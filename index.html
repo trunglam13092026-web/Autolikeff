@@ -3,200 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buff Like Free Fire</title>
+    <title>Tool Buff Like Free Fire</title>
     <style>
-        * {
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
+        * { box-sizing: border-box; }
         body {
-            margin: 0;
-            padding: 20px 0;
-            /* Nền Gradient tím xanh chuẩn theo ảnh */
-            background: linear-gradient(135deg, #4A63E7 0%, #6E4BB6 50%, #90479A 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-        }
-
-        /* Thanh địa chỉ IP ở phía trên */
-        .ip-bar {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 25px;
-            padding: 8px 16px;
-            display: flex;
-            align-items: center;
-            color: white;
-            font-size: 13px;
-            margin-top: 10px;
-            margin-bottom: 40px;
-            width: 90%;
-            max-width: 360px;
-            backdrop-filter: blur(5px);
-        }
-
-        .ip-bar .home-icon {
-            background: rgba(255, 255, 255, 0.3);
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
             justify-content: center;
-            margin-right: 10px;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
         }
-
-        .ip-text {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            font-family: monospace;
-        }
-
-        /* Thẻ trắng chứa Form */
         .card {
             background: #ffffff;
             border-radius: 20px;
-            padding: 30px 24px;
-            width: 90%;
-            max-width: 360px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        h2 {
-            margin: 0 0 20px 0;
-            color: #111827;
-            font-size: 24px;
-            font-weight: 800;
-            line-height: 1.3;
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        label {
-            display: block;
-            font-size: 14px;
-            color: #374151;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        label a {
-            color: #5C5CFF;
-            text-decoration: underline;
-            font-weight: 600;
-        }
-
-        input[type="text"] {
+            padding: 30px;
             width: 100%;
-            padding: 12px 14px;
-            border: 1px solid #E5E7EB;
+            max-width: 380px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: left;
+        }
+        h2 { font-size: 20px; color: #1a1a1a; margin-top: 0; margin-bottom: 20px; text-align: center; }
+        label { font-size: 14px; font-weight: bold; color: #333; display: block; margin-top: 15px; margin-bottom: 5px; }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
             border-radius: 10px;
             font-size: 14px;
             outline: none;
-            color: #1F2937;
-            transition: border-color 0.2s;
         }
-
-        input[type="text"]:focus {
-            border-color: #6366F1;
-        }
-
-        input[type="text"]::placeholder {
-            color: #9CA3AF;
-        }
-
-        /* Nút Chạy */
+        input:focus { border-color: #6366f1; }
+        .key-link { font-size: 13px; margin-top: 12px; margin-bottom: 6px; color: #555; }
+        .key-link a { color: #4f46e5; text-decoration: none; font-weight: bold; }
+        .key-link a:hover { text-decoration: underline; }
         .btn-submit {
             width: 100%;
-            background-color: #6366F1;
+            background: #6366f1;
             color: white;
             border: none;
-            padding: 13px;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 600;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
-            margin-top: 10px;
-            transition: background-color 0.2s;
+            margin-top: 25px;
+            transition: 0.2s;
         }
-
-        .btn-submit:hover {
-            background-color: #4F46E5;
-        }
+        .btn-submit:hover { background: #4f46e5; }
+        .btn-submit:disabled { background: #a5b4fc; cursor: not-allowed; }
     </style>
 </head>
 <body>
 
-    <!-- Thanh hiển thị phía trên -->
-    <div class="ip-bar">
-        <div class="home-icon">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-            </svg>
-        </div>
-        <div class="ip-text">402:800:62b2:b66b:c905:2e0:82cb:4cad</div>
-    </div>
-
-    <!-- Khung chức năng chính -->
     <div class="card">
         <h2>Người đam mê công cụ giống như Free Fire</h2>
-        
-        <div class="form-group">
+
+        <div>
             <label for="uid">UID Free Fire:</label>
             <input type="text" id="uid" placeholder="Nhập UID Free Fire">
         </div>
 
-        <div class="form-group">
-            <!-- THAY LINK RÚT GỌN 1 (LINK A) CỦA BẠN VÀO HREF DƯỚI ĐÂY -->
-            <label>Key - Nhận miễn phí: <a href="https://link1s.com/linkA" target="_blank">Tại đây</a></label>
-            <input type="text" id="key" placeholder="Chìa khóa">
+        <div>
+            <div class="key-link">
+                Key - Nhận miễn phí: <a href="https://link1s.com/linkA" target="_blank">Tại đây</a>
+            </div>
+            <input type="text" id="key" placeholder="Chia khóa">
         </div>
 
-        <button class="btn-submit" onclick="runApp()">Chạy</button>
+        <button class="btn-submit" id="btnSubmit" onclick="runApp()">Chạy</button>
     </div>
 
     <script>
-        // THAY LINK RAW GIST (CHỨA DANH SÁCH 26 KEY) CỦA BẠN VÀO ĐÂY
-        const KEY_DATABASE_URL = "https://gist.githubusercontent.com/trunglam13092026-web/.../raw/.../Key.txt";
+        // 1. Link Gist chứa danh sách 26 Key của bạn
+        const KEY_DATABASE_URL = "https://gist.githubusercontent.com/trunglam13092026-web/00e7021facf70748710aed295719aa57/raw/0336ae5f476ead5a6dbcb50c8008b7ce93e3ca68/Key.txt";
+
+        // 2. Cấu hình Telegram Bot nhận thông báo UID (Điền Token và Chat ID của bạn vào đây)
+        const TELEGRAM_TOKEN = "THAY_TOKEN_BOT_TELEGRAM_VAO_DAY";
+        const TELEGRAM_CHAT_ID = "THAY_CHAT_ID_TELEGRAM_VAO_DAY";
 
         async function runApp() {
-            const uid = document.getElementById('uid').value.trim();
-            const key = document.getElementById('key').value.trim();
+            const uidInput = document.getElementById('uid');
+            const keyInput = document.getElementById('key');
+            const btnSubmit = document.getElementById('btnSubmit');
+
+            const uid = uidInput.value.trim();
+            const userKey = keyInput.value.trim();
 
             if (!uid) {
-                alert('Vui lòng nhập UID Free Fire!');
+                alert("Vui lòng nhập UID Free Fire!");
+                uidInput.focus();
                 return;
             }
-            if (!key) {
-                alert('Vui lòng nhập Key!');
+            if (!userKey) {
+                alert("Vui lòng nhập Key!");
+                keyInput.focus();
                 return;
             }
+
+            btnSubmit.innerText = "Đang kiểm tra Key...";
+            btnSubmit.disabled = true;
 
             try {
-                // Tải danh sách Key từ GitHub Gist về kiểm tra
-                const response = await fetch(KEY_DATABASE_URL);
-                const textData = await response.text();
-                
-                // Cắt danh sách thành các dòng
-                const validKeys = textData.split('\n').map(k => k.trim());
+                // Tải danh sách Key từ Gist về đối chiếu
+                const response = await fetch(KEY_DATABASE_URL + '?t=' + new Date().getTime());
+                if (!response.ok) throw new Error("Lỗi tải danh sách Key");
 
-                if (validKeys.includes(key)) {
-                    alert('Thành công! Đang tiến hành xử lý cho UID: ' + uid);
+                const text = await response.text();
+                const validKeys = text.split('\n').map(k => k.trim()).filter(k => k.length > 0);
+
+                // Kiểm tra xem Key nhập vào có trong danh sách không
+                if (validKeys.includes(userKey)) {
+                    btnSubmit.innerText = "Đang gửi đơn...";
+
+                    // Nếu đã cấu hình Telegram Token thì gửi tin nhắn thông báo về điện thoại
+                    if (TELEGRAM_TOKEN !== "THAY_TOKEN_BOT_TELEGRAM_VAO_DAY") {
+                        const message = `🔔 **ĐƠN BUFF LIKE MỚI!**\n\n🆔 **UID FF:** \`${uid}\`\n🔑 **Key:** \`${userKey}\`\n⏰ **Lúc:** ${new Date().toLocaleString('vi-VN')}`;
+                        
+                        await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                chat_id: TELEGRAM_CHAT_ID,
+                                text: message,
+                                parse_mode: 'Markdown'
+                            })
+                        });
+                    }
+
+                    alert("✅ Đã gửi yêu cầu thành công! Like sẽ được buff trong vòng 5-10 phút.");
+                    
+                    uidInput.value = '';
+                    keyInput.value = '';
                 } else {
-                    alert('Key không chính xác hoặc đã hết hạn! Vui lòng bấm "Tại đây" để lấy Key mới.');
+                    alert("❌ Key không chính xác hoặc đã hết hạn!");
                 }
+
             } catch (error) {
-                alert('Lỗi kết nối máy chủ kiểm tra Key!');
+                console.error("Lỗi:", error);
+                alert("Đã xảy ra lỗi kết nối. Vui lòng thử lại sau!");
+            } finally {
+                btnSubmit.innerText = "Chạy";
+                btnSubmit.disabled = false;
             }
         }
     </script>
-
 </body>
 </html>
