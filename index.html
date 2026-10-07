@@ -25,7 +25,8 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             text-align: left;
         }
-        h2 { font-size: 20px; color: #1a1a1a; margin-top: 0; margin-bottom: 20px; text-align: center; }
+        h2 { font-size: 20px; color: #1a1a1a; margin-top: 0; margin-bottom: 10px; text-align: center; }
+        .notice { font-size: 12px; color: #e11d48; text-align: center; margin-bottom: 20px; font-weight: bold; }
         label { font-size: 14px; font-weight: bold; color: #333; display: block; margin-top: 15px; margin-bottom: 5px; }
         input {
             width: 100%;
@@ -59,7 +60,8 @@
 <body>
 
     <div class="card">
-        <h2>Buff Like Free Fire OB55 Miễn phí</h2>
+        <h2>Buff Like Free Fire OB55</h2>
+        <div class="notice">⚠️ Mỗi Key chỉ dùng được 1 lần duy nhất!</div>
 
         <div>
             <label for="uid">UID Free Fire:</label>
@@ -70,29 +72,32 @@
             <div class="key-link">
                 Key - Nhận miễn phí: <a onclick="openRandomKeyLink()">Tại đây</a>
             </div>
-            <input type="text" id="key" placeholder="Chìa khóa">
+            <input type="text" id="key" placeholder="Chìa khóa (Key123...)">
         </div>
 
         <button class="btn-submit" id="btnSubmit" onclick="runApp()">Chạy</button>
     </div>
 
     <script>
-        // 1. Link Gist Raw chứa danh sách Key hợp lệ
-        const KEY_DATABASE_URL = "https://gist.githubusercontent.com/trunglam13092026-web/d976fc3659545e6b4a1949c0094ac691/raw/9c852835df26f118efef026dc1c0e80578281a7e/Key.txt";
+        // Cấu hình JSONBin
+        const JSONBIN_BIN_ID = "6ac6c1d2ac6210605a1db90f";
+        const JSONBIN_SECRET_KEY = "$2a$10$ET4hpkJ9Q8Vz/5zT5wdmT..K5ZKMWRhC7jVET49g3lk4tfmiMwlbm";
+        const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
 
-        // 2. Cấu hình Telegram Bot
+        // Cấu hình Telegram Bot
         const TELEGRAM_TOKEN = "8920323422:AAEYHaz1sdO3g78yOryFZZMFzPG77FJp4ok";
         const TELEGRAM_CHAT_ID = "7827755950";
 
-        // 3. Danh sách các link rút gọn (Thêm nhiều link rút gọn vào đây)
+        // Cooldown chống click liên tục (60 phút)
+        const COOLDOWN_TIME = 60 * 60 * 1000;
+
+        // Xoay tua 3 Link Rút Gọn đã cài đặt
         const KEY_SHORT_LINKS = [
-            "https://sitetop.net/1QeBPi",
-            // Bạn có thể tạo thêm link rút gọn trên sitetop.net rồi dán thêm vào đây:
-            // "https://sitetop.net/link2xxx",
-            // "https://sitetop.net/link3xxx"
+            "https://sitetop.net/mMsLCf",
+            "https://sitetop.net/hujSa3",
+            "https://sitetop.net/O9IM28"
         ];
 
-        // Hàm mở ngẫu nhiên 1 trong các link rút gọn
         function openRandomKeyLink() {
             const randomIndex = Math.floor(Math.random() * KEY_SHORT_LINKS.length);
             window.open(KEY_SHORT_LINKS[randomIndex], '_blank');
@@ -102,6 +107,16 @@
             const uidInput = document.getElementById('uid');
             const keyInput = document.getElementById('key');
             const btnSubmit = document.getElementById('btnSubmit');
+
+            // 1. Kiểm tra Cooldown thiết bị
+            const lastBuffTime = localStorage.getItem('last_buff_time');
+            const currentTime = new Date().getTime();
+
+            if (lastBuffTime && (currentTime - lastBuffTime < COOLDOWN_TIME)) {
+                const remainingMinutes = Math.ceil((COOLDOWN_TIME - (currentTime - lastBuffTime)) / (60 * 1000));
+                alert(`⏳ Bạn vừa gửi đơn thành công! Vui lòng đợi thêm ${remainingMinutes} phút nữa để tiếp tục.`);
+                return;
+            }
 
             const uid = uidInput.value.trim();
             const userKey = keyInput.value.trim().toLowerCase();
@@ -117,25 +132,44 @@
                 return;
             }
 
-            btnSubmit.innerText = "Đang kiểm tra Key...";
+            btnSubmit.innerText = "Đang xác minh Key...";
             btnSubmit.disabled = true;
 
             try {
-                const response = await fetch(KEY_DATABASE_URL + '?v=' + new Date().getTime());
-                if (!response.ok) throw new Error("Lỗi tải danh sách Key");
+                // 2. Lấy danh sách Key từ JSONBin
+                const resGet = await fetch(JSONBIN_URL + '/latest', {
+                    headers: { 'X-Master-Key': JSONBIN_SECRET_KEY }
+                });
 
-                const text = await response.text();
-                
-                const validKeys = text
-                    .split('\n')
-                    .map(k => k.replace('\r', '').trim().toLowerCase())
-                    .filter(k => k.length > 0);
+                if (!resGet.ok) throw new Error("Lỗi kết nối cơ sở dữ liệu Key");
 
-                if (validKeys.includes(userKey)) {
-                    btnSubmit.innerText = "Đang gửi đơn...";
+                const dataGet = await resGet.json();
+                let keyList = dataGet.record.keys || [];
 
-                    const message = `🔔 **ĐƠN BUFF LIKE MỚI!**\n\n🆔 **UID FF:** \`${uid}\`\n🔑 **Key:** \`${keyInput.value.trim()}\`\n⏰ **Lúc:** ${new Date().toLocaleString('vi-VN')}`;
-                    
+                // 3. Kiểm tra xem Key người dùng nhập có tồn tại hay không
+                const keyIndex = keyList.findIndex(k => k.toLowerCase() === userKey);
+
+                if (keyIndex !== -1) {
+                    btnSubmit.innerText = "Đang hủy Key & gửi đơn...";
+
+                    // Xóa Key đã sử dụng khỏi danh sách
+                    keyList.splice(keyIndex, 1);
+
+                    // 4. Cập nhật lại danh sách Key mới lên JSONBin
+                    const resPut = await fetch(JSONBIN_URL, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Master-Key': JSONBIN_SECRET_KEY
+                        },
+                        body: JSON.stringify({ keys: keyList })
+                    });
+
+                    if (!resPut.ok) throw new Error("Lỗi cập nhật trạng thái Key");
+
+                    // 5. Gửi thông báo đơn hàng sang Telegram Bot
+                    const message = `🔔 **ĐƠN BUFF LIKE MỚI!**\n\n🆔 **UID FF:** \`${uid}\`\n🔑 **Key đã dùng:** \`${keyInput.value.trim()}\`\n📊 **Key còn lại:** ${keyList.length}\n⏰ **Lúc:** ${new Date().toLocaleString('vi-VN')}`;
+
                     await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -146,17 +180,20 @@
                         })
                     });
 
-                    alert("✅ Đã gửi yêu cầu thành công! Like sẽ được buff trong vòng 5-10 phút.");
-                    
+                    // Lưu mốc thời gian đã gửi thành công
+                    localStorage.setItem('last_buff_time', new Date().getTime());
+
+                    alert("✅ Xác minh Key thành công! Like sẽ được gửi tới tài khoản trong 5-10 phút.");
                     uidInput.value = '';
                     keyInput.value = '';
+
                 } else {
-                    alert("❌ Key không chính xác hoặc đã hết hạn!");
+                    alert("❌ Key không chính xác hoặc đã được sử dụng trước đó!");
                 }
 
             } catch (error) {
                 console.error("Lỗi:", error);
-                alert("Đã xảy ra lỗi kết nối. Vui lòng thử lại sau!");
+                alert("Đã xảy ra lỗi hệ thống! Vui lòng thử lại sau.");
             } finally {
                 btnSubmit.innerText = "Chạy";
                 btnSubmit.disabled = false;
