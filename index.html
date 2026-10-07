@@ -77,12 +77,12 @@
     </div>
 
     <script>
-        // 1. Link Gist chứa danh sách 26 Key của bạn
+        // 1. Link Gist chứa danh sách 26 Key
         const KEY_DATABASE_URL = "https://gist.githubusercontent.com/trunglam13092026-web/00e7021facf70748710aed295719aa57/raw/0336ae5f476ead5a6dbcb50c8008b7ce93e3ca68/Key.txt";
 
-        // 2. Cấu hình Telegram Bot nhận thông báo UID
-        const TELEGRAM_TOKEN = "THAY_TOKEN_BOT_TELEGRAM_VAO_DAY";
-        const TELEGRAM_CHAT_ID = "THAY_CHAT_ID_TELEGRAM_VAO_DAY";
+        // 2. Cấu hình Telegram Bot (@bufflikeob55_bot)
+        const TELEGRAM_TOKEN = "8920323422:AAEYHaz1sdO3g78yOryFZZMFzPG77FJp4ok";
+        const TELEGRAM_CHAT_ID = "THAY_CHAT_ID_CUA_BAN_VAO_DAY"; // Điền Chat ID lấy từ @userinfobot vào đây
 
         async function runApp() {
             const uidInput = document.getElementById('uid');
@@ -114,12 +114,12 @@
                 const text = await response.text();
                 const validKeys = text.split('\n').map(k => k.trim()).filter(k => k.length > 0);
 
-                // Kiểm tra xem Key nhập vào có trong danh sách không
+                // Kiểm tra xem Key nhập vào có trong danh sách hay không
                 if (validKeys.includes(userKey)) {
                     btnSubmit.innerText = "Đang gửi đơn...";
 
-                    // Nếu đã cấu hình Telegram Token thì tự động gửi tin nhắn thông báo về điện thoại
-                    if (TELEGRAM_TOKEN !== "THAY_TOKEN_BOT_TELEGRAM_VAO_DAY") {
+                    // Gửi thông báo về Telegram
+                    if (TELEGRAM_CHAT_ID !== "THAY_CHAT_ID_CUA_BAN_VAO_DAY") {
                         const message = `🔔 **ĐƠN BUFF LIKE MỚI!**\n\n🆔 **UID FF:** \`${uid}\`\n🔑 **Key:** \`${userKey}\`\n⏰ **Lúc:** ${new Date().toLocaleString('vi-VN')}`;
                         
                         await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
