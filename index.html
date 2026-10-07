@@ -68,7 +68,7 @@
 
         <div>
             <div class="key-link">
-                Key - Nhận miễn phí: <a href="https://linktop.one/LdmMuKxLtlk" target="_blank">Tại đây</a>
+                Key - Nhận miễn phí: <a href="https://linkfree.click/s/keyz1u17yvmuy3x2b1" target="_blank">Tại đây</a>
             </div>
             <input type="text" id="key" placeholder="Chia khóa">
         </div>
@@ -77,12 +77,12 @@
     </div>
 
     <script>
-        // 1. Link Gist chứa danh sách 26 Key
+        // 1. Link Gist chứa danh sách Raw Key
         const KEY_DATABASE_URL = "https://gist.githubusercontent.com/trunglam13092026-web/00e7021facf70748710aed295719aa57/raw/0336ae5f476ead5a6dbcb50c8008b7ce93e3ca68/Key.txt";
 
-        // 2. Cấu hình Telegram Bot (@bufflikeob55_bot)
+        // 2. Cấu hình Telegram Bot (@bufflikeob55_bot) và Chat ID người dùng
         const TELEGRAM_TOKEN = "8920323422:AAEYHaz1sdO3g78yOryFZZMFzPG77FJp4ok";
-        const TELEGRAM_CHAT_ID = "THAY_CHAT_ID_CUA_BAN_VAO_DAY"; // Điền Chat ID lấy từ @userinfobot vào đây
+        const TELEGRAM_CHAT_ID = "7827755950";
 
         async function runApp() {
             const uidInput = document.getElementById('uid');
@@ -119,19 +119,17 @@
                     btnSubmit.innerText = "Đang gửi đơn...";
 
                     // Gửi thông báo về Telegram
-                    if (TELEGRAM_CHAT_ID !== "THAY_CHAT_ID_CUA_BAN_VAO_DAY") {
-                        const message = `🔔 **ĐƠN BUFF LIKE MỚI!**\n\n🆔 **UID FF:** \`${uid}\`\n🔑 **Key:** \`${userKey}\`\n⏰ **Lúc:** ${new Date().toLocaleString('vi-VN')}`;
-                        
-                        await fetch(`https://api.telegram.org/bot${8920323422:AAEYHaz1sdO3g78yOryFZZMFzPG77FJp4ok}/sendMessage`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                chat_id: TELEGRAM_CHAT_ID,
-                                text: message,
-                                parse_mode: 'Markdown'
-                            })
-                        });
-                    }
+                    const message = `🔔 **ĐƠN BUFF LIKE MỚI!**\n\n🆔 **UID FF:** \`${uid}\`\n🔑 **Key:** \`${userKey}\`\n⏰ **Lúc:** ${new Date().toLocaleString('vi-VN')}`;
+                    
+                    await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            chat_id: TELEGRAM_CHAT_ID,
+                            text: message,
+                            parse_mode: 'Markdown'
+                        })
+                    });
 
                     alert("✅ Đã gửi yêu cầu thành công! Like sẽ được buff trong vòng 5-10 phút.");
                     
