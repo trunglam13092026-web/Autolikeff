@@ -37,7 +37,7 @@
         }
         input:focus { border-color: #6366f1; }
         .key-link { font-size: 13px; margin-top: 12px; margin-bottom: 6px; color: #555; }
-        .key-link a { color: #4f46e5; text-decoration: none; font-weight: bold; }
+        .key-link a { color: #4f46e5; text-decoration: none; font-weight: bold; cursor: pointer; }
         .key-link a:hover { text-decoration: underline; }
         .btn-submit {
             width: 100%;
@@ -68,21 +68,35 @@
 
         <div>
             <div class="key-link">
-                Key - Nhận miễn phí: <a href="https://sitetop.net/1QeBPi" target="_blank">Tại đây</a>
+                Key - Nhận miễn phí: <a onclick="openRandomKeyLink()">Tại đây</a>
             </div>
-            <input type="text" id="key" placeholder="Chia khóa">
+            <input type="text" id="key" placeholder="Chìa khóa">
         </div>
 
         <button class="btn-submit" id="btnSubmit" onclick="runApp()">Chạy</button>
     </div>
 
     <script>
-        // 1. Link Gist Raw MỚI chứa danh sách Key
+        // 1. Link Gist Raw chứa danh sách Key hợp lệ
         const KEY_DATABASE_URL = "https://gist.githubusercontent.com/trunglam13092026-web/d976fc3659545e6b4a1949c0094ac691/raw/9c852835df26f118efef026dc1c0e80578281a7e/Key.txt";
 
-        // 2. Cấu hình Telegram Bot (@bufflikeob55_bot) và Chat ID người dùng
+        // 2. Cấu hình Telegram Bot
         const TELEGRAM_TOKEN = "8920323422:AAEYHaz1sdO3g78yOryFZZMFzPG77FJp4ok";
         const TELEGRAM_CHAT_ID = "7827755950";
+
+        // 3. Danh sách các link rút gọn (Thêm nhiều link rút gọn vào đây)
+        const KEY_SHORT_LINKS = [
+            "https://sitetop.net/1QeBPi",
+            // Bạn có thể tạo thêm link rút gọn trên sitetop.net rồi dán thêm vào đây:
+            // "https://sitetop.net/link2xxx",
+            // "https://sitetop.net/link3xxx"
+        ];
+
+        // Hàm mở ngẫu nhiên 1 trong các link rút gọn
+        function openRandomKeyLink() {
+            const randomIndex = Math.floor(Math.random() * KEY_SHORT_LINKS.length);
+            window.open(KEY_SHORT_LINKS[randomIndex], '_blank');
+        }
 
         async function runApp() {
             const uidInput = document.getElementById('uid');
@@ -107,13 +121,11 @@
             btnSubmit.disabled = true;
 
             try {
-                // Tải danh sách Key từ Gist Raw mới (thêm query ngẫu nhiên để chống cache)
                 const response = await fetch(KEY_DATABASE_URL + '?v=' + new Date().getTime());
                 if (!response.ok) throw new Error("Lỗi tải danh sách Key");
 
                 const text = await response.text();
                 
-                // Loại bỏ khoảng trắng và chuyển về chữ thường để so sánh
                 const validKeys = text
                     .split('\n')
                     .map(k => k.replace('\r', '').trim().toLowerCase())
