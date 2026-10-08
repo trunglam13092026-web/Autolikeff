@@ -3,192 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Lấy Key Free Fire</title>
+    <title>Get Key Free Fire</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
         body {
-            font-family: Arial, sans-serif;
             background-color: #121212;
-            color: #fff;
+            color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            min-height: 100vh;
+            padding: 20px;
         }
 
         .container {
             background-color: #1e1e1e;
-            padding: 25px;
+            padding: 35px 25px;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,.5);
             text-align: center;
-            width: 90%;
-            max-width: 400px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
         }
 
-        h2 {
-            color: #ff9900;
-            margin-bottom: 20px;
+        .title {
+            color: #ff9800;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            letter-spacing: 0.5px;
         }
 
         .key-box {
-            background-color: #2a2a2a;
-            border: 2px dashed #ff9900;
-            padding: 15px;
-            font-size: 20px;
-            font-weight: bold;
-            color: #00ffcc;
-            letter-spacing: 2px;
+            border: 2px dashed #ff9800;
+            padding: 16px;
             border-radius: 8px;
-            margin: 20px 0;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 25px;
             word-break: break-all;
+            background-color: #242424;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .btn {
-            background-color: #ff9900;
-            color: #000;
+        .key-box.error {
+            color: #26a69a;
+        }
+
+        .key-box.success {
+            color: #ffffff;
+        }
+
+        .btn-copy {
+            background-color: #ff9800;
+            color: #ffffff;
             border: none;
-            padding: 12px 25px;
+            padding: 14px 28px;
             font-size: 16px;
-            font-weight: bold;
-            border-radius: 6px;
+            font-weight: 700;
+            border-radius: 8px;
             cursor: pointer;
+            width: 100%;
+            max-width: 200px;
+            transition: background-color 0.2s ease;
+            margin-bottom: 20px;
         }
 
-        .btn:hover {
+        .btn-copy:hover {
             background-color: #e68a00;
         }
 
-        .status {
-            margin-top: 15px;
-            font-size: 14px;
-            color: #aaa;
+        .btn-copy:active {
+            transform: scale(0.98);
+        }
+
+        .note {
+            font-size: 13px;
+            color: #9e9e9e;
         }
     </style>
 </head>
-
 <body>
 
-<div class="container">
-    <h2>KEY FREE FIRE CỦA BẠN</h2>
-
-    <div id="keyDisplay" class="key-box">
-        Đang xử lý...
+    <div class="container">
+        <div class="title">KEY FREE FIRE CỦA BẠN</div>
+        
+        <div id="keyDisplay" class="key-box error">ĐANG TẢI...</div>
+        
+        <button class="btn-copy" onclick="copyKey()">Sao chép Key</button>
+        
+        <div class="note">Vui lòng vượt link rút gọn để lấy key!</div>
     </div>
 
-    <button class="btn" onclick="copyKey()">
-        Sao chép Key
-    </button>
+    <script>
+        // Link Gist Raw chứa Key của bạn
+        const GIST_URL = 'https://gist.githubusercontent.com/trunglam13092026-web/0b0121c36304c433da1e5ec7ab567161/raw/ee5771ab0e9b2fd9ebb62ccdbc201a41911c2a9b/getkey.html';
 
-    <div id="status" class="status">
-        Đang tải dữ liệu...
-    </div>
-</div>
-
-<script>
-    // Lấy token từ URL
-    function getTokenFromURL() {
         const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get("token");
-    }
+        const token = urlParams.get('token');
+        const keyDisplay = document.getElementById('keyDisplay');
 
-    // Tạo Key dạng TLZ-MAX-XXXXXX
-    function generateRandomKey() {
-        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        let result = "";
+        async function initKey() {
+            // 1. Kiểm tra Token
+            if (!token || token.trim() === "") {
+                keyDisplay.innerText = 'LỖI TOKEN';
+                keyDisplay.classList.remove('success');
+                keyDisplay.classList.add('error');
+                return;
+            }
 
-        for (let i = 0; i < 6; i++) {
-            result += chars.charAt(
-                Math.floor(Math.random() * chars.length)
-            );
+            const storageKey = 'ff_key_' + token.trim();
+            let savedKey = localStorage.getItem(storageKey);
+
+            // 2. Nếu đã có Key lưu ở trình duyệt -> Lấy ra hiển thị luôn
+            if (savedKey) {
+                keyDisplay.innerText = savedKey;
+                keyDisplay.classList.remove('error');
+                keyDisplay.classList.add('success');
+                return;
+            }
+
+            // 3. Nếu chưa có -> Lấy Key từ link Gist về và lưu lại
+            try {
+                // Thêm timestamp để tránh bị dính cache trình duyệt
+                const response = await fetch(GIST_URL + '?t=' + new Date().getTime());
+                if (!response.ok) throw new Error('Không thể tải Key');
+                
+                const fetchedKey = (await response.text()).trim();
+                
+                if (fetchedKey) {
+                    localStorage.setItem(storageKey, fetchedKey);
+                    keyDisplay.innerText = fetchedKey;
+                    keyDisplay.classList.remove('error');
+                    keyDisplay.classList.add('success');
+                } else {
+                    keyDisplay.innerText = 'LỖI KEY RỐNG';
+                }
+            } catch (error) {
+                keyDisplay.innerText = 'LỖI TẢI KEY';
+                console.error(error);
+            }
         }
 
-        return `TLZ-MAX-${result}`;
-    }
+        function copyKey() {
+            const currentText = keyDisplay.innerText.trim();
 
-    // Xử lý Key
-    function handleKey() {
-        const token = getTokenFromURL();
+            if (currentText === 'LỖI TOKEN' || currentText === 'ĐANG TẢI...' || currentText.includes('LỖI')) {
+                alert('Lỗi: Bạn cần có Token hợp lệ trước khi sao chép!');
+                return;
+            }
 
-        const keyDisplay =
-            document.getElementById("keyDisplay");
-
-        const statusDisplay =
-            document.getElementById("status");
-
-        // Không có token
-        if (!token) {
-            keyDisplay.innerText = "LỖI TOKEN";
-
-            statusDisplay.innerText =
-                "Vui lòng vượt link rút gọn để lấy key!";
-
-            return;
+            navigator.clipboard.writeText(currentText).then(() => {
+                alert('Đã sao chép Key: ' + currentText);
+            }).catch(() => {
+                const tempInput = document.createElement('input');
+                tempInput.value = currentText;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempInput);
+                alert('Đã sao chép Key: ' + currentText);
+            });
         }
 
-        // Tìm Key đã lưu
-        const storageKey = `tlz_key_${token}`;
-
-        let savedKey =
-            localStorage.getItem(storageKey);
-
-        if (savedKey) {
-
-            keyDisplay.innerText = savedKey;
-
-            statusDisplay.innerText =
-                "Key của bạn (Đã lưu thành công)";
-
-        } else {
-
-            // Tạo Key mới
-            const newKey = generateRandomKey();
-
-            // Lưu Key theo token
-            localStorage.setItem(
-                storageKey,
-                newKey
-            );
-
-            keyDisplay.innerText = newKey;
-
-            statusDisplay.innerText =
-                "Tạo key thành công!";
-        }
-    }
-
-    // Sao chép Key
-    function copyKey() {
-
-        const keyText =
-            document.getElementById("keyDisplay").innerText;
-
-        if (keyText.startsWith("TLZ-MAX-")) {
-
-            navigator.clipboard.writeText(keyText)
-                .then(() => {
-                    alert(
-                        "Đã sao chép key thành công: " +
-                        keyText
-                    );
-                })
-                .catch(() => {
-                    alert(
-                        "Không thể sao chép tự động!"
-                    );
-                });
-
-        } else {
-
-            alert(
-                "Chưa có key hợp lệ để sao chép!"
-            );
-        }
-    }
-
-    // Chạy khi trang mở
-    handleKey();
-</script>
-
+        // Chạy hàm khi trang web tải xong
+        initKey();
+    </script>
 </body>
 </html>
