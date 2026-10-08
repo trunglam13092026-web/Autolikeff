@@ -1,187 +1,153 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buff Like Free Fire OB55</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .card {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 30px 24px;
-            width: 100%;
-            max-width: 380px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
-
-        .title {
-            font-size: 20px;
-            font-weight: 700;
-            color: #1a202c;
-            text-align: center;
-            margin-bottom: 8px;
-        }
-
-        .sub-title {
-            font-size: 13px;
-            color: #e53e3e;
-            text-align: center;
-            margin-bottom: 24px;
-            font-weight: 500;
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        label {
-            display: block;
-            font-size: 14px;
-            color: #4a5568;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        label a {
-            color: #5a67d8;
-            text-decoration: none;
-            float: right;
-            font-weight: 500;
-        }
-
-        label a:hover {
-            text-decoration: underline;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 15px;
-            outline: none;
-            transition: all 0.2s ease;
-            background-color: #f8fafc;
-        }
-
-        input:focus {
-            border-color: #667eea;
-            background-color: #fff;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
-        }
-
-        .btn-submit {
-            width: 100%;
-            background: #5a67d8;
-            color: #ffffff;
-            border: none;
-            padding: 14px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: background 0.2s ease;
-        }
-
-        .btn-submit:hover {
-            background: #4c51bf;
-        }
-
-        .btn-submit:active {
-            transform: scale(0.99);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buff Like Free Fire</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: #1e1e1e;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    }
+    h2 {
+      color: #ff9900;
+      margin-bottom: 20px;
+    }
+    .input-group {
+      margin-bottom: 15px;
+      text-align: left;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+      color: #ccc;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #333;
+      background-color: #2a2a2a;
+      color: #fff;
+      box-sizing: border-box;
+      font-size: 15px;
+    }
+    button {
+      background-color: #ff9900;
+      color: #000;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background-color: #e68a00;
+    }
+    button:disabled {
+      background-color: #555;
+      color: #888;
+      cursor: not-allowed;
+    }
+    #statusMsg {
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="card">
-        <div class="title">Buff Like Free Fire OB55</div>
-        <div class="sub-title">⚠️ Mỗi Key chỉ dùng được 1 lần duy nhất!</div>
-
-        <form id="buffForm" onsubmit="handleBuff(event)">
-            <div class="form-group">
-                <label for="uid">UID Free Fire:</label>
-                <input type="text" id="uid" placeholder="Nhập UID Free Fire" required>
-            </div>
-
-            <div class="form-group">
-                <label for="key">
-                    Key - Nhận miễn phí: 
-                    <a href="https://link4m.org/r6Fga1EF" target="_blank">Tại đây</a>
-                </label>
-                <input type="text" id="key" placeholder="Chìa khóa (Key123...)" required>
-            </div>
-
-            <button type="submit" class="btn-submit">Chạy</button>
-        </form>
+  <div class="card">
+    <h2>BUFF LIKE FREE FIRE</h2>
+    
+    <div class="input-group">
+      <label for="uidInput">ID Nhân Vật (UID):</label>
+      <input type="text" id="uidInput" placeholder="Nhập UID Free Fire...">
     </div>
 
-    <script>
-        const TELEGRAM_BOT_TOKEN = '8920323422:AAEYHaz1sdO3g78yOryFZZMFzPG77FJp4ok';
-        const TELEGRAM_CHAT_ID = '-1003664078325';
+    <div class="input-group">
+      <label for="keyInput">Key Xác Nhận:</label>
+      <input type="text" id="keyInput" placeholder="Dán Key lấy từ trang getkey vào đây...">
+    </div>
 
-        async function handleBuff(e) {
-            e.preventDefault();
-            const uid = document.getElementById('uid').value.trim();
-            const key = document.getElementById('key').value.trim();
+    <button id="btnSubmit" onclick="startBuff()">XÁC NHẬN BUFF LIKE</button>
 
-            if (!uid || !key) {
-                alert('Vui lòng nhập đầy đủ UID và Key!');
-                return;
-            }
+    <div id="statusMsg"></div>
+  </div>
 
-            let userIp = 'Không xác định';
-            try {
-                const ipRes = await fetch('https://api.ipify.org?format=json');
-                const ipData = await ipRes.json();
-                userIp = ipData.ip;
-            } catch (err) {}
+  <script>
+    // Link Web App API đã kết nối với Google Sheet
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxKDUNk3jVVuV5w7jcAWYLUJreSYOi7l8dBWJKxlMqx4cwPDaSvgU0sljwa04EmLnLp/exec";
 
-            const timeString = new Date().toLocaleString('vi-VN');
+    async function startBuff() {
+      const uid = document.getElementById("uidInput").value.trim();
+      const userKey = document.getElementById("keyInput").value.trim();
+      const btn = document.getElementById("btnSubmit");
+      const statusMsg = document.getElementById("statusMsg");
 
-            const message = 
-`🚀 <b>CÓ LỆNH BUFF LIKE MỚI!</b>
-----------------------------------
-🎮 <b>UID FF:</b> <code>${uid}</code>
-🗝 <b>Key sử dụng:</b> <code>${key}</code>
-🌐 <b>IP:</b> <code>${userIp}</code>
-⏰ <b>Thời gian:</b> ${timeString}
-🔗 <b>Tại web:</b> https://bufflikeff.site`;
+      if (!uid) {
+        alert("Vui lòng nhập UID Free Fire!");
+        return;
+      }
+      if (!userKey) {
+        alert("Vui lòng nhập Key!");
+        return;
+      }
 
-            try {
-                await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: TELEGRAM_CHAT_ID,
-                        text: message,
-                        parse_mode: 'HTML'
-                    })
-                });
+      btn.disabled = true;
+      btn.innerText = "Đang kiểm tra Key...";
+      statusMsg.innerText = "";
 
-                alert('Đã gửi yêu cầu Buff thành công! Vui lòng chờ xử lý.');
-                document.getElementById('buffForm').reset();
-            } catch (error) {
-                alert('Có lỗi xảy ra, vui lòng thử lại!');
-            }
+      try {
+        // Gửi yêu cầu kiểm tra và khóa Key lên Google Sheet
+        const response = await fetch(`${WEB_APP_URL}?action=useKey&key=${encodeURIComponent(userKey)}`);
+        const data = await response.json();
+
+        if (data.success) {
+          statusMsg.style.color = "#28a745";
+          statusMsg.innerText = "✅ Key hợp lệ! Đang tiến hành tăng Like...";
+          
+          // ========================================================
+          // ĐOẠN CODE GỌI API BUFF LIKE CỦA BẠN SẼ ĐẶT Ở ĐÂY
+          // Ví dụ: await sendLikeToFF(uid);
+          // ========================================================
+          
+          alert("🎉 Buff Like thành công cho UID: " + uid);
+        } else {
+          statusMsg.style.color = "#dc3545";
+          statusMsg.innerText = data.message;
+          alert(data.message);
         }
-    </script>
+      } catch (error) {
+        alert("Lỗi kết nối máy chủ! Vui lòng thử lại.");
+        console.error(error);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "XÁC NHẬN BUFF LIKE";
+      }
+    }
+  </script>
+
 </body>
 </html>
