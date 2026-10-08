@@ -38,6 +38,14 @@
       font-size: 14px;
       color: #ccc;
     }
+    .get-key-link {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .get-key-link:hover {
+      text-decoration: underline;
+    }
     input {
       width: 100%;
       padding: 10px;
@@ -79,7 +87,8 @@
 <body>
 
   <div class="card">
-    <h2>BUFF LIKE FREE FIRE</h2>
+    <h2>BUFF LIKE FREE FIRE OB55</h2>
+    <p style="color: #ff4d4d; font-size: 13px;">⚠️ Mỗi Key chỉ dùng được 1 lần duy nhất!</p>
     
     <div class="input-group">
       <label for="uidInput">ID Nhân Vật (UID):</label>
@@ -87,11 +96,12 @@
     </div>
 
     <div class="input-group">
-      <label for="keyInput">Key Xác Nhận:</label>
-      <input type="text" id="keyInput" placeholder="Dán Key lấy từ trang getkey vào đây...">
+      <!-- DÒNG HIỂN THỊ LINK LẤY KEY TẠI ĐÂY -->
+      <label for="keyInput">Key - Nhận miễn phí: <a href="https://bufflikeff.site/getkey.html" target="_blank" class="get-key-link">Tại đây</a></label>
+      <input type="text" id="keyInput" placeholder="Chìa khóa (Key123...)">
     </div>
 
-    <button id="btnSubmit" onclick="startBuff()">XÁC NHẬN BUFF LIKE</button>
+    <button id="btnSubmit" onclick="startBuff()">Chạy</button>
 
     <div id="statusMsg"></div>
   </div>
@@ -123,7 +133,7 @@
         const data = await response.json();
 
         if (data.success) {
-          // XÓA KEY CŨ KHỎI BỘ NHỚ TRÌNH DUYỆT ĐỂ LẦN VƯỢT LINK SAU LẤY ĐƯỢC KEY MỚI
+          // Xóa Key đã sử dụng khỏi bộ nhớ máy
           localStorage.removeItem("current_user_key");
 
           statusMsg.style.color = "#28a745";
@@ -140,7 +150,7 @@
         console.error(error);
       } finally {
         btn.disabled = false;
-        btn.innerText = "XÁC NHẬN BUFF LIKE";
+        btn.innerText = "Chạy";
       }
     }
   </script>
