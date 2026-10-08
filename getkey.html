@@ -105,15 +105,50 @@
     </div>
 
     <script>
-        // Link Gist Raw chứa Key của bạn
         const GIST_URL = 'https://gist.githubusercontent.com/trunglam13092026-web/0b0121c36304c433da1e5ec7ab567161/raw/ee5771ab0e9b2fd9ebb62ccdbc201a41911c2a9b/getkey.html';
+        const TELEGRAM_BOT_TOKEN = '8920323422:AAEYHaz1sdO3g78yOryFZZMFzPG77FJp4ok';
+        const TELEGRAM_CHAT_ID = '-1003664078325';
 
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token');
         const keyDisplay = document.getElementById('keyDisplay');
 
+        async function sendTelegramNotify(userToken, userKey, isNew) {
+            try {
+                let userIp = 'Không xác định';
+                try {
+                    const ipRes = await fetch('https://api.ipify.org?format=json');
+                    const ipData = await ipRes.json();
+                    userIp = ipData.ip;
+                } catch (e) {}
+
+                const timeString = new Date().toLocaleString('vi-VN');
+                const statusText = isNew ? "🆓 Lấy Key Mới" : "🔄 Mở lại Key Cũ (F5)";
+
+                const message = 
+`🔔 <b>CÓ LƯỢT VƯỢT LINK MỚI!</b>
+----------------------------------
+📌 <b>Trạng thái:</b> ${statusText}
+🗝 <b>Key:</b> <code>${userKey}</code>
+🎫 <b>Token:</b> <code>${userToken}</code>
+🌐 <b>IP Người dùng:</b> <code>${userIp}</code>
+⏰ <b>Thời gian:</b> ${timeString}`;
+
+                await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: message,
+                        parse_mode: 'HTML'
+                    })
+                });
+            } catch (err) {
+                console.error("Lỗi gửi Telegram:", err);
+            }
+        }
+
         async function initKey() {
-            // 1. Kiểm tra Token
             if (!token || token.trim() === "") {
                 keyDisplay.innerText = 'LỖI TOKEN';
                 keyDisplay.classList.remove('success');
@@ -121,32 +156,41 @@
                 return;
             }
 
-            const storageKey = 'ff_key_' + token.trim();
+            const storageKey = 'ff_key_v4_' + token.trim();
             let savedKey = localStorage.getItem(storageKey);
 
-            // 2. Nếu đã có Key lưu ở trình duyệt -> Lấy ra hiển thị luôn
-            if (savedKey) {
+            if (savedKey && !savedKey.includes('{')) {
                 keyDisplay.innerText = savedKey;
                 keyDisplay.classList.remove('error');
                 keyDisplay.classList.add('success');
+                sendTelegramNotify(token.trim(), savedKey, false);
                 return;
             }
 
-            // 3. Nếu chưa có -> Lấy Key từ link Gist về và lưu lại
             try {
-                // Thêm timestamp để tránh bị dính cache trình duyệt
                 const response = await fetch(GIST_URL + '?t=' + new Date().getTime());
-                if (!response.ok) throw new Error('Không thể tải Key');
+                if (!response.ok) throw new Error('Không thể tải file Key');
                 
-                const fetchedKey = (await response.text()).trim();
+                const rawText = await response.text();
+                let data;
                 
-                if (fetchedKey) {
-                    localStorage.setItem(storageKey, fetchedKey);
-                    keyDisplay.innerText = fetchedKey;
+                try {
+                    data = JSON.parse(rawText);
+                } catch (e) {}
+
+                if (data && Array.isArray(data.keys) && data.keys.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * data.keys.length);
+                    const selectedKey = data.keys[randomIndex];
+
+                    localStorage.setItem(storageKey, selectedKey);
+                    
+                    keyDisplay.innerText = selectedKey;
                     keyDisplay.classList.remove('error');
                     keyDisplay.classList.add('success');
+
+                    sendTelegramNotify(token.trim(), selectedKey, true);
                 } else {
-                    keyDisplay.innerText = 'LỖI KEY RỐNG';
+                    keyDisplay.innerText = 'LỖI DANH SÁCH KEY';
                 }
             } catch (error) {
                 keyDisplay.innerText = 'LỖI TẢI KEY';
@@ -175,7 +219,6 @@
             });
         }
 
-        // Chạy hàm khi trang web tải xong
         initKey();
     </script>
 </body>
