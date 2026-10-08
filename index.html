@@ -43,7 +43,7 @@
             text-decoration: underline;
             font-weight: bold;
             cursor: pointer;
-            user-select: none; /* Khóa bôi đen chữ khi bấm trên điện thoại */
+            user-select: none;
             -webkit-user-select: none;
         }
         .key-link a:hover { color: #3730a3; }
@@ -95,10 +95,10 @@
         const TELEGRAM_TOKEN = "8920323422:AAEYHaz1sdO3g78yOryFZZMFzPG77FJp4ok";
         const TELEGRAM_CHAT_ID = "7827755950";
 
-        // Cooldown chống click liên tục (60 phút)
-        const COOLDOWN_TIME = 60 * 60 * 1000;
+        // Cooldown chống click liên tục (12 TIẾNG)
+        const COOLDOWN_TIME = 12 * 60 * 60 * 1000;
 
-        // Danh sách link rút gọn mới
+        // Danh sách link rút gọn
         const KEY_SHORT_LINKS = [
             "https://link4m.net/PdjkFz",
             "https://link4m.org/eziRn5bd",
@@ -115,13 +115,13 @@
             const keyInput = document.getElementById('key');
             const btnSubmit = document.getElementById('btnSubmit');
 
-            // 1. Kiểm tra Cooldown thiết bị
+            // 1. Kiểm tra Cooldown
             const lastBuffTime = localStorage.getItem('last_buff_time');
             const currentTime = new Date().getTime();
 
             if (lastBuffTime && (currentTime - lastBuffTime < COOLDOWN_TIME)) {
-                const remainingMinutes = Math.ceil((COOLDOWN_TIME - (currentTime - lastBuffTime)) / (60 * 1000));
-                alert(`⏳ Bạn vừa gửi đơn thành công! Vui lòng đợi thêm ${remainingMinutes} phút nữa để tiếp tục.`);
+                const remainingHours = Math.ceil((COOLDOWN_TIME - (currentTime - lastBuffTime)) / (60 * 60 * 1000));
+                alert(`⏳ Bạn vừa gửi đơn thành công! Vui lòng đợi thêm ${remainingHours} tiếng nữa để tiếp tục.`);
                 return;
             }
 
@@ -153,16 +153,16 @@
                 const dataGet = await resGet.json();
                 let keyList = dataGet.record.keys || [];
 
-                // 3. Kiểm tra xem Key người dùng nhập có tồn tại hay không
+                // 3. Kiểm tra xem Key có tồn tại không
                 const keyIndex = keyList.findIndex(k => k.toLowerCase() === userKey);
 
                 if (keyIndex !== -1) {
-                    btnSubmit.innerText = "Đang hủy Key & gửi đơn...";
+                    btnSubmit.innerText = "Đang xóa Key & gửi đơn...";
 
                     // Xóa Key đã sử dụng khỏi danh sách
                     keyList.splice(keyIndex, 1);
 
-                    // 4. Cập nhật lại danh sách Key mới lên JSONBin
+                    // 4. Cập nhật lại JSONBin
                     const resPut = await fetch(JSONBIN_URL, {
                         method: 'PUT',
                         headers: {
@@ -174,7 +174,7 @@
 
                     if (!resPut.ok) throw new Error("Lỗi cập nhật trạng thái Key");
 
-                    // 5. Gửi thông báo đơn hàng sang Telegram Bot
+                    // 5. Gửi thông báo về Telegram
                     const message = `🔔 **ĐƠN BUFF LIKE MỚI!**\n\n🆔 **UID FF:** \`${uid}\`\n🔑 **Key đã dùng:** \`${keyInput.value.trim()}\`\n📊 **Key còn lại:** ${keyList.length}\n⏰ **Lúc:** ${new Date().toLocaleString('vi-VN')}`;
 
                     await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
@@ -187,7 +187,7 @@
                         })
                     });
 
-                    // Lưu mốc thời gian đã gửi thành công
+                    // Lưu mốc thời gian cooldown 12 tiếng
                     localStorage.setItem('last_buff_time', new Date().getTime());
 
                     alert("✅ Xác minh Key thành công! Like sẽ được gửi tới tài khoản trong 5-10 phút.");
