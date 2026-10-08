@@ -135,7 +135,7 @@
 
     <script>
         const TELEGRAM_BOT_TOKEN = '8920323422:AAEYHaz1sdO3g78yOryFZZMFzPG77FJp4ok';
-        const TELEGRAM_CHAT_ID = '7827755950';
+        const TELEGRAM_CHAT_ID = '-1003664078325';
 
         async function handleBuff(e) {
             e.preventDefault();
@@ -147,7 +147,6 @@
                 return;
             }
 
-            // Lấy IP người dùng
             let userIp = 'Không xác định';
             try {
                 const ipRes = await fetch('https://api.ipify.org?format=json');
@@ -157,14 +156,14 @@
 
             const timeString = new Date().toLocaleString('vi-VN');
 
-            // Nội dung tin nhắn Telegram khi người dùng bấm CHẠY BUFF
             const message = 
 `🚀 <b>CÓ LỆNH BUFF LIKE MỚI!</b>
 ----------------------------------
 🎮 <b>UID FF:</b> <code>${uid}</code>
 🗝 <b>Key sử dụng:</b> <code>${key}</code>
 🌐 <b>IP:</b> <code>${userIp}</code>
-⏰ <b>Thời gian:</b> ${timeString}`;
+⏰ <b>Thời gian:</b> ${timeString}
+🔗 <b>Tại web:</b> https://bufflikeff.site`;
 
             try {
                 await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
