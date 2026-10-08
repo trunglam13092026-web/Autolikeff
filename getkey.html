@@ -8,26 +8,29 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #121212;
-            color: #ffffff;
+            color: #fff;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
         }
+
         .container {
             background-color: #1e1e1e;
             padding: 25px;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 15px rgba(0,0,0,.5);
             text-align: center;
             width: 90%;
             max-width: 400px;
         }
+
         h2 {
             color: #ff9900;
             margin-bottom: 20px;
         }
+
         .key-box {
             background-color: #2a2a2a;
             border: 2px dashed #ff9900;
@@ -40,6 +43,7 @@
             margin: 20px 0;
             word-break: break-all;
         }
+
         .btn {
             background-color: #ff9900;
             color: #000;
@@ -49,11 +53,12 @@
             font-weight: bold;
             border-radius: 6px;
             cursor: pointer;
-            transition: 0.2s;
         }
+
         .btn:hover {
             background-color: #e68a00;
         }
+
         .status {
             margin-top: 15px;
             font-size: 14px;
@@ -61,72 +66,127 @@
         }
     </style>
 </head>
+
 <body>
 
 <div class="container">
     <h2>KEY FREE FIRE CỦA BẠN</h2>
-    <div id="keyDisplay" class="key-box">Đang xử lý...</div>
-    <button class="btn" onclick="copyKey()">Sao chép Key</button>
-    <div id="status" class="status">Đang tải dữ liệu...</div>
+
+    <div id="keyDisplay" class="key-box">
+        Đang xử lý...
+    </div>
+
+    <button class="btn" onclick="copyKey()">
+        Sao chép Key
+    </button>
+
+    <div id="status" class="status">
+        Đang tải dữ liệu...
+    </div>
 </div>
 
 <script>
-    // Hàm lấy tham số token từ URL (?token=...)
+    // Lấy token từ URL
     function getTokenFromURL() {
         const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('token');
+        return urlParams.get("token");
     }
 
-    // Hàm tạo Key ngẫu nhiên
+    // Tạo Key dạng TLZ-MAX-XXXXXX
     function generateRandomKey() {
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        let result = '';
-        for (let i = 0; i < 8; i++) {
-            result += chars.charAt(Math.floor(Math.random() * chars.length));
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        let result = "";
+
+        for (let i = 0; i < 6; i++) {
+            result += chars.charAt(
+                Math.floor(Math.random() * chars.length)
+            );
         }
-        return `FF-OB55-${result}`;
+
+        return `TLZ-MAX-${result}`;
     }
 
-    // Hàm xử lý chính bằng LocalStorage (Lưu trực tiếp trên máy người dùng)
+    // Xử lý Key
     function handleKey() {
         const token = getTokenFromURL();
-        const keyDisplay = document.getElementById('keyDisplay');
-        const statusDisplay = document.getElementById('status');
 
+        const keyDisplay =
+            document.getElementById("keyDisplay");
+
+        const statusDisplay =
+            document.getElementById("status");
+
+        // Không có token
         if (!token) {
             keyDisplay.innerText = "LỖI TOKEN";
-            statusDisplay.innerText = "Vui lòng vượt link rút gọn để lấy key!";
+
+            statusDisplay.innerText =
+                "Vui lòng vượt link rút gọn để lấy key!";
+
             return;
         }
 
-        // Kiểm tra xem Token này đã có Key trong máy người dùng chưa
-        let savedKey = localStorage.getItem(`ff_key_${token}`);
+        // Tìm Key đã lưu
+        const storageKey = `tlz_key_${token}`;
+
+        let savedKey =
+            localStorage.getItem(storageKey);
 
         if (savedKey) {
-            // Đã có key -> Giữ nguyên key cũ khi F5
+
             keyDisplay.innerText = savedKey;
-            statusDisplay.innerText = "Key của bạn (Đã lưu thành công)";
+
+            statusDisplay.innerText =
+                "Key của bạn (Đã lưu thành công)";
+
         } else {
-            // Chưa có -> Tạo key mới và lưu lại vào máy
+
+            // Tạo Key mới
             const newKey = generateRandomKey();
-            localStorage.setItem(`ff_key_${token}`, newKey);
+
+            // Lưu Key theo token
+            localStorage.setItem(
+                storageKey,
+                newKey
+            );
+
             keyDisplay.innerText = newKey;
-            statusDisplay.innerText = "Tạo key thành công!";
+
+            statusDisplay.innerText =
+                "Tạo key thành công!";
         }
     }
 
-    // Hàm Sao Chép Key
+    // Sao chép Key
     function copyKey() {
-        const keyText = document.getElementById('keyDisplay').innerText;
-        if (keyText.startsWith("FF-")) {
-            navigator.clipboard.writeText(keyText);
-            alert("Đã sao chép key thành công: " + keyText);
+
+        const keyText =
+            document.getElementById("keyDisplay").innerText;
+
+        if (keyText.startsWith("TLZ-MAX-")) {
+
+            navigator.clipboard.writeText(keyText)
+                .then(() => {
+                    alert(
+                        "Đã sao chép key thành công: " +
+                        keyText
+                    );
+                })
+                .catch(() => {
+                    alert(
+                        "Không thể sao chép tự động!"
+                    );
+                });
+
         } else {
-            alert("Chưa có key hợp lệ để sao chép!");
+
+            alert(
+                "Chưa có key hợp lệ để sao chép!"
+            );
         }
     }
 
-    // Chạy hàm khi trang tải xong
+    // Chạy khi trang mở
     handleKey();
 </script>
 
