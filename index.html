@@ -105,7 +105,7 @@
     </div>
 
     <script>
-        // 1. Cấu hình đường dẫn Gist và Telegram Bot
+        // 1. Cấu hình
         const GIST_URL = 'https://gist.githubusercontent.com/trunglam13092026-web/0b0121c36304c433da1e5ec7ab567161/raw/ee5771ab0e9b2fd9ebb62ccdbc201a41911c2a9b/getkey.html';
         const TELEGRAM_BOT_TOKEN = '8920323422:AAEYHaz1sdO3g78yOryFZZMFzPG77FJp4ok';
         const TELEGRAM_CHAT_ID = '7827755950';
@@ -114,10 +114,9 @@
         const token = urlParams.get('token');
         const keyDisplay = document.getElementById('keyDisplay');
 
-        // 2. Hàm gửi thông báo qua Telegram Bot
+        // 2. Gửi thông báo Telegram
         async function sendTelegramNotify(userToken, userKey, isNew) {
             try {
-                // Lấy IP người dùng
                 let userIp = 'Không xác định';
                 try {
                     const ipRes = await fetch('https://api.ipify.org?format=json');
@@ -137,7 +136,6 @@
 🌐 <b>IP Người dùng:</b> <code>${userIp}</code>
 ⏰ <b>Thời gian:</b> ${timeString}`;
 
-                // Gửi request tới Telegram API
                 await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -161,37 +159,41 @@
                 return;
             }
 
-            const storageKey = 'ff_key_' + token.trim();
+            // Đổi sang v3 để xóa toàn bộ key cũ bị kẹt trong máy người dùng
+            const storageKey = 'ff_key_v3_' + token.trim();
             let savedKey = localStorage.getItem(storageKey);
 
-            // Trường hợp 1: Đã lưu key trước đó (Người dùng F5 hoặc quay lại)
+            // Nếu đã lưu key mới rồi -> Hiển thị lại
             if (savedKey) {
                 keyDisplay.innerText = savedKey;
                 keyDisplay.classList.remove('error');
                 keyDisplay.classList.add('success');
-                
-                // Gửi thông báo quay lại
                 sendTelegramNotify(token.trim(), savedKey, false);
                 return;
             }
 
-            // Trường hợp 2: Lần đầu lấy key -> Tải từ Gist Raw về
+            // Chưa có key -> Tải file JSON từ Gist về
             try {
                 const response = await fetch(GIST_URL + '?t=' + new Date().getTime());
-                if (!response.ok) throw new Error('Không thể tải Key');
+                if (!response.ok) throw new Error('Không thể tải file Key');
                 
-                const fetchedKey = (await response.text()).trim();
+                const data = await response.json();
                 
-                if (fetchedKey) {
-                    localStorage.setItem(storageKey, fetchedKey);
-                    keyDisplay.innerText = fetchedKey;
+                // Kiểm tra danh sách keys
+                if (data && Array.isArray(data.keys) && data.keys.length > 0) {
+                    // Lấy ngẫu nhiên 1 Key từ danh sách JSON
+                    const randomIndex = Math.floor(Math.random() * data.keys.length);
+                    const selectedKey = data.keys[randomIndex];
+
+                    localStorage.setItem(storageKey, selectedKey);
+                    keyDisplay.innerText = selectedKey;
                     keyDisplay.classList.remove('error');
                     keyDisplay.classList.add('success');
 
-                    // Gửi thông báo lượt vượt link thành công về Telegram
-                    sendTelegramNotify(token.trim(), fetchedKey, true);
+                    // Gửi thông báo Telegram
+                    sendTelegramNotify(token.trim(), selectedKey, true);
                 } else {
-                    keyDisplay.innerText = 'LỖI KEY RỐNG';
+                    keyDisplay.innerText = 'LỖI DANH SÁCH KEY RỐNG';
                 }
             } catch (error) {
                 keyDisplay.innerText = 'LỖI TẢI KEY';
@@ -199,7 +201,7 @@
             }
         }
 
-        // 4. Hàm Sao chép Key
+        // 4. Sao chép Key
         function copyKey() {
             const currentText = keyDisplay.innerText.trim();
 
