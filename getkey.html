@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhận Key Free Fire Miễn Phí</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e1e2f 0%, #0f0f1e 100%);
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .card {
+            background: #27293d;
+            border-radius: 16px;
+            padding: 30px;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        h2 { font-size: 20px; color: #e14eca; margin-top: 0; margin-bottom: 10px; }
+        p { font-size: 13px; color: #a9a9b9; margin-bottom: 20px; }
+        .key-box {
+            background: #1e1e2f;
+            border: 2px dashed #e14eca;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #00f2c3;
+            letter-spacing: 1px;
+            word-break: break-all;
+            margin-bottom: 20px;
+        }
+        .btn-copy {
+            width: 100%;
+            background: #e14eca;
+            color: #ffffff;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-copy:hover { background: #ba2db4; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>🔑 KEY FREE FIRE CỦA BẠN</h2>
+        <p>Sao chép Key bên dưới và dán vào trang Buff Like</p>
+        
+        <div class="key-box" id="keyDisplay">Đang lấy Key...</div>
+        
+        <button class="btn-copy" onclick="copyKey()">Sao Chép Key</button>
+    </div>
+
+    <script>
+        const JSONBIN_BIN_ID = "6ac6c1d2ac6210605a1db90f";
+        const JSONBIN_SECRET_KEY = "$2a$10$ET4hpkJ9Q8Vz/5zT5wdmT..K5ZKMWRhC7jVET49g3lk4tfmiMwlbm";
+        const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
+
+        async function fetchRandomKey() {
+            const keyBox = document.getElementById('keyDisplay');
+            try {
+                const res = await fetch(JSONBIN_URL + '/latest', {
+                    headers: { 'X-Master-Key': JSONBIN_SECRET_KEY }
+                });
+                if (!res.ok) throw new Error("Lỗi tải Key");
+
+                const data = await res.json();
+                const keys = data.record.keys || [];
+
+                if (keys.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * keys.length);
+                    keyBox.innerText = keys[randomIndex];
+                } else {
+                    keyBox.innerText = "HẾT KEY!";
+                }
+            } catch (err) {
+                keyBox.innerText = "LỖI LẤY KEY!";
+            }
+        }
+
+        function copyKey() {
+            const keyText = document.getElementById('keyDisplay').innerText;
+            if (keyText && keyText !== "Đang lấy Key..." && keyText !== "HẾT KEY!" && keyText !== "LỖI LẤY KEY!") {
+                navigator.clipboard.writeText(keyText);
+                alert("Đã sao chép Key: " + keyText);
+            }
+        }
+
+        fetchRandomKey();
+    </script>
+</body>
+</html>
