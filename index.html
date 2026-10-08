@@ -1,133 +1,27 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Get Key Free Fire</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
+<script>
+    // 1. Cấu hình
+    const GIST_URL = 'https://gist.githubusercontent.com/trunglam13092026-web/0b0121c36304c433da1e5ec7ab567161/raw/ee5771ab0e9b2fd9ebb62ccdbc201a41911c2a9b/getkey.html';
+    const TELEGRAM_BOT_TOKEN = '8920323422:AAEYHaz1sdO3g78yOryFZZMFzPG77FJp4ok';
+    const TELEGRAM_CHAT_ID = '7827755950';
 
-        body {
-            background-color: #121212;
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const keyDisplay = document.getElementById('keyDisplay');
 
-        .container {
-            background-color: #1e1e1e;
-            padding: 35px 25px;
-            border-radius: 12px;
-            text-align: center;
-            max-width: 420px;
-            width: 100%;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-        }
-
-        .title {
-            color: #ff9800;
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 25px;
-            letter-spacing: 0.5px;
-        }
-
-        .key-box {
-            border: 2px dashed #ff9800;
-            padding: 16px;
-            border-radius: 8px;
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 25px;
-            word-break: break-all;
-            background-color: #242424;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .key-box.error {
-            color: #26a69a;
-        }
-
-        .key-box.success {
-            color: #ffffff;
-        }
-
-        .btn-copy {
-            background-color: #ff9800;
-            color: #ffffff;
-            border: none;
-            padding: 14px 28px;
-            font-size: 16px;
-            font-weight: 700;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-            max-width: 200px;
-            transition: background-color 0.2s ease;
-            margin-bottom: 20px;
-        }
-
-        .btn-copy:hover {
-            background-color: #e68a00;
-        }
-
-        .btn-copy:active {
-            transform: scale(0.98);
-        }
-
-        .note {
-            font-size: 13px;
-            color: #9e9e9e;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <div class="title">KEY FREE FIRE CỦA BẠN</div>
-        
-        <div id="keyDisplay" class="key-box error">ĐANG TẢI...</div>
-        
-        <button class="btn-copy" onclick="copyKey()">Sao chép Key</button>
-        
-        <div class="note">Vui lòng vượt link rút gọn để lấy key!</div>
-    </div>
-
-    <script>
-        // 1. Cấu hình
-        const GIST_URL = 'https://gist.githubusercontent.com/trunglam13092026-web/0b0121c36304c433da1e5ec7ab567161/raw/ee5771ab0e9b2fd9ebb62ccdbc201a41911c2a9b/getkey.html';
-        const TELEGRAM_BOT_TOKEN = '8920323422:AAEYHaz1sdO3g78yOryFZZMFzPG77FJp4ok';
-        const TELEGRAM_CHAT_ID = '7827755950';
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const token = urlParams.get('token');
-        const keyDisplay = document.getElementById('keyDisplay');
-
-        // 2. Gửi thông báo Telegram
-        async function sendTelegramNotify(userToken, userKey, isNew) {
+    // 2. Gửi thông báo Telegram
+    async function sendTelegramNotify(userToken, userKey, isNew) {
+        try {
+            let userIp = 'Không xác định';
             try {
-                let userIp = 'Không xác định';
-                try {
-                    const ipRes = await fetch('https://api.ipify.org?format=json');
-                    const ipData = await ipRes.json();
-                    userIp = ipData.ip;
-                } catch (e) {}
+                const ipRes = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipRes.json();
+                userIp = ipData.ip;
+            } catch (e) {}
 
-                const timeString = new Date().toLocaleString('vi-VN');
-                const statusText = isNew ? "🆓 Lấy Key Mới" : "🔄 Mở lại Key Cũ (F5)";
+            const timeString = new Date().toLocaleString('vi-VN');
+            const statusText = isNew ? "🆓 Lấy Key Mới" : "🔄 Mở lại Key Cũ (F5)";
 
-                const message = 
+            const message = 
 `🔔 <b>CÓ LƯỢT VƯỢT LINK MỚI!</b>
 ----------------------------------
 📌 <b>Trạng thái:</b> ${statusText}
@@ -136,94 +30,102 @@
 🌐 <b>IP Người dùng:</b> <code>${userIp}</code>
 ⏰ <b>Thời gian:</b> ${timeString}`;
 
-                await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: TELEGRAM_CHAT_ID,
-                        text: message,
-                        parse_mode: 'HTML'
-                    })
-                });
-            } catch (err) {
-                console.error("Lỗi gửi Telegram:", err);
-            }
+            await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: TELEGRAM_CHAT_ID,
+                    text: message,
+                    parse_mode: 'HTML'
+                })
+            });
+        } catch (err) {
+            console.error("Lỗi gửi Telegram:", err);
+        }
+    }
+
+    // 3. Logic xử lý Key
+    async function initKey() {
+        if (!token || token.trim() === "") {
+            keyDisplay.innerText = 'LỖI TOKEN';
+            keyDisplay.classList.remove('success');
+            keyDisplay.classList.add('error');
+            return;
         }
 
-        // 3. Logic xử lý Key
-        async function initKey() {
-            if (!token || token.trim() === "") {
-                keyDisplay.innerText = 'LỖI TOKEN';
-                keyDisplay.classList.remove('success');
-                keyDisplay.classList.add('error');
-                return;
+        // Đổi sang v4 để xóa bỏ hoàn toàn dữ liệu chuỗi JSON bị lưu nhầm trước đó
+        const storageKey = 'ff_key_v4_' + token.trim();
+        let savedKey = localStorage.getItem(storageKey);
+
+        // Nếu đã có key hợp lệ trong máy -> Hiển thị ra
+        if (savedKey && !savedKey.includes('{')) {
+            keyDisplay.innerText = savedKey;
+            keyDisplay.classList.remove('error');
+            keyDisplay.classList.add('success');
+            sendTelegramNotify(token.trim(), savedKey, false);
+            return;
+        }
+
+        // Tải dữ liệu từ Gist về
+        try {
+            const response = await fetch(GIST_URL + '?t=' + new Date().getTime());
+            if (!response.ok) throw new Error('Không thể tải file Key');
+            
+            const rawText = await response.text();
+            let data;
+            
+            // Ép kiểu dữ liệu về dạng Object JSON
+            try {
+                data = JSON.parse(rawText);
+            } catch (e) {
+                console.error("Lỗi parse JSON:", e);
             }
 
-            // Đổi sang v3 để xóa toàn bộ key cũ bị kẹt trong máy người dùng
-            const storageKey = 'ff_key_v3_' + token.trim();
-            let savedKey = localStorage.getItem(storageKey);
+            // Kiểm tra mảng keys
+            if (data && Array.isArray(data.keys) && data.keys.length > 0) {
+                // Bốc 1 key ngẫu nhiên duy nhất
+                const randomIndex = Math.floor(Math.random() * data.keys.length);
+                const selectedKey = data.keys[randomIndex];
 
-            // Nếu đã lưu key mới rồi -> Hiển thị lại
-            if (savedKey) {
-                keyDisplay.innerText = savedKey;
+                // Lưu đúng 1 Key duy nhất vào localStorage
+                localStorage.setItem(storageKey, selectedKey);
+                
+                keyDisplay.innerText = selectedKey;
                 keyDisplay.classList.remove('error');
                 keyDisplay.classList.add('success');
-                sendTelegramNotify(token.trim(), savedKey, false);
-                return;
+
+                // Gửi thông báo Telegram
+                sendTelegramNotify(token.trim(), selectedKey, true);
+            } else {
+                keyDisplay.innerText = 'LỖI DANH SÁCH KEY';
             }
+        } catch (error) {
+            keyDisplay.innerText = 'LỖI TẢI KEY';
+            console.error(error);
+        }
+    }
 
-            // Chưa có key -> Tải file JSON từ Gist về
-            try {
-                const response = await fetch(GIST_URL + '?t=' + new Date().getTime());
-                if (!response.ok) throw new Error('Không thể tải file Key');
-                
-                const data = await response.json();
-                
-                // Kiểm tra danh sách keys
-                if (data && Array.isArray(data.keys) && data.keys.length > 0) {
-                    // Lấy ngẫu nhiên 1 Key từ danh sách JSON
-                    const randomIndex = Math.floor(Math.random() * data.keys.length);
-                    const selectedKey = data.keys[randomIndex];
+    // 4. Sao chép Key
+    function copyKey() {
+        const currentText = keyDisplay.innerText.trim();
 
-                    localStorage.setItem(storageKey, selectedKey);
-                    keyDisplay.innerText = selectedKey;
-                    keyDisplay.classList.remove('error');
-                    keyDisplay.classList.add('success');
-
-                    // Gửi thông báo Telegram
-                    sendTelegramNotify(token.trim(), selectedKey, true);
-                } else {
-                    keyDisplay.innerText = 'LỖI DANH SÁCH KEY RỐNG';
-                }
-            } catch (error) {
-                keyDisplay.innerText = 'LỖI TẢI KEY';
-                console.error(error);
-            }
+        if (currentText === 'LỖI TOKEN' || currentText === 'ĐANG TẢI...' || currentText.includes('LỖI')) {
+            alert('Lỗi: Bạn cần có Token hợp lệ trước khi sao chép!');
+            return;
         }
 
-        // 4. Sao chép Key
-        function copyKey() {
-            const currentText = keyDisplay.innerText.trim();
+        navigator.clipboard.writeText(currentText).then(() => {
+            alert('Đã sao chép Key: ' + currentText);
+        }).catch(() => {
+            const tempInput = document.createElement('input');
+            tempInput.value = currentText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            alert('Đã sao chép Key: ' + currentText);
+        });
+    }
 
-            if (currentText === 'LỖI TOKEN' || currentText === 'ĐANG TẢI...' || currentText.includes('LỖI')) {
-                alert('Lỗi: Bạn cần có Token hợp lệ trước khi sao chép!');
-                return;
-            }
-
-            navigator.clipboard.writeText(currentText).then(() => {
-                alert('Đã sao chép Key: ' + currentText);
-            }).catch(() => {
-                const tempInput = document.createElement('input');
-                tempInput.value = currentText;
-                document.body.appendChild(tempInput);
-                tempInput.select();
-                document.execCommand('copy');
-                document.body.removeChild(tempInput);
-                alert('Đã sao chép Key: ' + currentText);
-            });
-        }
-
-        initKey();
-    </script>
-</body>
-</html>
+    initKey();
+</script>
