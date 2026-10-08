@@ -1,217 +1,125 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Get Key Free Fire</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body {
-            background-color: #121212;
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            background-color: #1e1e1e;
-            padding: 35px 25px;
-            border-radius: 12px;
-            text-align: center;
-            max-width: 420px;
-            width: 100%;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-        }
-
-        .title {
-            color: #ff9800;
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 25px;
-            letter-spacing: 0.5px;
-        }
-
-        .key-box {
-            border: 2px dashed #ff9800;
-            padding: 16px;
-            border-radius: 8px;
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 25px;
-            word-break: break-all;
-            background-color: #242424;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .key-box.error {
-            color: #26a69a;
-        }
-
-        .key-box.success {
-            color: #ffffff;
-        }
-
-        .btn-copy {
-            background-color: #ff9800;
-            color: #ffffff;
-            border: none;
-            padding: 14px 28px;
-            font-size: 16px;
-            font-weight: 700;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-            max-width: 200px;
-            transition: background-color 0.2s ease;
-            margin-bottom: 20px;
-        }
-
-        .btn-copy:hover {
-            background-color: #e68a00;
-        }
-
-        .btn-copy:active {
-            transform: scale(0.98);
-        }
-
-        .note {
-            font-size: 13px;
-            color: #9e9e9e;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lấy Key Buff Like Free Fire</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      text-align: center;
+      max-width: 350px;
+      width: 90%;
+    }
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    button:disabled {
+      background-color: #6c757d;
+      cursor: not-allowed;
+    }
+    .key-box {
+      margin-top: 20px;
+      padding: 12px;
+      background: #e9ecef;
+      border: 1px dashed #6c757d;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 18px;
+      color: #007bff;
+      word-break: break-all;
+    }
+    .copy-btn {
+      margin-top: 10px;
+      background-color: #007bff;
+    }
+    .copy-btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="title">KEY FREE FIRE CỦA BẠN</div>
-        
-        <div id="keyDisplay" class="key-box error">ĐANG TẢI...</div>
-        
-        <button class="btn-copy" onclick="copyKey()">Sao chép Key</button>
-        
-        <div class="note">Vui lòng vượt link rút gọn để lấy key!</div>
+  <div class="card">
+    <h2>LẤY KEY BUFF LIKE</h2>
+    <p>Nhấn vào nút bên dưới để tạo Key mới (dùng 1 lần):</p>
+    
+    <button id="btnGetKey" onclick="generateKey()">LẤY KEY NGAY</button>
+
+    <div id="resultBox" style="display: none;">
+      <div class="key-box" id="keyDisplay">---</div>
+      <button class="copy-btn" onclick="copyKey()">Sao Chép Key</button>
     </div>
+  </div>
 
-    <script>
-        const TELEGRAM_BOT_TOKEN = '8920323422:AAEYHaz1sdO3g78yOryFZZMFzPG77FJp4ok';
-        const TELEGRAM_CHAT_ID = '-1003664078325';
+  <script>
+    // Link Web App API đã thiết lập
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxKDUNk3jVVuV5w7jcAWYLUJreSYOi7l8dBWJKxlMqx4cwPDaSvgU0sljwa04EmLnLp/exec";
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const token = urlParams.get('token');
-        const keyDisplay = document.getElementById('keyDisplay');
+    async function generateKey() {
+      const btn = document.getElementById("btnGetKey");
+      const keyDisplay = document.getElementById("keyDisplay");
+      const resultBox = document.getElementById("resultBox");
 
-        // Hàm tạo Random Key tự động (Ví dụ: TLZ-MAX-X8K9P2)
-        function generateRandomKey() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let randomPart = '';
-            for (let i = 0; i < 6; i++) {
-                randomPart += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return 'TLZ-MAX-' + randomPart;
+      btn.disabled = true;
+      btn.innerText = "Đang tạo Key...";
+
+      try {
+        const response = await fetch(`${WEB_APP_URL}?action=createKey`);
+        const data = await response.json();
+
+        if (data.success) {
+          keyDisplay.innerText = data.key;
+          resultBox.style.display = "block";
+        } else {
+          alert("Lỗi: " + (data.message || "Không thể tạo Key"));
         }
+      } catch (error) {
+        alert("Có lỗi kết nối đến máy chủ! Vui lòng thử lại.");
+        console.error(error);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "LẤY KEY NGAY";
+      }
+    }
 
-        async function sendTelegramNotify(userToken, userKey, isNew) {
-            try {
-                let userIp = 'Không xác định';
-                try {
-                    const ipRes = await fetch('https://api.ipify.org?format=json');
-                    const ipData = await ipRes.json();
-                    userIp = ipData.ip;
-                } catch (e) {}
+    function copyKey() {
+      const keyText = document.getElementById("keyDisplay").innerText;
+      navigator.clipboard.writeText(keyText).then(() => {
+        alert("Đã sao chép Key thành công!");
+      }).catch(() => {
+        alert("Không thể tự động sao chép. Vui lòng chọn và chép thủ công.");
+      });
+    }
+  </script>
 
-                const timeString = new Date().toLocaleString('vi-VN');
-                const statusText = isNew ? "🆓 Lấy Key Mới (Random)" : "🔄 Mở lại Key Cũ (F5)";
-                
-                // Che Key khi gửi vào nhóm Telegram
-                const maskedKey = 'TLZ-MAX-*****';
-
-                const message = 
-`🔔 <b>CÓ LƯỢT VƯỢT LINK MỚI!</b>
-----------------------------------
-📌 <b>Trạng thái:</b> ${statusText}
-🗝 <b>Key:</b> <code>${maskedKey}</code>
-🌐 <b>IP Người dùng:</b> <code>${userIp}</code>
-⏰ <b>Thời gian:</b> ${timeString}`;
-
-                await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: TELEGRAM_CHAT_ID,
-                        text: message,
-                        parse_mode: 'HTML'
-                    })
-                });
-            } catch (err) {
-                console.error("Lỗi gửi Telegram:", err);
-            }
-        }
-
-        async function initKey() {
-            if (!token || token.trim() === "") {
-                keyDisplay.innerText = 'LỖI TOKEN';
-                keyDisplay.classList.remove('success');
-                keyDisplay.classList.add('error');
-                return;
-            }
-
-            const storageKey = 'ff_key_v5_' + token.trim();
-            let savedKey = localStorage.getItem(storageKey);
-
-            if (savedKey) {
-                // Nếu người dùng F5 lại trang thì giữ nguyên Key cũ của Token đó
-                keyDisplay.innerText = savedKey;
-                keyDisplay.classList.remove('error');
-                keyDisplay.classList.add('success');
-                sendTelegramNotify(token.trim(), savedKey, false);
-                return;
-            }
-
-            // Tạo Key random mới
-            const newKey = generateRandomKey();
-            localStorage.setItem(storageKey, newKey);
-            
-            keyDisplay.innerText = newKey;
-            keyDisplay.classList.remove('error');
-            keyDisplay.classList.add('success');
-
-            sendTelegramNotify(token.trim(), newKey, true);
-        }
-
-        function copyKey() {
-            const currentText = keyDisplay.innerText.trim();
-
-            if (currentText === 'LỖI TOKEN' || currentText === 'ĐANG TẢI...' || currentText.includes('LỖI')) {
-                alert('Lỗi: Bạn cần có Token hợp lệ trước khi sao chép!');
-                return;
-            }
-
-            navigator.clipboard.writeText(currentText).then(() => {
-                alert('Đã sao chép Key: ' + currentText);
-            }).catch(() => {
-                const tempInput = document.createElement('input');
-                tempInput.value = currentText;
-                document.body.appendChild(tempInput);
-                tempInput.select();
-                document.execCommand('copy');
-                document.body.removeChild(tempInput);
-                alert('Đã sao chép Key: ' + currentText);
-            });
-        }
-
-        initKey();
-    </script>
 </body>
 </html>
