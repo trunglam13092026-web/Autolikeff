@@ -47,7 +47,7 @@
       cursor: not-allowed;
     }
     .key-box {
-      margin-top: 20px;
+      margin-top: 15px;
       padding: 12px;
       background: #e9ecef;
       border: 1px dashed #6c757d;
@@ -70,10 +70,12 @@
 
   <div class="card">
     <h2>LẤY KEY BUFF LIKE</h2>
-    <p>Nhấn vào nút bên dưới để tạo Key mới (dùng 1 lần):</p>
+    <p id="instructionText">Nhấn vào nút bên dưới để tạo Key mới (dùng 1 lần):</p>
     
+    <!-- Nút Lấy Key -->
     <button id="btnGetKey" onclick="generateKey()">LẤY KEY NGAY</button>
 
+    <!-- Màn hình hiển thị Key sau khi lấy -->
     <div id="resultBox" style="display: none;">
       <div class="key-box" id="keyDisplay">---</div>
       <button class="copy-btn" onclick="copyKey()">Sao Chép Key</button>
@@ -81,14 +83,16 @@
   </div>
 
   <script>
-    // Link Web App API đã thiết lập
+    // Link Web App API Google Apps Script của bạn
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxKDUNk3jVVuV5w7jcAWYLUJreSYOi7l8dBWJKxlMqx4cwPDaSvgU0sljwa04EmLnLp/exec";
 
     async function generateKey() {
       const btn = document.getElementById("btnGetKey");
       const keyDisplay = document.getElementById("keyDisplay");
       const resultBox = document.getElementById("resultBox");
+      const instructionText = document.getElementById("instructionText");
 
+      // Khóa nút ngay khi vừa bấm để tránh spam
       btn.disabled = true;
       btn.innerText = "Đang tạo Key...";
 
@@ -99,13 +103,18 @@
         if (data.success) {
           keyDisplay.innerText = data.key;
           resultBox.style.display = "block";
+
+          // ẨN HẲN NÚT LẤY KEY VÀ ĐỔI HƯỚNG DẪN
+          btn.style.display = "none";
+          instructionText.innerText = "Key của bạn đã được tạo! Hãy sao chép và sử dụng ngay:";
         } else {
           alert("Lỗi: " + (data.message || "Không thể tạo Key"));
+          btn.disabled = false;
+          btn.innerText = "LẤY KEY NGAY";
         }
       } catch (error) {
         alert("Có lỗi kết nối đến máy chủ! Vui lòng thử lại.");
         console.error(error);
-      } finally {
         btn.disabled = false;
         btn.innerText = "LẤY KEY NGAY";
       }
