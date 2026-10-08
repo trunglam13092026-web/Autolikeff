@@ -97,7 +97,6 @@
   </div>
 
   <script>
-    // Link Web App API đã kết nối với Google Sheet
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxKDUNk3jVVuV5w7jcAWYLUJreSYOi7l8dBWJKxlMqx4cwPDaSvgU0sljwa04EmLnLp/exec";
 
     async function startBuff() {
@@ -120,18 +119,15 @@
       statusMsg.innerText = "";
 
       try {
-        // Gửi yêu cầu kiểm tra và khóa Key lên Google Sheet
         const response = await fetch(`${WEB_APP_URL}?action=useKey&key=${encodeURIComponent(userKey)}`);
         const data = await response.json();
 
         if (data.success) {
+          // XÓA KEY CŨ KHỎI BỘ NHỚ TRÌNH DUYỆT ĐỂ LẦN VƯỢT LINK SAU LẤY ĐƯỢC KEY MỚI
+          localStorage.removeItem("current_user_key");
+
           statusMsg.style.color = "#28a745";
           statusMsg.innerText = "✅ Key hợp lệ! Đang tiến hành tăng Like...";
-          
-          // ========================================================
-          // ĐOẠN CODE GỌI API BUFF LIKE CỦA BẠN SẼ ĐẶT Ở ĐÂY
-          // Ví dụ: await sendLikeToFF(uid);
-          // ========================================================
           
           alert("🎉 Buff Like thành công cho UID: " + uid);
         } else {
