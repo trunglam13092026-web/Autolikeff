@@ -124,13 +124,15 @@
 
                 const timeString = new Date().toLocaleString('vi-VN');
                 const statusText = isNew ? "🆓 Lấy Key Mới" : "🔄 Mở lại Key Cũ (F5)";
+                
+                // Che phần đuôi Key thành ***** khi gửi lên Telegram
+                const maskedKey = 'TLZ-MAX-*****';
 
                 const message = 
 `🔔 <b>CÓ LƯỢT VƯỢT LINK MỚI!</b>
 ----------------------------------
 📌 <b>Trạng thái:</b> ${statusText}
-🗝 <b>Key:</b> <code>${userKey}</code>
-🎫 <b>Token:</b> <code>${userToken}</code>
+🗝 <b>Key:</b> <code>${maskedKey}</code>
 🌐 <b>IP Người dùng:</b> <code>${userIp}</code>
 ⏰ <b>Thời gian:</b> ${timeString}`;
 
@@ -160,7 +162,7 @@
             let savedKey = localStorage.getItem(storageKey);
 
             if (savedKey && !savedKey.includes('{')) {
-                keyDisplay.innerText = savedKey;
+                keyDisplay.innerText = savedKey; // Trên web người dùng vẫn thấy ĐẦY ĐỦ KEY để copy
                 keyDisplay.classList.remove('error');
                 keyDisplay.classList.add('success');
                 sendTelegramNotify(token.trim(), savedKey, false);
@@ -184,7 +186,7 @@
 
                     localStorage.setItem(storageKey, selectedKey);
                     
-                    keyDisplay.innerText = selectedKey;
+                    keyDisplay.innerText = selectedKey; // Trên web người dùng vẫn thấy ĐẦY ĐỦ KEY để copy
                     keyDisplay.classList.remove('error');
                     keyDisplay.classList.add('success');
 
