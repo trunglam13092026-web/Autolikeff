@@ -105,13 +105,22 @@
     </div>
 
     <script>
-        const GIST_URL = 'https://gist.githubusercontent.com/trunglam13092026-web/0b0121c36304c433da1e5ec7ab567161/raw/ee5771ab0e9b2fd9ebb62ccdbc201a41911c2a9b/getkey.html';
         const TELEGRAM_BOT_TOKEN = '8920323422:AAEYHaz1sdO3g78yOryFZZMFzPG77FJp4ok';
         const TELEGRAM_CHAT_ID = '-1003664078325';
 
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token');
         const keyDisplay = document.getElementById('keyDisplay');
+
+        // Hàm tạo Random Key tự động (Ví dụ: TLZ-MAX-X8K9P2)
+        function generateRandomKey() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let randomPart = '';
+            for (let i = 0; i < 6; i++) {
+                randomPart += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return 'TLZ-MAX-' + randomPart;
+        }
 
         async function sendTelegramNotify(userToken, userKey, isNew) {
             try {
@@ -123,9 +132,9 @@
                 } catch (e) {}
 
                 const timeString = new Date().toLocaleString('vi-VN');
-                const statusText = isNew ? "🆓 Lấy Key Mới" : "🔄 Mở lại Key Cũ (F5)";
+                const statusText = isNew ? "🆓 Lấy Key Mới (Random)" : "🔄 Mở lại Key Cũ (F5)";
                 
-                // Che phần đuôi Key thành ***** khi gửi lên Telegram
+                // Che Key khi gửi vào nhóm Telegram
                 const maskedKey = 'TLZ-MAX-*****';
 
                 const message = 
@@ -158,46 +167,27 @@
                 return;
             }
 
-            const storageKey = 'ff_key_v4_' + token.trim();
+            const storageKey = 'ff_key_v5_' + token.trim();
             let savedKey = localStorage.getItem(storageKey);
 
-            if (savedKey && !savedKey.includes('{')) {
-                keyDisplay.innerText = savedKey; // Trên web người dùng vẫn thấy ĐẦY ĐỦ KEY để copy
+            if (savedKey) {
+                // Nếu người dùng F5 lại trang thì giữ nguyên Key cũ của Token đó
+                keyDisplay.innerText = savedKey;
                 keyDisplay.classList.remove('error');
                 keyDisplay.classList.add('success');
                 sendTelegramNotify(token.trim(), savedKey, false);
                 return;
             }
 
-            try {
-                const response = await fetch(GIST_URL + '?t=' + new Date().getTime());
-                if (!response.ok) throw new Error('Không thể tải file Key');
-                
-                const rawText = await response.text();
-                let data;
-                
-                try {
-                    data = JSON.parse(rawText);
-                } catch (e) {}
+            // Tạo Key random mới
+            const newKey = generateRandomKey();
+            localStorage.setItem(storageKey, newKey);
+            
+            keyDisplay.innerText = newKey;
+            keyDisplay.classList.remove('error');
+            keyDisplay.classList.add('success');
 
-                if (data && Array.isArray(data.keys) && data.keys.length > 0) {
-                    const randomIndex = Math.floor(Math.random() * data.keys.length);
-                    const selectedKey = data.keys[randomIndex];
-
-                    localStorage.setItem(storageKey, selectedKey);
-                    
-                    keyDisplay.innerText = selectedKey; // Trên web người dùng vẫn thấy ĐẦY ĐỦ KEY để copy
-                    keyDisplay.classList.remove('error');
-                    keyDisplay.classList.add('success');
-
-                    sendTelegramNotify(token.trim(), selectedKey, true);
-                } else {
-                    keyDisplay.innerText = 'LỖI DANH SÁCH KEY';
-                }
-            } catch (error) {
-                keyDisplay.innerText = 'LỖI TẢI KEY';
-                console.error(error);
-            }
+            sendTelegramNotify(token.trim(), newKey, true);
         }
 
         function copyKey() {
