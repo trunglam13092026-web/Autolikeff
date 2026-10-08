@@ -67,14 +67,10 @@
     <h2>KEY FREE FIRE CỦA BẠN</h2>
     <div id="keyDisplay" class="key-box">Đang xử lý...</div>
     <button class="btn" onclick="copyKey()">Sao chép Key</button>
-    <div id="status" class="status">Đang đồng bộ dữ liệu...</div>
+    <div id="status" class="status">Đang tải dữ liệu...</div>
 </div>
 
 <script>
-    // Thông tin JSONBin đã thay đầy đủ
-    const JSONBIN_BIN_ID = '6ac6c1d2ac6210605a1db90f';
-    const JSONBIN_API_KEY = '$2a$10$ET4hpkJ9Q8Vz/5zT5wdmT..K5ZKMWRhC7jVET49g3lk4tfmiMwlbm';
-
     // Hàm lấy tham số token từ URL (?token=...)
     function getTokenFromURL() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -91,59 +87,31 @@
         return `FF-OB55-${result}`;
     }
 
-    // Hàm xử lý chính
-    async function handleKey() {
+    // Hàm xử lý chính bằng LocalStorage (Lưu trực tiếp trên máy người dùng)
+    function handleKey() {
         const token = getTokenFromURL();
         const keyDisplay = document.getElementById('keyDisplay');
         const statusDisplay = document.getElementById('status');
 
         if (!token) {
             keyDisplay.innerText = "LỖI TOKEN";
-            statusDisplay.innerText = "Vui lòng vượt link rút gọn để lấy key hợp lệ!";
+            statusDisplay.innerText = "Vui lòng vượt link rút gọn để lấy key!";
             return;
         }
 
-        try {
-            // 1. Đọc dữ liệu hiện tại từ JSONBin
-            const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
-                method: 'GET',
-                headers: {
-                    'X-Master-Key': JSONBIN_API_KEY
-                }
-            });
+        // Kiểm tra xem Token này đã có Key trong máy người dùng chưa
+        let savedKey = localStorage.getItem(`ff_key_${token}`);
 
-            if (!response.ok) throw new Error("Không thể kết nối JSONBin");
-
-            const result = await response.json();
-            let sessions = result.record.sessions || {};
-
-            // 2. Kiểm tra token đã tồn tại hay chưa
-            if (sessions[token]) {
-                // Đã có -> Giữ nguyên key cũ
-                keyDisplay.innerText = sessions[token];
-                statusDisplay.innerText = "Key của bạn (Đã lưu lại thành công)";
-            } else {
-                // Chưa có -> Tạo key mới và lưu lại
-                const newKey = generateRandomKey();
-                sessions[token] = newKey;
-
-                // 3. Cập nhật dữ liệu mới lên JSONBin
-                await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Master-Key': JSONBIN_API_KEY
-                    },
-                    body: JSON.stringify({ sessions: sessions })
-                });
-
-                keyDisplay.innerText = newKey;
-                statusDisplay.innerText = "Tạo key thành công!";
-            }
-        } catch (error) {
-            console.error(error);
-            keyDisplay.innerText = "LỖI KẾT NỐI";
-            statusDisplay.innerText = "Không thể tải dữ liệu, vui lòng kiểm tra cấu hình API.";
+        if (savedKey) {
+            // Đã có key -> Giữ nguyên key cũ khi F5
+            keyDisplay.innerText = savedKey;
+            statusDisplay.innerText = "Key của bạn (Đã lưu thành công)";
+        } else {
+            // Chưa có -> Tạo key mới và lưu lại vào máy
+            const newKey = generateRandomKey();
+            localStorage.setItem(`ff_key_${token}`, newKey);
+            keyDisplay.innerText = newKey;
+            statusDisplay.innerText = "Tạo key thành công!";
         }
     }
 
@@ -158,7 +126,7 @@
         }
     }
 
-    // Chạy khi trang load xong
+    // Chạy hàm khi trang tải xong
     handleKey();
 </script>
 
