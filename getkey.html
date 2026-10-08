@@ -75,7 +75,7 @@
     <!-- Nút Lấy Key -->
     <button id="btnGetKey" onclick="generateKey()">LẤY KEY NGAY</button>
 
-    <!-- Màn hình hiển thị Key sau khi lấy -->
+    <!-- Màn hình hiển thị Key -->
     <div id="resultBox" style="display: none;">
       <div class="key-box" id="keyDisplay">---</div>
       <button class="copy-btn" onclick="copyKey()">Sao Chép Key</button>
@@ -83,16 +83,19 @@
   </div>
 
   <script>
-    // Link Web App API Google Apps Script của bạn
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxKDUNk3jVVuV5w7jcAWYLUJreSYOi7l8dBWJKxlMqx4cwPDaSvgU0sljwa04EmLnLp/exec";
+
+    // Kiểm tra xem máy đã lưu Key chưa khi tải lại trang
+    window.onload = function() {
+      const savedKey = localStorage.getItem("current_user_key");
+      if (savedKey) {
+        showKeyOnUI(savedKey);
+      }
+    };
 
     async function generateKey() {
       const btn = document.getElementById("btnGetKey");
-      const keyDisplay = document.getElementById("keyDisplay");
-      const resultBox = document.getElementById("resultBox");
-      const instructionText = document.getElementById("instructionText");
 
-      // Khóa nút ngay khi vừa bấm để tránh spam
       btn.disabled = true;
       btn.innerText = "Đang tạo Key...";
 
@@ -101,12 +104,9 @@
         const data = await response.json();
 
         if (data.success) {
-          keyDisplay.innerText = data.key;
-          resultBox.style.display = "block";
-
-          // ẨN HẲN NÚT LẤY KEY VÀ ĐỔI HƯỚNG DẪN
-          btn.style.display = "none";
-          instructionText.innerText = "Key của bạn đã được tạo! Hãy sao chép và sử dụng ngay:";
+          // Lưu Key vào bộ nhớ trình duyệt
+          localStorage.setItem("current_user_key", data.key);
+          showKeyOnUI(data.key);
         } else {
           alert("Lỗi: " + (data.message || "Không thể tạo Key"));
           btn.disabled = false;
@@ -118,6 +118,14 @@
         btn.disabled = false;
         btn.innerText = "LẤY KEY NGAY";
       }
+    }
+
+    // Hiển thị Key ra giao diện và ẩn nút Lấy Key
+    function showKeyOnUI(key) {
+      document.getElementById("btnGetKey").style.display = "none";
+      document.getElementById("keyDisplay").innerText = key;
+      document.getElementById("resultBox").style.display = "block";
+      document.getElementById("instructionText").innerText = "Key của bạn đã được tạo! Hãy sao chép và sử dụng ngay:";
     }
 
     function copyKey() {
