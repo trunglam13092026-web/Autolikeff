@@ -3,91 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lấy Key Buff Like Free Fire</title>
+    <title>Buff Like Free Fire</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f9; }
         .card { background: white; padding: 20px; border-radius: 10px; max-width: 400px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        .btn { display: block; width: 90%; padding: 12px; margin: 10px auto; border-radius: 5px; border: none; font-weight: bold; cursor: pointer; text-decoration: none; box-sizing: border-box; }
-        .btn-link { background-color: #ff9800; color: white; }
-        .btn-key { background-color: #007bff; color: white; }
-        .btn-copy { background-color: #17a2b8; color: white; margin-top: 10px; }
-        button:disabled { background-color: #cccccc !important; }
-        .key-box { margin-top: 15px; padding: 10px; background: #e9ecef; border-radius: 5px; font-weight: bold; font-size: 18px; color: #28a745; word-break: break-all; }
-        .step-desc { font-size: 14px; color: #555; text-align: left; width: 90%; margin: 10px auto; line-height: 1.5; }
+        input, button { width: 90%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
+        button { background-color: #28a745; color: white; border: none; font-weight: bold; cursor: pointer; }
+        button:disabled { background-color: #cccccc; }
+        .key-link { color: #007bff; text-decoration: none; font-weight: bold; }
+        #statusMsg { margin-top: 15px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>LẤY KEY MIỄN PHÍ</h2>
+    <h2>BUFF LIKE FREE FIRE</h2>
     
-    <div class="step-desc">
-        <b>Hướng dẫn lấy Key:</b><br>
-        1. Bấm vào nút <b>"BƯỚC 1: VƯỢT LINK LẤY KEY"</b> bên dưới.<br>
-        2. Hoàn thành vượt captcha để lấy mã kích hoạt.<br>
-        3. Quay lại đây bấm <b>"LẤY KEY NGAY"</b>.
+    <input type="text" id="uidInput" placeholder="Nhập UID Free Fire">
+    <input type="text" id="keyInput" placeholder="Nhập Key sử dụng">
+    
+    <div>
+        <a href="getkey.html" class="key-link">👉 Nhấp vào đây để lấy Key miễn phí</a>
     </div>
 
-    <!-- LINK RÚT GỌN LINK4M CỦA BẠN -->
-    <a href="https://link4m.net/uUbcJiq" target="_blank" class="btn btn-link">👉 BƯỚC 1: VƯỢT LINK LẤY KEY</a>
+    <button id="btnSubmit" onclick="startBuff()">Chạy</button>
 
-    <button id="btnGetKey" class="btn btn-key" onclick="generateKey()">BƯỚC 2: LẤY KEY NGAY</button>
-
-    <div id="resultBox" style="display: none;">
-        <div class="key-box" id="keyDisplay">---</div>
-        <button class="btn btn-copy" onclick="copyKey()">Sao Chép Key</button>
-    </div>
+    <div id="statusMsg"></div>
 </div>
 
 <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbztVta3Zm2CUxLIxBGVoFYJ_lhPAi9dvppZyu3ZY_GMsRUgql_NxIqpaKVFJ2fmjEik/exec";
+    // URL WEB APP MỚI CỦA BẠN
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
 
-    function generateKey() {
-        const btnGetKey = document.getElementById("btnGetKey");
-        const resultBox = document.getElementById("resultBox");
-        const keyDisplay = document.getElementById("keyDisplay");
+    async function getClientIp() {
+        try {
+            const res = await fetch("https://jsonip.com/", { cache: "no-store" });
+            const data = await res.json();
+            return data.ip || "Không lấy được IP";
+        } catch (e) {
+            return "Không lấy được IP";
+        }
+    }
 
-        btnGetKey.disabled = true;
-        btnGetKey.innerText = "Đang tạo Key...";
+    async function startBuff() {
+        const uidInput = document.getElementById("uidInput").value.trim();
+        const keyInput = document.getElementById("keyInput").value.trim();
+        const statusMsg = document.getElementById("statusMsg");
+        const btnSubmit = document.getElementById("btnSubmit");
 
-        const callbackName = "cb_getkey_" + Date.now();
+        if (!uidInput || !keyInput) {
+            statusMsg.style.color = "red";
+            statusMsg.innerText = "Vui lòng nhập đầy đủ UID và Key!";
+            return;
+        }
+
+        btnSubmit.disabled = true;
+        statusMsg.style.color = "blue";
+        statusMsg.innerText = "Đang kiểm tra Key và gửi lệnh...";
+
+        const userIp = await getClientIp();
+
+        const callbackName = "cb_" + Date.now();
         window[callbackName] = function(data) {
             delete window[callbackName];
-            if (document.getElementById(callbackName)) {
-                document.body.removeChild(document.getElementById(callbackName));
-            }
-
-            btnGetKey.disabled = false;
-            btnGetKey.innerText = "BƯỚC 2: LẤY KEY NGAY";
-
-            if (data.success) {
-                keyDisplay.innerText = data.key;
-                resultBox.style.display = "block";
+            const oldScript = document.getElementById(callbackName);
+            if (oldScript) oldScript.remove();
+            
+            btnSubmit.disabled = false;
+            if (data && data.success) {
+                statusMsg.style.color = "green";
+                statusMsg.innerText = data.message || "Gửi lệnh Buff thành công!";
             } else {
-                alert("Lỗi tạo Key: " + (data.message || "Không xác định"));
+                statusMsg.style.color = "red";
+                statusMsg.innerText = data ? data.message : "Key không hợp lệ hoặc đã được sử dụng!";
             }
         };
 
         const script = document.createElement("script");
         script.id = callbackName;
-        script.src = WEB_APP_URL + "?action=createKey&callback=" + callbackName;
+        script.src = WEB_APP_URL + "?action=useKey&key=" + encodeURIComponent(keyInput) + "&uid=" + encodeURIComponent(uidInput) + "&ip=" + encodeURIComponent(userIp) + "&callback=" + callbackName;
         script.onerror = function() {
             delete window[callbackName];
-            if (document.getElementById(callbackName)) {
-                document.body.removeChild(document.getElementById(callbackName));
-            }
-            btnGetKey.disabled = false;
-            btnGetKey.innerText = "BƯỚC 2: LẤY KEY NGAY";
-            alert("Lỗi kết nối Server!");
+            const oldScript = document.getElementById(callbackName);
+            if (oldScript) oldScript.remove();
+            btnSubmit.disabled = false;
+            statusMsg.style.color = "red";
+            statusMsg.innerText = "Lỗi kết nối Server!";
         };
         document.body.appendChild(script);
-    }
-
-    function copyKey() {
-        const keyText = document.getElementById("keyDisplay").innerText;
-        navigator.clipboard.writeText(keyText).then(() => {
-            alert("Đã sao chép Key: " + keyText);
-        });
     }
 </script>
 
