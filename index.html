@@ -3,112 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BUFF LIKE FREE FIRE OB55</title>
+    <title>Buff Like Free Fire</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0d0d0d;
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container {
-            background-color: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 12px;
-            padding: 30px;
-            width: 100%;
-            max-width: 450px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-        }
-        h2 {
-            text-align: center;
-            color: #ff9900;
-            margin-bottom: 25px;
-            font-size: 22px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 14px;
-            color: #ccc;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            background-color: #262626;
-            border: 1px solid #404040;
-            border-radius: 6px;
-            color: #fff;
-            font-size: 15px;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-        input[type="text"]:focus {
-            border-color: #ff9900;
-        }
-        .key-link {
-            display: inline-block;
-            margin-top: 8px;
-            font-size: 13px;
-            color: #00bfff;
-            text-decoration: none;
-        }
-        .key-link:hover {
-            text-decoration: underline;
-        }
-        button {
-            width: 100%;
-            padding: 14px;
-            background-color: #ff9900;
-            border: none;
-            border-radius: 6px;
-            color: #000;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s;
-            margin-top: 10px;
-        }
-        button:hover {
-            background-color: #e68a00;
-        }
-        #statusMsg {
-            margin-top: 20px;
-            text-align: center;
-            font-size: 14px;
-            font-weight: bold;
-            min-height: 20px;
-        }
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f9; }
+        .card { background: white; padding: 20px; border-radius: 10px; max-width: 400px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        input, button { width: 90%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; }
+        button { background-color: #28a745; color: white; border: none; font-weight: bold; cursor: pointer; }
+        button:disabled { background-color: #cccccc; }
+        .key-link { color: #007bff; text-decoration: none; font-weight: bold; }
+        #statusMsg { margin-top: 15px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>BUFF LIKE FREE FIRE OB55</h2>
+<div class="card">
+    <h2>BUFF LIKE FREE FIRE</h2>
     
-    <div class="form-group">
-        <label for="uidInput">Nhập UID Free Fire:</label>
-        <input type="text" id="uidInput" placeholder="Ví dụ: 123456789">
-    </div>
-
-    <div class="form-group">
-        <label for="keyInput">Chìa khóa (Key):</label>
-        <input type="text" id="keyInput" placeholder="Nhập Key kích hoạt...">
-        <a href="https://link4m.net/7tBngB" target="_blank" class="key-link">👉 Nhấp vào đây để lấy Key miễn phí</a>
+    <input type="text" id="uidInput" placeholder="Nhập UID Free Fire">
+    <input type="text" id="keyInput" placeholder="Nhập Key sử dụng">
+    
+    <div>
+        <a href="getkey.html" target="_blank" class="key-link">👉 Nhấp vào đây để lấy Key miễn phí</a>
     </div>
 
     <button id="btnSubmit" onclick="startBuff()">Chạy</button>
@@ -117,65 +32,49 @@
 </div>
 
 <script>
-    // URL Web App Google Apps Script mới nhất của bạn
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzL9yxIq2gU_QiaOmtj1oUrscPp_fzjcYHvHcyw6Ww47SW1Rm9jX7ZM8lp_6i3l7MFz/exec";
 
     async function startBuff() {
-        const uidInput = document.getElementById("uidInput");
-        const keyInput = document.getElementById("keyInput");
-        const btnSubmit = document.getElementById("btnSubmit");
+        const uidInput = document.getElementById("uidInput").value.trim();
+        const keyInput = document.getElementById("keyInput").value.trim();
         const statusMsg = document.getElementById("statusMsg");
+        const btnSubmit = document.getElementById("btnSubmit");
 
-        const uid = uidInput.value.trim();
-        const userKey = keyInput.value.trim();
-
-        if (!uid) {
-            alert("Vui lòng nhập UID Free Fire!");
+        if (!uidInput || !keyInput) {
+            statusMsg.style.color = "red";
+            statusMsg.innerText = "Vui lòng nhập đầy đủ UID và Key!";
             return;
         }
 
-        if (!userKey) {
-            alert("Vui lòng nhập Key!");
-            return;
-        }
-
-        // Vô hiệu hóa nút bấm trong lúc đang xử lý
         btnSubmit.disabled = true;
-        btnSubmit.innerText = "Đang kiểm tra Key...";
-        statusMsg.style.color = "#00bfff";
-        statusMsg.innerText = "Đang gửi yêu cầu đến máy chủ...";
+        statusMsg.style.color = "blue";
+        statusMsg.innerText = "Đang kiểm tra Key và gửi lệnh...";
 
-        try {
-            const requestUrl = `${WEB_APP_URL}?action=useKey&key=${encodeURIComponent(userKey)}&uid=${encodeURIComponent(uid)}`;
+        const callbackName = "cb_" + Date.now();
+        window[callbackName] = function(data) {
+            delete window[callbackName];
+            document.body.removeChild(script);
             
-            // XỬ LÝ LỖI KẾT NỐI MÁY CHỦ BẰNG REDIRECT FOLLOW
-            const response = await fetch(requestUrl, {
-                method: 'GET',
-                mode: 'cors',
-                redirect: 'follow'
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                statusMsg.style.color = "#00ff00";
-                statusMsg.innerText = "✅ " + (data.message || "Xác nhận thành công! Lệnh Buff đã được gửi.");
-                alert("Thành công! Lệnh Buff Like Free Fire của bạn đã được khởi chạy.");
-                keyInput.value = "";
-            } else {
-                statusMsg.style.color = "#ff3333";
-                statusMsg.innerText = "❌ " + (data.message || "Key không hợp lệ hoặc đã sử dụng!");
-                alert(data.message || "Key không hợp lệ hoặc đã sử dụng!");
-            }
-        } catch (error) {
-            statusMsg.style.color = "#ff3333";
-            statusMsg.innerText = "❌ Lỗi kết nối máy chủ! Vui lòng kiểm tra mạng hoặc thử lại.";
-            alert("Lỗi kết nối máy chủ! Vui lòng thử lại.");
-            console.error("Lỗi Fetch:", error);
-        } finally {
             btnSubmit.disabled = false;
-            btnSubmit.innerText = "Chạy";
-        }
+            if (data.success) {
+                statusMsg.style.color = "green";
+                statusMsg.innerText = data.message || "Gửi lệnh Buff thành công!";
+            } else {
+                statusMsg.style.color = "red";
+                statusMsg.innerText = data.message || "Key không hợp lệ hoặc đã được sử dụng!";
+            }
+        };
+
+        const script = document.createElement("script");
+        script.src = WEB_APP_URL + "?action=useKey&key=" + encodeURIComponent(keyInput) + "&uid=" + encodeURIComponent(uidInput) + "&callback=" + callbackName;
+        script.onerror = function() {
+            delete window[callbackName];
+            document.body.removeChild(script);
+            btnSubmit.disabled = false;
+            statusMsg.style.color = "red";
+            statusMsg.innerText = "Lỗi kết nối Server!";
+        };
+        document.body.appendChild(script);
     }
 </script>
 
