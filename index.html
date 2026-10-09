@@ -32,7 +32,7 @@
 </div>
 
 <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzL9yxIq2gU_QiaOmtj1oUrscPp_fzjcYHvHcyw6Ww47SW1Rm9jX7ZM8lp_6i317MFz/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbztVta3Zm2CUxLIxBGVoFYJ_lhPAi9dvppZyu3ZY_GMsRUgql_NxIqpaKVFJ2fmjEik/exec";
 
     async function startBuff() {
         const uidInput = document.getElementById("uidInput").value.trim();
@@ -48,7 +48,19 @@
 
         btnSubmit.disabled = true;
         statusMsg.style.color = "blue";
-        statusMsg.innerText = "Đang kiểm tra Key và gửi lệnh...";
+        statusMsg.innerText = "Đang kiểm tra Key và lấy địa chỉ IP...";
+
+        // Bắt IP người dùng
+        let userIp = "Không rõ IP";
+        try {
+            const ipRes = await fetch("https://api.ipify.org?format=json");
+            const ipData = await ipRes.json();
+            userIp = ipData.ip;
+        } catch (e) {
+            console.log("Không thể lấy IP:", e);
+        }
+
+        statusMsg.innerText = "Đang gửi lệnh Buff...";
 
         const callbackName = "cb_" + Date.now();
         window[callbackName] = function(data) {
@@ -66,7 +78,7 @@
         };
 
         const script = document.createElement("script");
-        script.src = WEB_APP_URL + "?action=useKey&key=" + encodeURIComponent(keyInput) + "&uid=" + encodeURIComponent(uidInput) + "&callback=" + callbackName;
+        script.src = WEB_APP_URL + "?action=useKey&key=" + encodeURIComponent(keyInput) + "&uid=" + encodeURIComponent(uidInput) + "&ip=" + encodeURIComponent(userIp) + "&callback=" + callbackName;
         script.onerror = function() {
             delete window[callbackName];
             document.body.removeChild(script);
