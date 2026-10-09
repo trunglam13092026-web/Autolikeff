@@ -1,3 +1,4 @@
+Dưới đây là file index.html đã được cập nhật chính xác nội dung thông báo của bạn:
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -5,15 +6,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buff Like Free Fire</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f9; }
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 40px; background-color: #f4f4f9; }
         .card { background: white; padding: 20px; border-radius: 10px; max-width: 400px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
         input, button { width: 90%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
-        button { background-color: #28a745; color: white; border: none; font-weight: bold; cursor: pointer; }
+        button { background-color: #28a745; color: white; border: none; font-weight: bold; cursor: pointer; font-size: 16px; }
         button:disabled { background-color: #cccccc; }
         .key-link { color: #007bff; text-decoration: none; font-weight: bold; }
         #statusMsg { margin-top: 15px; font-weight: bold; }
         .sub-description { font-size: 13px; color: #666; margin-bottom: 15px; line-height: 1.5; }
         .telegram-link { color: #0088cc; text-decoration: none; font-weight: bold; }
+        
+        /* Style cho khung thông báo dưới nút Chạy */
+        .notice-box {
+            margin-top: 20px;
+            padding: 12px;
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            border-radius: 6px;
+            color: #856404;
+            font-size: 13px;
+            text-align: left;
+            line-height: 1.5;
+        }
+        .notice-box b { color: #533f03; }
     </style>
 </head>
 <body>
@@ -21,7 +36,6 @@
 <div class="card">
     <h2>BUFF LIKE FREE FIRE</h2>
     
-    <!-- THÊM DÒNG THÔNG TIN PHÁT TRIỂN Ở ĐÂY -->
     <div class="sub-description">
         Được phát triển bởi <a href="https://t.me/tlzproject" target="_blank" class="telegram-link">@tlzproject</a>
     </div>
@@ -36,6 +50,14 @@
     <button id="btnSubmit" onclick="startBuff()">Chạy</button>
 
     <div id="statusMsg"></div>
+
+    <!-- KHUNG THÔNG BÁO DƯỚI NÚT CHẠY -->
+    <div class="notice-box">
+        📢 <b>THÔNG BÁO QUAN TRỌNG:</b><br>
+        • Mỗi người tranh thủ buff sớm nhất có thể nha (từ <b>6h sáng đến 20h tối</b>).<br>
+        • Khoảng thời gian này sẽ buff đủ cho <b>+200 like</b>.<br>
+        • Nếu như mọi người buff <b>sau 20h sẽ bị thiếu like</b> nha!
+    </div>
 </div>
 
 <script>
