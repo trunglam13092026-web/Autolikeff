@@ -11,6 +11,7 @@
         .btn-link { background-color: #ff9800; color: white; }
         .btn-key { background-color: #007bff; color: white; }
         .btn-copy { background-color: #17a2b8; color: white; margin-top: 10px; }
+        .btn-home { background-color: #28a745; color: white; margin-top: 15px; }
         button:disabled { background-color: #cccccc !important; }
         .key-box { margin-top: 15px; padding: 10px; background: #e9ecef; border-radius: 5px; font-weight: bold; font-size: 18px; color: #28a745; word-break: break-all; }
         .step-desc { font-size: 14px; color: #555; text-align: left; width: 90%; margin: 10px auto; line-height: 1.5; }
@@ -25,10 +26,10 @@
         <b>Hướng dẫn lấy Key:</b><br>
         1. Bấm vào nút <b>"BƯỚC 1: VƯỢT LINK LẤY KEY"</b> bên dưới.<br>
         2. Hoàn thành vượt captcha để lấy mã kích hoạt.<br>
-        3. Quay lại đây bấm <b>"LẤY KEY NGAY"</b>.
+        3. Quay lại đây bấm <b>"BƯỚC 2: LẤY KEY NGAY"</b>.
     </div>
 
-    <!-- LINK RÚT GỌN LINK4M CỦA BẠN -->
+    <!-- LINK RÚT GỌN LINK4M -->
     <a href="https://link4m.net/uUbcJiq" target="_blank" class="btn btn-link">👉 BƯỚC 1: VƯỢT LINK LẤY KEY</a>
 
     <button id="btnGetKey" class="btn btn-key" onclick="generateKey()">BƯỚC 2: LẤY KEY NGAY</button>
@@ -36,11 +37,13 @@
     <div id="resultBox" style="display: none;">
         <div class="key-box" id="keyDisplay">---</div>
         <button class="btn btn-copy" onclick="copyKey()">Sao Chép Key</button>
+        <a href="index.html" class="btn btn-home">🚀 QUAY LẠI TRANG BUFF LIKE</a>
     </div>
 </div>
 
 <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbztVta3Zm2CUxLIxBGVoFYJ_lhPAi9dvppZyu3ZY_GMsRUgql_NxIqpaKVFJ2fmjEik/exec";
+    // URL WEB APP MỚI CỦA BẠN
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
 
     function generateKey() {
         const btnGetKey = document.getElementById("btnGetKey");
@@ -78,7 +81,7 @@
             
             btnGetKey.disabled = false;
             btnGetKey.innerText = "BƯỚC 2: LẤY KEY NGAY";
-            alert("Không thể kết nối tới Google Script. Vui lòng kiểm tra lại quyền truy cập (Anyone) trên Apps Script!");
+            alert("Lỗi kết nối Server! Vui lòng thử lại.");
         };
 
         document.body.appendChild(script);
