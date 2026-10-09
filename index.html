@@ -34,6 +34,16 @@
 <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbztVta3Zm2CUxLIxBGVoFYJ_lhPAi9dvppZyu3ZY_GMsRUgql_NxIqpaKVFJ2fmjEik/exec";
 
+    async function getClientIp() {
+        try {
+            const res = await fetch("https://jsonip.com/", { cache: "no-store" });
+            const data = await res.json();
+            return data.ip || "Không lấy được IP";
+        } catch (e) {
+            return "Không lấy được IP";
+        }
+    }
+
     async function startBuff() {
         const uidInput = document.getElementById("uidInput").value.trim();
         const keyInput = document.getElementById("keyInput").value.trim();
@@ -48,24 +58,17 @@
 
         btnSubmit.disabled = true;
         statusMsg.style.color = "blue";
-        statusMsg.innerText = "Đang kiểm tra Key và lấy địa chỉ IP...";
+        statusMsg.innerText = "Đang xử lý...";
 
-        // Bắt IP người dùng
-        let userIp = "Không rõ IP";
-        try {
-            const ipRes = await fetch("https://api.ipify.org?format=json");
-            const ipData = await ipRes.json();
-            userIp = ipData.ip;
-        } catch (e) {
-            console.log("Không thể lấy IP:", e);
-        }
-
-        statusMsg.innerText = "Đang gửi lệnh Buff...";
+        // Lấy IP với cơ chế dự phòng an toàn
+        const userIp = await getClientIp();
 
         const callbackName = "cb_" + Date.now();
         window[callbackName] = function(data) {
             delete window[callbackName];
-            document.body.removeChild(script);
+            if (document.getElementById(callbackName)) {
+                document.body.removeChild(document.getElementById(callbackName));
+            }
             
             btnSubmit.disabled = false;
             if (data.success) {
@@ -78,10 +81,13 @@
         };
 
         const script = document.createElement("script");
+        script.id = callbackName;
         script.src = WEB_APP_URL + "?action=useKey&key=" + encodeURIComponent(keyInput) + "&uid=" + encodeURIComponent(uidInput) + "&ip=" + encodeURIComponent(userIp) + "&callback=" + callbackName;
         script.onerror = function() {
             delete window[callbackName];
-            document.body.removeChild(script);
+            if (document.getElementById(callbackName)) {
+                document.body.removeChild(document.getElementById(callbackName));
+            }
             btnSubmit.disabled = false;
             statusMsg.style.color = "red";
             statusMsg.innerText = "Lỗi kết nối Server!";
