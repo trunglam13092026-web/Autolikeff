@@ -96,7 +96,6 @@
     </div>
 
     <div class="input-group">
-      <!-- LINK RÚT GỌN LINK4M CỦA BẠN ĐÃ ĐƯỢC THAY TẠI ĐÂY -->
       <label for="keyInput">Key - Nhận miễn phí: <a href="https://link4m.net/7tBngB" target="_blank" class="get-key-link">Tại đây</a></label>
       <input type="text" id="keyInput" placeholder="Chìa khóa (Key123...)">
     </div>
@@ -129,16 +128,14 @@
       statusMsg.innerText = "";
 
       try {
-        const response = await fetch(`${WEB_APP_URL}?action=useKey&key=${encodeURIComponent(userKey)}`);
+        // TRUYỀN CẢ KEY VÀ UID SANG GOOGLE APPS SCRIPT
+        const response = await fetch(`${WEB_APP_URL}?action=useKey&key=${encodeURIComponent(userKey)}&uid=${encodeURIComponent(uid)}`);
         const data = await response.json();
 
         if (data.success) {
-          // Xóa Key đã dùng khỏi bộ nhớ máy
           localStorage.removeItem("current_user_key");
-
           statusMsg.style.color = "#28a745";
           statusMsg.innerText = "✅ Key hợp lệ! Đang tiến hành tăng Like...";
-          
           alert("🎉 Buff Like thành công cho UID: " + uid);
         } else {
           statusMsg.style.color = "#dc3545";
