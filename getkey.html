@@ -1,142 +1,78 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lấy Key Buff Like Free Fire</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f6f9;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .card {
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      text-align: center;
-      max-width: 350px;
-      width: 90%;
-    }
-    h2 {
-      color: #333;
-      margin-bottom: 20px;
-    }
-    button {
-      background-color: #28a745;
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      font-size: 16px;
-      font-weight: bold;
-      border-radius: 6px;
-      cursor: pointer;
-      width: 100%;
-      transition: background 0.2s;
-    }
-    button:hover {
-      background-color: #218838;
-    }
-    button:disabled {
-      background-color: #6c757d;
-      cursor: not-allowed;
-    }
-    .key-box {
-      margin-top: 15px;
-      padding: 12px;
-      background: #e9ecef;
-      border: 1px dashed #6c757d;
-      border-radius: 6px;
-      font-weight: bold;
-      font-size: 18px;
-      color: #007bff;
-      word-break: break-all;
-    }
-    .copy-btn {
-      margin-top: 10px;
-      background-color: #007bff;
-    }
-    .copy-btn:hover {
-      background-color: #0056b3;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lấy Key Buff Like</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f9; }
+        .card { background: white; padding: 20px; border-radius: 10px; max-width: 400px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        button { width: 90%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; font-weight: bold; cursor: pointer; background-color: #007bff; color: white; }
+        button:disabled { background-color: #cccccc; }
+        .key-box { margin-top: 15px; padding: 10px; background: #e9ecef; border-radius: 5px; font-weight: bold; font-size: 18px; color: #28a745; word-break: break-all; }
+        .copy-btn { background-color: #17a2b8; margin-top: 10px; }
+    </style>
 </head>
 <body>
 
-  <div class="card">
-    <h2>LẤY KEY BUFF LIKE</h2>
-    <p id="instructionText">Nhấn vào nút bên dưới để tạo Key mới (dùng 1 lần):</p>
+<div class="card">
+    <h2>LẤY KEY MIỄN PHÍ</h2>
+    <p>Bấm nút bên dưới để tạo Key sử dụng Buff Like</p>
     
-    <!-- Nút Lấy Key -->
     <button id="btnGetKey" onclick="generateKey()">LẤY KEY NGAY</button>
 
-    <!-- Màn hình hiển thị Key -->
     <div id="resultBox" style="display: none;">
-      <div class="key-box" id="keyDisplay">---</div>
-      <button class="copy-btn" onclick="copyKey()">Sao Chép Key</button>
+        <div class="key-box" id="keyDisplay">---</div>
+        <button class="copy-btn" onclick="copyKey()">Sao Chép Key</button>
     </div>
-  </div>
+</div>
 
-  <script>
- const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzL9yxIq2gU_QiaOmtj1oUrscPp_fzjcYHvHcyw6Ww47SW1Rm9jX7ZM8lp_6i3l7MFz/exec";
+<script>
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzL9yxIq2gU_QiaOmtj1oUrscPp_fzjcYHvHcyw6Ww47SW1Rm9jX7ZM8lp_6i3l7MFz/exec";
 
-    // Kiểm tra xem máy đã lưu Key chưa khi tải lại trang
-    window.onload = function() {
-      const savedKey = localStorage.getItem("current_user_key");
-      if (savedKey) {
-        showKeyOnUI(savedKey);
-      }
-    };
+    function generateKey() {
+        const btnGetKey = document.getElementById("btnGetKey");
+        const resultBox = document.getElementById("resultBox");
+        const keyDisplay = document.getElementById("keyDisplay");
 
-    async function generateKey() {
-      const btn = document.getElementById("btnGetKey");
+        btnGetKey.disabled = true;
+        btnGetKey.innerText = "Đang tạo Key...";
 
-      btn.disabled = true;
-      btn.innerText = "Đang tạo Key...";
+        const callbackName = "cb_getkey_" + Date.now();
+        window[callbackName] = function(data) {
+            delete window[callbackName];
+            document.body.removeChild(script);
 
-      try {
-        const response = await fetch(`${WEB_APP_URL}?action=createKey`);
-        const data = await response.json();
+            btnGetKey.disabled = false;
+            btnGetKey.innerText = "LẤY KEY NGAY";
 
-        if (data.success) {
-          // Lưu Key vào bộ nhớ trình duyệt
-          localStorage.setItem("current_user_key", data.key);
-          showKeyOnUI(data.key);
-        } else {
-          alert("Lỗi: " + (data.message || "Không thể tạo Key"));
-          btn.disabled = false;
-          btn.innerText = "LẤY KEY NGAY";
-        }
-      } catch (error) {
-        alert("Có lỗi kết nối đến máy chủ! Vui lòng thử lại.");
-        console.error(error);
-        btn.disabled = false;
-        btn.innerText = "LẤY KEY NGAY";
-      }
-    }
+            if (data.success) {
+                keyDisplay.innerText = data.key;
+                resultBox.style.display = "block";
+            } else {
+                alert("Lỗi tạo Key: " + (data.message || "Không xác định"));
+            }
+        };
 
-    // Hiển thị Key ra giao diện và ẩn nút Lấy Key
-    function showKeyOnUI(key) {
-      document.getElementById("btnGetKey").style.display = "none";
-      document.getElementById("keyDisplay").innerText = key;
-      document.getElementById("resultBox").style.display = "block";
-      document.getElementById("instructionText").innerText = "Key của bạn đã được tạo! Hãy sao chép và sử dụng ngay:";
+        const script = document.createElement("script");
+        script.src = WEB_APP_URL + "?action=createKey&callback=" + callbackName;
+        script.onerror = function() {
+            delete window[callbackName];
+            document.body.removeChild(script);
+            btnGetKey.disabled = false;
+            btnGetKey.innerText = "LẤY KEY NGAY";
+            alert("Lỗi kết nối Server!");
+        };
+        document.body.appendChild(script);
     }
 
     function copyKey() {
-      const keyText = document.getElementById("keyDisplay").innerText;
-      navigator.clipboard.writeText(keyText).then(() => {
-        alert("Đã sao chép Key thành công!");
-      }).catch(() => {
-        alert("Không thể tự động sao chép. Vui lòng chọn và chép thủ công.");
-      });
+        const keyText = document.getElementById("keyDisplay").innerText;
+        navigator.clipboard.writeText(keyText).then(() => {
+            alert("Đã sao chép Key: " + keyText);
+        });
     }
-  </script>
+</script>
 
 </body>
 </html>
