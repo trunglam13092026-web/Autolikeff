@@ -23,21 +23,25 @@
 <div class="card">
     <h2>LẤY KEY MIỄN PHÍ</h2>
     
-    <div class="step-desc">
-        <b>Hướng dẫn bắt buộc:</b><br>
-        1. Bấm <b>"BƯỚC 1: VƯỢT LINK LẤY MÃ"</b>.<br>
-        2. Vượt Captcha trên Link4M để nhận <b>Mã xác minh</b>.<br>
-        3. Dán Mã xác minh vào ô dưới rồi bấm <b>"LẤY KEY NGAY"</b>.
+    <!-- KHỐI BƯỚC THỰC HIỆN (SẼ BỊ ẨN KHI LẤY KEY THÀNH CÔNG) -->
+    <div id="actionArea">
+        <div class="step-desc">
+            <b>Hướng dẫn bắt buộc:</b><br>
+            1. Bấm <b>"BƯỚC 1: VƯỢT LINK LẤY MÃ"</b>.<br>
+            2. Vượt Captcha trên Link4M để nhận <b>Mã xác minh</b>.<br>
+            3. Dán Mã xác minh vào ô dưới rồi bấm <b>"LẤY KEY NGAY"</b>.
+        </div>
+
+        <!-- LINK RÚT GỌN LINK4M -->
+        <a href="https://link4m.net/uUbcJiq" target="_blank" class="btn btn-link" id="btnStep1">👉 BƯỚC 1: VƯỢT LINK LẤY MÃ</a>
+
+        <!-- Ô NHẬP MÃ BẮT BUỘC -->
+        <input type="text" id="passInput" placeholder="Nhập mã xác minh từ Link4M...">
+
+        <button id="btnGetKey" class="btn btn-key" onclick="generateKey()">BƯỚC 2: LẤY KEY NGAY</button>
     </div>
 
-    <!-- LINK RÚT GỌN LINK4M -->
-    <a href="https://link4m.net/SEvGWH1h" target="_blank" class="btn btn-link">👉 BƯỚC 1: VƯỢT LINK LẤY MÃ</a>
-
-    <!-- Ô NHẬP MÃ BẮT BUỘC -->
-    <input type="text" id="passInput" placeholder="Nhập mã xác minh từ Link4M...">
-
-    <button id="btnGetKey" class="btn btn-key" onclick="generateKey()">BƯỚC 2: LẤY KEY NGAY</button>
-
+    <!-- KHỐI HIỂN THỊ KEY KHI LẤY THÀNH CÔNG -->
     <div id="resultBox" style="display: none;">
         <div class="key-box" id="keyDisplay">---</div>
         <button class="btn btn-copy" onclick="copyKey()">Sao Chép Key</button>
@@ -48,12 +52,13 @@
 <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
     
-    // MÃ XÁC MINH BẠN CÀI TRÊN LINK4M (Thay đổi mã này theo ý bạn)
-    const SECRET_PASS = "tlzproject05"; 
+    // MÃ XÁC MINH TRÊN LINK4M
+    const SECRET_PASS = "TLZ888"; 
 
     function generateKey() {
         const passInput = document.getElementById("passInput").value.trim();
         const btnGetKey = document.getElementById("btnGetKey");
+        const actionArea = document.getElementById("actionArea");
         const resultBox = document.getElementById("resultBox");
         const keyDisplay = document.getElementById("keyDisplay");
 
@@ -82,6 +87,11 @@
 
             if (data && data.success) {
                 keyDisplay.innerText = data.key;
+                
+                // ẨN TOÀN BỘ NÚT BƯỚC 1 VÀ Ô NHẬP MÃ KHI THÀNH CÔNG
+                actionArea.style.display = "none";
+                
+                // HIỆN KHUNG KẾT QUẢ KEY
                 resultBox.style.display = "block";
             } else {
                 alert("Lỗi: " + (data ? data.message : "Không thể lấy Key"));
