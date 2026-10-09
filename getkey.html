@@ -5,16 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lấy Key Buff Like Free Fire</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f9; }
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 40px; background-color: #f4f4f9; }
         .card { background: white; padding: 20px; border-radius: 10px; max-width: 400px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        .btn { display: block; width: 90%; padding: 12px; margin: 10px auto; border-radius: 5px; border: none; font-weight: bold; cursor: pointer; text-decoration: none; box-sizing: border-box; }
+        .btn { display: block; width: 100%; padding: 12px; margin: 10px 0; border-radius: 5px; border: none; font-weight: bold; cursor: pointer; text-decoration: none; box-sizing: border-box; }
         .btn-link { background-color: #ff9800; color: white; }
         .btn-key { background-color: #007bff; color: white; }
         .btn-copy { background-color: #17a2b8; color: white; margin-top: 10px; }
         .btn-home { background-color: #28a745; color: white; margin-top: 15px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; font-size: 15px; text-align: center; }
         button:disabled { background-color: #cccccc !important; }
         .key-box { margin-top: 15px; padding: 10px; background: #e9ecef; border-radius: 5px; font-weight: bold; font-size: 18px; color: #28a745; word-break: break-all; }
-        .step-desc { font-size: 14px; color: #555; text-align: left; width: 90%; margin: 10px auto; line-height: 1.5; }
+        .step-desc { font-size: 14px; color: #555; text-align: left; line-height: 1.5; }
     </style>
 </head>
 <body>
@@ -23,14 +24,17 @@
     <h2>LẤY KEY MIỄN PHÍ</h2>
     
     <div class="step-desc">
-        <b>Hướng dẫn lấy Key:</b><br>
-        1. Bấm vào nút <b>"BƯỚC 1: VƯỢT LINK LẤY KEY"</b> bên dưới.<br>
-        2. Hoàn thành vượt captcha để lấy mã kích hoạt.<br>
-        3. Quay lại đây bấm <b>"BƯỚC 2: LẤY KEY NGAY"</b>.
+        <b>Hướng dẫn bắt buộc:</b><br>
+        1. Bấm <b>"BƯỚC 1: VƯỢT LINK LẤY MÃ"</b>.<br>
+        2. Vượt Captcha trên Link4M để nhận <b>Mã xác minh</b>.<br>
+        3. Dán Mã xác minh vào ô dưới rồi bấm <b>"LẤY KEY NGAY"</b>.
     </div>
 
     <!-- LINK RÚT GỌN LINK4M -->
-    <a href="https://link4m.net/uUbcJiq" target="_blank" class="btn btn-link">👉 BƯỚC 1: VƯỢT LINK LẤY KEY</a>
+    <a href="https://link4m.net/uUbcJiq" target="_blank" class="btn btn-link">👉 BƯỚC 1: VƯỢT LINK LẤY MÃ</a>
+
+    <!-- Ô NHẬP MÃ BẮT BUỘC -->
+    <input type="text" id="passInput" placeholder="Nhập mã xác minh từ Link4M...">
 
     <button id="btnGetKey" class="btn btn-key" onclick="generateKey()">BƯỚC 2: LẤY KEY NGAY</button>
 
@@ -43,11 +47,25 @@
 
 <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
+    
+    // MÃ XÁC MINH BẠN CÀI TRÊN LINK4M (Thay đổi mã này theo ý bạn)
+    const SECRET_PASS = "TLZ888"; 
 
     function generateKey() {
+        const passInput = document.getElementById("passInput").value.trim();
         const btnGetKey = document.getElementById("btnGetKey");
         const resultBox = document.getElementById("resultBox");
         const keyDisplay = document.getElementById("keyDisplay");
+
+        if (!passInput) {
+            alert("Vui lòng bấm Bước 1 vượt link để lấy Mã xác minh!");
+            return;
+        }
+
+        if (passInput !== SECRET_PASS) {
+            alert("Mã xác minh không chính xác! Vui lòng vượt link để lấy đúng mã.");
+            return;
+        }
 
         btnGetKey.disabled = true;
         btnGetKey.innerText = "Đang tạo Key...";
@@ -70,20 +88,20 @@
             }
         };
 
-        const script = document.createElement("script");
-        script.id = callbackName;
-        script.src = WEB_APP_URL + "?action=createKey&callback=" + callbackName;
-        script.onerror = function() {
+        const script = document.getElementById(callbackName);
+        if (script) script.remove();
+
+        const newScript = document.createElement("script");
+        newScript.id = callbackName;
+        newScript.src = WEB_APP_URL + "?action=createKey&callback=" + callbackName;
+        newScript.onerror = function() {
             delete window[callbackName];
-            const oldScript = document.getElementById(callbackName);
-            if (oldScript) oldScript.remove();
-            
             btnGetKey.disabled = false;
             btnGetKey.innerText = "BƯỚC 2: LẤY KEY NGAY";
-            alert("Không thể kết nối Server! Vui lòng kiểm tra cài đặt 'Anyone' trong Deploy.");
+            alert("Lỗi kết nối Server!");
         };
 
-        document.body.appendChild(script);
+        document.body.appendChild(newScript);
     }
 
     function copyKey() {
