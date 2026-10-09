@@ -42,7 +42,6 @@
 </div>
 
 <script>
-    // URL WEB APP MỚI CỦA BẠN
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
 
     function generateKey() {
@@ -81,7 +80,7 @@
             
             btnGetKey.disabled = false;
             btnGetKey.innerText = "BƯỚC 2: LẤY KEY NGAY";
-            alert("Lỗi kết nối Server! Vui lòng thử lại.");
+            alert("Không thể kết nối Server! Vui lòng kiểm tra cài đặt 'Anyone' trong Deploy.");
         };
 
         document.body.appendChild(script);
