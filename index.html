@@ -14,13 +14,11 @@
         #statusMsg { margin-top: 15px; font-weight: bold; }
         .sub-description { font-size: 13px; color: #666; margin-bottom: 15px; line-height: 1.5; }
         
-        /* Style cho các liên kết mạng xã hội */
         .social-links { margin: 12px 0; font-size: 13px; }
         .social-links a { text-decoration: none; font-weight: bold; margin: 0 8px; }
         .telegram-link { color: #0088cc; }
         .tiktok-link { color: #000000; }
 
-        /* Style cho khung thông báo */
         .notice-box {
             margin-top: 15px;
             padding: 12px;
@@ -33,6 +31,22 @@
             line-height: 1.5;
         }
         .notice-box b { color: #533f03; }
+
+        /* Style cho khung đếm ngược 12 tiếng */
+        .cooldown-box {
+            background-color: #e2e3e5;
+            border: 1px solid #d6d8db;
+            color: #383d41;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .timer {
+            font-size: 22px;
+            font-weight: bold;
+            color: #dc3545;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -44,25 +58,33 @@
         Được phát triển bởi hệ thống <a href="https://t.me/tlzproject" target="_blank" class="telegram-link">@tlzproject</a>
     </div>
 
-    <!-- KHUNG HỖ TRỢ TIKTOK & TELEGRAM -->
     <div class="social-links">
         <b>Hỗ trợ chính thức:</b><br>
         <a href="https://t.me/tlzproject" target="_blank" class="telegram-link">💬 Telegram: @tlzproject</a><br>
         <a href="https://www.tiktok.com/@Hvpcutis1tg" target="_blank" class="tiktok-link">🎵 TikTok: @Hvpcutis1tg</a>
     </div>
     
-    <input type="text" id="uidInput" placeholder="Nhập UID Free Fire">
-    <input type="text" id="keyInput" placeholder="Nhập Key sử dụng">
-    
-    <div>
-        <a href="getkey.html" class="key-link">👉 Nhấp vào đây để lấy Key miễn phí</a>
+    <!-- KHỐI FORM NHẬP -->
+    <div id="formBuff">
+        <input type="text" id="uidInput" placeholder="Nhập UID Free Fire">
+        <input type="text" id="keyInput" placeholder="Nhập Key sử dụng">
+        
+        <div>
+            <a href="getkey.html" class="key-link">👉 Nhấp vào đây để lấy Key miễn phí</a>
+        </div>
+
+        <button id="btnSubmit" onclick="startBuff()">Chạy</button>
     </div>
 
-    <button id="btnSubmit" onclick="startBuff()">Chạy</button>
+    <!-- KHỐI ĐẾM NGƯỢC (BÌNH THƯỜNG BỊ ẨN) -->
+    <div id="cooldownArea" class="cooldown-box" style="display: none;">
+        ⏳ <b>HỆ THỐNG ĐANG TRONG THỜI GIAN CHỜ</b>
+        <div class="sub-description" style="margin-top: 5px;">Mỗi lượt buff cách nhau 12 tiếng. Vui lòng quay lại sau:</div>
+        <div class="timer" id="timerDisplay">12:00:00</div>
+    </div>
 
     <div id="statusMsg"></div>
 
-    <!-- KHUNG THÔNG BÁO -->
     <div class="notice-box">
         📢 <b>THÔNG BÁO QUAN TRỌNG:</b><br>
         • Mỗi người tranh thủ buff sớm nhất có thể nha (từ <b>6h sáng đến 20h tối</b>).<br>
@@ -73,6 +95,62 @@
 
 <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
+    const COOLDOWN_TIME = 12 * 60 * 60 * 1000; // 12 Tiếng tính bằng mili-giây
+
+    let timerInterval = null;
+
+    // Kiểm tra ngay khi vừa mở trang web
+    window.onload = function() {
+        checkCooldown();
+    };
+
+    function checkCooldown() {
+        const lastBuffTime = localStorage.getItem("lastBuffTime");
+        if (lastBuffTime) {
+            const now = Date.now();
+            const elapsed = now - parseInt(lastBuffTime);
+            if (elapsed < COOLDOWN_TIME) {
+                const remainingMs = COOLDOWN_TIME - elapsed;
+                startTimer(remainingMs);
+            } else {
+                localStorage.removeItem("lastBuffTime");
+                showForm();
+            }
+        }
+    }
+
+    function startTimer(durationMs) {
+        document.getElementById("formBuff").style.display = "none";
+        document.getElementById("cooldownArea").style.display = "block";
+        
+        let endTime = Date.now() + durationMs;
+
+        if (timerInterval) clearInterval(timerInterval);
+
+        timerInterval = setInterval(() => {
+            let remain = endTime - Date.now();
+            if (remain <= 0) {
+                clearInterval(timerInterval);
+                localStorage.removeItem("lastBuffTime");
+                showForm();
+                return;
+            }
+
+            let hours = Math.floor(remain / (1000 * 60 * 60));
+            let minutes = Math.floor((remain % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((remain % (1000 * 60)) / 1000);
+
+            document.getElementById("timerDisplay").innerText = 
+                (hours < 10 ? "0" + hours : hours) + ":" + 
+                (minutes < 10 ? "0" + minutes : minutes) + ":" + 
+                (seconds < 10 ? "0" + seconds : seconds);
+        }, 1000);
+    }
+
+    function showForm() {
+        document.getElementById("formBuff").style.display = "block";
+        document.getElementById("cooldownArea").style.display = "none";
+    }
 
     async function getClientIp() {
         try {
@@ -112,6 +190,13 @@
             if (data && data.success) {
                 statusMsg.style.color = "green";
                 statusMsg.innerText = data.message || "Gửi lệnh Buff thành công!";
+                
+                // Lưu thời điểm thành công vào trình duyệt và bắt đầu đếm ngược 12 tiếng
+                localStorage.setItem("lastBuffTime", Date.now().toString());
+                setTimeout(() => {
+                    startTimer(COOLDOWN_TIME);
+                }, 1500);
+
             } else {
                 statusMsg.style.color = "red";
                 statusMsg.innerText = data ? data.message : "Key không hợp lệ hoặc đã được sử dụng!";
