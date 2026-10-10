@@ -24,6 +24,17 @@
     </div>
 
     <script>
+        // --- CHẶN TRUY CẬP TRỰC TIẾP / LƯU LINK BOOKMARK ---
+        // Kiểm tra xem người dùng có đi từ trang ngoài (Link4M hoặc trang chủ của bạn) vào không
+        const referrer = document.referrer;
+        
+        // Bạn có thể thay đổi hoặc thêm domain của Link4M vào đây nếu muốn check kỹ hơn
+        // Nếu referrer trống (tức là gõ trực tiếp hoặc dán thẳng link pass.html lên trình duyệt)
+        if (!referrer || (!referrer.includes("link4m") && !referrer.includes("bufflikeff.site"))) {
+            alert("⚠️ Phát hiện hành vi truy cập trực tiếp không qua vượt link! Vui lòng thực hiện lại.");
+            window.location.href = "getkey.html"; // Đá về trang lấy key bắt vượt lại từ đầu
+        }
+
         function generateRandomPass() {
             const now = new Date();
             const day = now.getDate();
