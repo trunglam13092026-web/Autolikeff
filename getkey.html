@@ -3,123 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lấy Key Buff Like Free Fire</title>
+    <title>LẤY KEY - TLZ BUFF LIKE</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 40px; background-color: #f4f4f9; }
-        .card { background: white; padding: 20px; border-radius: 10px; max-width: 400px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        .btn { display: block; width: 100%; padding: 12px; margin: 10px 0; border-radius: 5px; border: none; font-weight: bold; cursor: pointer; text-decoration: none; box-sizing: border-box; }
-        .btn-link { background-color: #ff9800; color: white; }
-        .btn-key { background-color: #007bff; color: white; }
-        .btn-copy { background-color: #17a2b8; color: white; margin-top: 10px; }
-        .btn-home { background-color: #28a745; color: white; margin-top: 15px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; font-size: 15px; text-align: center; }
-        button:disabled { background-color: #cccccc !important; }
-        .key-box { margin-top: 15px; padding: 10px; background: #e9ecef; border-radius: 5px; font-weight: bold; font-size: 18px; color: #28a745; word-break: break-all; }
-        .step-desc { font-size: 14px; color: #555; text-align: left; line-height: 1.5; }
+        body { font-family: Arial, sans-serif; background-color: #121212; color: #fff; text-align: center; padding: 30px 15px; }
+        .container { max-width: 450px; margin: auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        h2 { color: #00ff88; margin-bottom: 5px; }
+        .instructions { font-size: 14px; color: #ccc; text-align: left; background: #2a2a2a; padding: 12px; border-radius: 8px; margin-bottom: 20px; line-height: 1.5; }
+        .btn { display: block; width: 100%; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 8px; border: none; cursor: pointer; text-decoration: none; margin-bottom: 12px; box-sizing: border-box; }
+        .btn-link { background: #ff9900; color: #000; }
+        .btn-key { background: #0088cc; color: #fff; }
+        .btn-home { background: #444; color: #fff; }
+        input[type="text"] { width: 100%; padding: 12px; font-size: 15px; border-radius: 8px; border: 1px solid #444; background: #121212; color: #fff; margin-bottom: 15px; box-sizing: border-box; text-align: center; }
+        .key-result { display: none; background: #2a2a2a; border: 1px solid #00ff88; padding: 15px; border-radius: 8px; margin-top: 15px; word-break: break-all; }
+        .key-text { font-size: 18px; font-weight: bold; color: #00ff88; letter-spacing: 1px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>LẤY KEY MIỄN PHÍ</h2>
-    
-    <div id="actionArea">
-        <div class="step-desc">
-            <b>Hướng dẫn bắt buộc:</b><br>
+    <div class="container">
+        <h2>🚀 LẤY KEY BUFF LIKE</h2>
+        <p style="font-size: 13px; color: #888;">Key riêng biệt & Chống Spam</p>
+
+        <div class="instructions">
+            <b>HƯỚNG DẪN LẤY KEY:</b><br>
             1. Bấm <b>"BƯỚC 1: VƯỢT LINK LẤY MÃ"</b>.<br>
-            2. Lấy <b>Mã xác minh</b> hiển thị ở trang đích.<br>
-            3. Dán Mã xác minh vào ô dưới rồi bấm <b>"LẤY KEY NGAY"</b>.
+            2. Hoàn tất vượt link để lấy <b>Mã xác minh</b>.<br>
+            3. Dán Mã xác minh vào ô bên dưới rồi bấm <b>"BƯỚC 2: LẤY KEY NGAY"</b>.
         </div>
 
-        <!-- ĐƯỜNG DẪN TRỎ VỀ TRANG PASS.HTML CỦA BẠN -->
-        <a href="https://link4m.net/0aFFT" target="_blank" class="btn btn-link" id="btnStep1">👉 BƯỚC 1: VƯỢT LINK LẤY MÃ</a>
+        <a href="https://link4m.net/0aFFT" target="_blank" class="btn btn-link">👉 BƯỚC 1: VƯỢT LINK LẤY MÃ</a>
 
-        <input type="text" id="passInput" placeholder="Nhập mã xác minh...">
+        <input type="text" id="passInput" placeholder="Nhập mã xác minh tại đây...">
 
-        <button id="btnGetKey" class="btn btn-key" onclick="generateKey()">BƯỚC 2: LẤY KEY NGAY</button>
-    </div>
+        <button class="btn btn-key" onclick="generateUniqueKey()">⚡ BƯỚC 2: LẤY KEY NGAY</button>
 
-    <div id="resultBox" style="display: none;">
-        <div class="key-box" id="keyDisplay">---</div>
-        <button class="btn btn-copy" onclick="copyKey()">Sao Chép Key</button>
-        <a href="index.html" class="btn btn-home">🚀 QUAY LẠI TRANG BUFF LIKE</a>
-    </div>
-</div>
-
-<script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
-    
-    // HÀM TỰ ĐỘNG TẠO MÃ ĐỒNG BỘ VỚI TRANG PASS.HTML
-    function getDynamicSecretPass() {
-        const now = new Date();
-        const day = now.getDate();     // Ngày trong tháng
-        const hour = now.getHours();   // Giờ hiện tại (0 - 23)
-        return "tlz-" + day + "-h" + hour;
-    }
-
-    function generateKey() {
-        const passInput = document.getElementById("passInput").value.trim();
-        const btnGetKey = document.getElementById("btnGetKey");
-        const actionArea = document.getElementById("actionArea");
-        const resultBox = document.getElementById("resultBox");
-        const keyDisplay = document.getElementById("keyDisplay");
-
-        // Lấy mã chuẩn của đúng thời điểm hiện tại để so sánh
-        const currentValidPass = getDynamicSecretPass();
-
-        if (!passInput) {
-            alert("Vui lòng nhập mã xác minh!");
-            return;
-        }
-
-        // Kiểm tra xem người dùng nhập có khớp mã hiện tại không
-        if (passInput !== currentValidPass) {
-            alert("Mã xác minh không chính xác hoặc đã hết hạn! Vui lòng vượt lại link để lấy mã mới nhất.");
-            return;
-        }
-
-        btnGetKey.disabled = true;
-        btnGetKey.innerText = "Đang tạo Key...";
-
-        const callbackName = "cb_getkey_" + Date.now();
+        <div id="resultBox" class="key-result">
+            <div style="font-size: 13px; color: #aaa;">KEY CỦA BẠN (1 LẦN DÙNG):</div>
+            <div class="key-text" id="keyDisplay">---</div>
+            <button class="btn btn-home" onclick="copyResultKey()">📋 SAO CHÉP KEY</button>
+        </div>
         
-        window[callbackName] = function(data) {
-            delete window[callbackName];
-            const oldScript = document.getElementById(callbackName);
-            if (oldScript) oldScript.remove();
+        <br>
+        <a href="index.html" class="btn btn-home">🏠 QUAY LẠI TRANG CHÍNH</a>
+    </div>
 
-            btnGetKey.disabled = false;
-            btnGetKey.innerText = "BƯỚC 2: LẤY KEY NGAY";
+    <script>
+        const SECRET_KEY_SALT = "TLZ_SECRET_SIGNATURE_2026";
 
-            if (data && data.success) {
-                keyDisplay.innerText = data.key;
-                actionArea.style.display = "none";
-                resultBox.style.display = "block";
-            } else {
-                alert("Lỗi: " + (data ? data.message : "Không thể lấy Key"));
+        function getPassByTime(dateObj) {
+            const day = dateObj.getDate();
+            const hour = dateObj.getHours();
+            const block10 = Math.floor(dateObj.getMinutes() / 10);
+            
+            const seed = "TLZ-SECRET-" + day + "-" + hour + "-" + block10;
+            let hash = 0;
+            for (let i = 0; i < seed.length; i++) {
+                hash = ((hash << 5) - hash) + seed.charCodeAt(i);
+                hash |= 0;
             }
-        };
+            const hex = Math.abs(hash).toString(16).toUpperCase().padEnd(8, '0');
+            return "TLZ-" + hex.slice(0, 4) + "-" + hex.slice(4, 8);
+        }
 
-        const newScript = document.createElement("script");
-        newScript.id = callbackName;
-        newScript.src = WEB_APP_URL + "?action=createKey&callback=" + callbackName;
-        newScript.onerror = function() {
-            delete window[callbackName];
-            btnGetKey.disabled = false;
-            btnGetKey.innerText = "BƯỚC 2: LẤY KEY NGAY";
-            alert("Lỗi kết nối Server!");
-        };
+        function generateUniqueKey() {
+            const passInput = document.getElementById("passInput").value.trim().toUpperCase();
 
-        document.body.appendChild(newScript);
-    }
+            if (!passInput) {
+                alert("Vui lòng nhập Mã xác minh!");
+                return;
+            }
 
-    function copyKey() {
-        const keyText = document.getElementById("keyDisplay").innerText;
-        navigator.clipboard.writeText(keyText).then(() => {
-            alert("Đã sao chép Key: " + keyText);
-        });
-    }
-</script>
+            // 1. CHỐNG SPAM (Chờ 5 phút/lần)
+            const lastTime = localStorage.getItem("last_get_key_time");
+            const nowTime = new Date().getTime();
+            const cooldownTime = 5 * 60 * 1000;
 
+            if (lastTime && (nowTime - lastTime < cooldownTime)) {
+                const timeLeft = Math.ceil((cooldownTime - (nowTime - lastTime)) / 1000);
+                const minutesLeft = Math.ceil(timeLeft / 60);
+                alert("Bạn đang lấy Key quá nhanh! Vui lòng đợi " + minutesLeft + " phút nữa.");
+                return;
+            }
+
+            // 2. CHECK MÃ XÁC MINH
+            const now = new Date();
+            const currentValidPass = getPassByTime(now);
+            const prevTime = new Date(now.getTime() - 10 * 60 * 1000);
+            const prevValidPass = getPassByTime(prevTime);
+
+            if (passInput !== currentValidPass && passInput !== prevValidPass) {
+                alert("Mã xác minh KHÔNG CHÍNH XÁC hoặc đã hết hạn!");
+                return;
+            }
+
+            // 3. TẠO KEY RIÊNG ĐỘC NHẤT
+            const timestamp = new Date().getTime();
+            const randomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+            const rawKeyData = `TLZ-${timestamp}-${randomCode}`;
+            
+            let hash = 0;
+            const signString = rawKeyData + SECRET_KEY_SALT;
+            for (let i = 0; i < signString.length; i++) {
+                hash = ((hash << 5) - hash) + signString.charCodeAt(i);
+                hash |= 0;
+            }
+            const signature = Math.abs(hash).toString(16).toUpperCase().slice(0, 4);
+            const uniqueUserKey = `${rawKeyData}-${signature}`;
+
+            document.getElementById("keyDisplay").innerText = uniqueUserKey;
+            document.getElementById("resultBox").style.display = "block";
+            localStorage.setItem("last_get_key_time", nowTime);
+            alert("Lấy Key thành công!");
+        }
+
+        function copyResultKey() {
+            const keyText = document.getElementById("keyDisplay").innerText;
+            navigator.clipboard.writeText(keyText);
+            alert("Đã sao chép Key thành công!");
+        }
+    </script>
 </body>
 </html>
