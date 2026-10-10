@@ -23,25 +23,22 @@
 <div class="card">
     <h2>LẤY KEY MIỄN PHÍ</h2>
     
-    <!-- KHỐI BƯỚC THỰC HIỆN (SẼ BỊ ẨN KHI LẤY KEY THÀNH CÔNG) -->
     <div id="actionArea">
         <div class="step-desc">
             <b>Hướng dẫn bắt buộc:</b><br>
             1. Bấm <b>"BƯỚC 1: VƯỢT LINK LẤY MÃ"</b>.<br>
-            2. Vượt Captcha trên Link4M để nhận <b>Mã xác minh</b>.<br>
+            2. Lấy <b>Mã xác minh</b> hiển thị ở trang đích.<br>
             3. Dán Mã xác minh vào ô dưới rồi bấm <b>"LẤY KEY NGAY"</b>.
         </div>
 
-        <!-- LINK RÚT GỌN LINK4M -->
-        <a href="https://link4m.org/SEvGWH1h" target="_blank" class="btn btn-link" id="btnStep1">👉 BƯỚC 1: VƯỢT LINK LẤY MÃ</a>
+        <!-- ĐƯỜNG DẪN TRỎ VỀ TRANG PASS.HTML CỦA BẠN -->
+        <a href="https://bufflikeff.site/pass.html" target="_blank" class="btn btn-link" id="btnStep1">👉 BƯỚC 1: VƯỢT LINK LẤY MÃ</a>
 
-        <!-- Ô NHẬP MÃ BẮT BUỘC -->
-        <input type="text" id="passInput" placeholder="Nhập mã xác minh từ Link4M...">
+        <input type="text" id="passInput" placeholder="Nhập mã xác minh...">
 
         <button id="btnGetKey" class="btn btn-key" onclick="generateKey()">BƯỚC 2: LẤY KEY NGAY</button>
     </div>
 
-    <!-- KHỐI HIỂN THỊ KEY KHI LẤY THÀNH CÔNG -->
     <div id="resultBox" style="display: none;">
         <div class="key-box" id="keyDisplay">---</div>
         <button class="btn btn-copy" onclick="copyKey()">Sao Chép Key</button>
@@ -52,8 +49,13 @@
 <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
     
-    // MÃ XÁC MINH TRÊN LINK4M
-    const SECRET_PASS = "TLZ901"; 
+    // HÀM TỰ ĐỘNG TẠO MÃ ĐỒNG BỘ VỚI TRANG PASS.HTML
+    function getDynamicSecretPass() {
+        const now = new Date();
+        const day = now.getDate();     // Ngày trong tháng
+        const hour = now.getHours();   // Giờ hiện tại (0 - 23)
+        return "tlz-" + day + "-h" + hour;
+    }
 
     function generateKey() {
         const passInput = document.getElementById("passInput").value.trim();
@@ -62,13 +64,17 @@
         const resultBox = document.getElementById("resultBox");
         const keyDisplay = document.getElementById("keyDisplay");
 
+        // Lấy mã chuẩn của đúng thời điểm hiện tại để so sánh
+        const currentValidPass = getDynamicSecretPass();
+
         if (!passInput) {
-            alert("Vui lòng bấm Bước 1 vượt link để lấy Mã xác minh!");
+            alert("Vui lòng nhập mã xác minh!");
             return;
         }
 
-        if (passInput !== SECRET_PASS) {
-            alert("Mã xác minh không chính xác! Vui lòng vượt link để lấy đúng mã.");
+        // Kiểm tra xem người dùng nhập có khớp mã hiện tại không
+        if (passInput !== currentValidPass) {
+            alert("Mã xác minh không chính xác hoặc đã hết hạn! Vui lòng vượt lại link để lấy mã mới nhất.");
             return;
         }
 
@@ -87,19 +93,12 @@
 
             if (data && data.success) {
                 keyDisplay.innerText = data.key;
-                
-                // ẨN TOÀN BỘ NÚT BƯỚC 1 VÀ Ô NHẬP MÃ KHI THÀNH CÔNG
                 actionArea.style.display = "none";
-                
-                // HIỆN KHUNG KẾT QUẢ KEY
                 resultBox.style.display = "block";
             } else {
                 alert("Lỗi: " + (data ? data.message : "Không thể lấy Key"));
             }
         };
-
-        const script = document.getElementById(callbackName);
-        if (script) script.remove();
 
         const newScript = document.createElement("script");
         newScript.id = callbackName;
