@@ -42,10 +42,10 @@
             margin: 15px 0;
         }
         .timer {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: bold;
             color: #dc3545;
-            margin-top: 5px;
+            margin-top: 8px;
         }
     </style>
 </head>
@@ -76,7 +76,7 @@
         <button id="btnSubmit" onclick="startBuff()">Chạy</button>
     </div>
 
-    <!-- KHỐI ĐẾM NGƯỢC (BÌNH THƯỜNG BỊ ẨN) -->
+    <!-- KHỐI ĐẾM NGƯỢC -->
     <div id="cooldownArea" class="cooldown-box" style="display: none;">
         ⏳ <b>HỆ THỐNG ĐANG TRONG THỜI GIAN CHỜ</b>
         <div class="sub-description" style="margin-top: 5px;">Mỗi lượt buff cách nhau 12 tiếng. Vui lòng quay lại sau:</div>
@@ -95,43 +95,46 @@
 
 <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
-    const COOLDOWN_TIME = 12 * 60 * 60 * 1000; // 12 Tiếng tính bằng mili-giây
-
+    const COOLDOWN_DURATION = 12 * 60 * 60 * 1000; // 12 Tiếng (ms)
     let timerInterval = null;
 
-    // Kiểm tra ngay khi vừa mở trang web
-    window.onload = function() {
+    // Tự động kiểm tra ngay khi load xong trang
+    document.addEventListener("DOMContentLoaded", function() {
         checkCooldown();
-    };
+    });
 
     function checkCooldown() {
-        const lastBuffTime = localStorage.getItem("lastBuffTime");
-        if (lastBuffTime) {
+        const unlockTime = localStorage.getItem("buffUnlockTime");
+        if (unlockTime) {
             const now = Date.now();
-            const elapsed = now - parseInt(lastBuffTime);
-            if (elapsed < COOLDOWN_TIME) {
-                const remainingMs = COOLDOWN_TIME - elapsed;
-                startTimer(remainingMs);
+            const remain = parseInt(unlockTime) - now;
+
+            if (remain > 0) {
+                // Thời gian vẫn còn -> Tiếp tục đếm ngược đúng số thời gian còn lại
+                runTimer(parseInt(unlockTime));
             } else {
-                localStorage.removeItem("lastBuffTime");
+                // Đã hết 12 tiếng -> Xóa bộ nhớ và mở lại form
+                localStorage.removeItem("buffUnlockTime");
                 showForm();
             }
+        } else {
+            showForm();
         }
     }
 
-    function startTimer(durationMs) {
+    function runTimer(targetTime) {
         document.getElementById("formBuff").style.display = "none";
         document.getElementById("cooldownArea").style.display = "block";
-        
-        let endTime = Date.now() + durationMs;
 
         if (timerInterval) clearInterval(timerInterval);
 
-        timerInterval = setInterval(() => {
-            let remain = endTime - Date.now();
+        function updateDisplay() {
+            const now = Date.now();
+            const remain = targetTime - now;
+
             if (remain <= 0) {
                 clearInterval(timerInterval);
-                localStorage.removeItem("lastBuffTime");
+                localStorage.removeItem("buffUnlockTime");
                 showForm();
                 return;
             }
@@ -144,7 +147,10 @@
                 (hours < 10 ? "0" + hours : hours) + ":" + 
                 (minutes < 10 ? "0" + minutes : minutes) + ":" + 
                 (seconds < 10 ? "0" + seconds : seconds);
-        }, 1000);
+        }
+
+        updateDisplay();
+        timerInterval = setInterval(updateDisplay, 1000);
     }
 
     function showForm() {
@@ -191,10 +197,12 @@
                 statusMsg.style.color = "green";
                 statusMsg.innerText = data.message || "Gửi lệnh Buff thành công!";
                 
-                // Lưu thời điểm thành công vào trình duyệt và bắt đầu đếm ngược 12 tiếng
-                localStorage.setItem("lastBuffTime", Date.now().toString());
+                // LƯU THỜI ĐIỂM SẼ MỞ KHÓA (Bây giờ + 12 Tiếng)
+                const targetUnlockTime = Date.now() + COOLDOWN_DURATION;
+                localStorage.setItem("buffUnlockTime", targetUnlockTime.toString());
+                
                 setTimeout(() => {
-                    startTimer(COOLDOWN_TIME);
+                    runTimer(targetUnlockTime);
                 }, 1500);
 
             } else {
