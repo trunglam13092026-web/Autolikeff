@@ -3,47 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mã Xác Minh - Buff Like Free Fire</title>
+    <title>MÃ XÁC MINH - TLZ BUFF LIKE</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f9; }
-        .card { background: white; padding: 25px; border-radius: 10px; max-width: 400px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        .pass-box { font-size: 24px; font-weight: bold; color: #d9534f; background: #ffeeba; padding: 15px; border-radius: 5px; margin: 20px 0; word-break: break-all; letter-spacing: 1px; }
-        .btn { display: block; width: 100%; padding: 12px; border-radius: 5px; border: none; font-weight: bold; cursor: pointer; text-decoration: none; font-size: 16px; background-color: #28a745; color: white; }
-        .note { font-size: 13px; color: #666; margin-top: 15px; line-height: 1.4; }
+        body { font-family: Arial, sans-serif; background-color: #121212; color: #fff; text-align: center; padding: 50px 20px; }
+        .card { background: #1e1e1e; max-width: 400px; margin: auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .pass-box { font-size: 24px; font-weight: bold; color: #00ff88; background: #2a2a2a; padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px dashed #00ff88; letter-spacing: 2px; }
+        .btn-copy { background: #0088cc; color: white; border: none; padding: 12px 20px; font-size: 16px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; }
+        .btn-copy:hover { background: #006699; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>MÃ XÁC MINH CỦA BẠN</h2>
-    <p>Hãy sao chép mã dưới đây và dán vào trang lấy Key:</p>
-    
-    <div class="pass-box" id="passCode">Đang tải mã...</div>
-
-    <button class="btn" onclick="copyPass()">📋 SAO CHÉP MÃ XÁC MINH</button>
-
-    <div class="note">
-        ⚠️ <b>Lưu ý:</b> Mã này thay đổi theo giờ để bảo mật. Sau khi sao chép, hãy quay lại trang lấy Key để tiếp tục.
+    <div class="card">
+        <h2>🎉 VƯỢT LINK THÀNH CÔNG</h2>
+        <p>Mã xác minh của bạn là (Hiệu lực 10 phút):</p>
+        
+        <div class="pass-box" id="passCode">Đang tải...</div>
+        
+        <button class="btn-copy" onclick="copyPass()">📋 SAO CHÉP MÃ</button>
     </div>
-</div>
 
-<script>
-    function generatePass() {
-        const now = new Date();
-        const day = now.getDate();     
-        const hour = now.getHours();   
-        return "tlz-" + day + "-h" + hour;
-    }
+    <script>
+        function generateRandomPass() {
+            const now = new Date();
+            const day = now.getDate();
+            const hour = now.getHours();
+            const block10 = Math.floor(now.getMinutes() / 10);
+            
+            const seed = "TLZ-SECRET-" + day + "-" + hour + "-" + block10;
+            let hash = 0;
+            for (let i = 0; i < seed.length; i++) {
+                hash = ((hash << 5) - hash) + seed.charCodeAt(i);
+                hash |= 0;
+            }
+            const hex = Math.abs(hash).toString(16).toUpperCase().padEnd(8, '0');
+            return "TLZ-" + hex.slice(0, 4) + "-" + hex.slice(4, 8);
+        }
 
-    const code = generatePass();
-    document.getElementById("passCodeinnerText") ? null : document.getElementById("passCode").innerText = code;
+        const currentPass = generateRandomPass();
+        document.getElementById("passCode").innerText = currentPass;
 
-    function copyPass() {
-        navigator.clipboard.writeText(code).then(() => {
-            alert("Đã sao chép mã: " + code);
-        });
-    }
-</script>
-
+        function copyPass() {
+            navigator.clipboard.writeText(currentPass);
+            alert("Đã sao chép mã xác minh: " + currentPass);
+        }
+    </script>
 </body>
 </html>
