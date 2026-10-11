@@ -122,7 +122,18 @@
                 errorBox.style.color = "#00ff88";
                 errorBox.innerText = "✅ Xác thực thành công! Đang gửi lệnh buff cho UID: " + uid;
                 
-                // (Chỗ này bạn có thể tích hợp code gửi request buff like thực tế của bạn vào đây)
+                // Gửi thông tin UID và Key ngầm về Google Apps Script để đẩy thông báo lên nhóm Telegram
+                fetch('https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        uid: uid,
+                        key: userKey
+                    })
+                });
 
             } catch (e) {
                 errorBox.innerText = "Key không tồn tại hoặc không hợp lệ!";
