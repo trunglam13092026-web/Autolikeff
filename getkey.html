@@ -9,7 +9,7 @@
         .container { max-width: 450px; margin: auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         h2 { color: #00ff88; margin-bottom: 5px; }
         .instructions { font-size: 14px; color: #ccc; text-align: left; background: #2a2a2a; padding: 12px; border-radius: 8px; margin-bottom: 20px; line-height: 1.5; }
-        .btn { display: block; width: 100%; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 8px; border: none; cursor: pointer; text-decoration: none; margin-bottom: 12px; box-sizing: border-box; }
+        .btn { display: block; width: 100%; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 8px; border: none; cursor: pointer; text-decoration: none; margin-bottom: 12px; box-sizing: border-box; text-align: center; }
         .btn-link { background: #ff9900; color: #000; }
         .btn-key { background: #0088cc; color: #fff; }
         .btn-home { background: #444; color: #fff; }
@@ -22,23 +22,23 @@
 
     <div class="container">
         <h2>🚀 LẤY KEY BUFF LIKE</h2>
-        <p style="font-size: 13px; color: #888;">Key riêng biệt & Chống Spam</p>
+        <p style="font-size: 13px; color: #888;">Hệ thống xác minh chống Spam</p>
 
         <div class="instructions">
             <b>HƯỚNG DẪN LẤY KEY:</b><br>
             1. Bấm <b>"BƯỚC 1: VƯỢT LINK LẤY MÃ"</b>.<br>
-            2. Hoàn tất vượt link để lấy <b>Mã xác minh</b>.<br>
+            2. Hoàn tất vượt link để nhận <b>Mã xác minh</b>.<br>
             3. Dán Mã xác minh vào ô bên dưới rồi bấm <b>"BƯỚC 2: LẤY KEY NGAY"</b>.
         </div>
 
-        <a href="https://link4m.net/0aFFT" target="_blank" class="btn btn-link">👉 BƯỚC 1: VƯỢT LINK LẤY MÃ</a>
+        <a href="#" onclick="startPassLink()" class="btn btn-link">👉 BƯỚC 1: VƯỢT LINK LẤY MÃ</a>
 
         <input type="text" id="passInput" placeholder="Nhập mã xác minh tại đây...">
 
-        <button class="btn btn-key" onclick="generateUniqueKey()">⚡ BƯỚC 2: LẤY KEY NGAY</button>
+        <button class="btn btn-key" onclick="generateKey()">⚡ BƯỚC 2: LẤY KEY NGAY</button>
 
         <div id="resultBox" class="key-result">
-            <div style="font-size: 13px; color: #aaa;">KEY CỦA BẠN (1 LẦN DÙNG):</div>
+            <div style="font-size: 13px; color: #aaa;">KEY CỦA BẠN (DÙNG CHO BOT):</div>
             <div class="key-text" id="keyDisplay">---</div>
             <button class="btn btn-home" onclick="copyResultKey()">📋 SAO CHÉP KEY</button>
         </div>
@@ -48,8 +48,13 @@
     </div>
 
     <script>
-        const SECRET_KEY_SALT = "TLZ_SECRET_SIGNATURE_2026";
+        // Mở Link4M và đánh dấu người dùng đã bấm vượt link
+        function startPassLink() {
+            localStorage.setItem("did_click_link", "true");
+            window.open("https://link4m.net/0aFFT", "_blank");
+        }
 
+        // Hàm tính Mã xác minh chung 10 phút
         function getPassByTime(dateObj) {
             const day = dateObj.getDate();
             const hour = dateObj.getHours();
@@ -65,7 +70,7 @@
             return "TLZ-" + hex.slice(0, 4) + "-" + hex.slice(4, 8);
         }
 
-        function generateUniqueKey() {
+        function generateKey() {
             const passInput = document.getElementById("passInput").value.trim().toUpperCase();
 
             if (!passInput) {
@@ -73,7 +78,7 @@
                 return;
             }
 
-            // 1. CHỐNG SPAM (Chờ 5 phút/lần)
+            // 1. Kiểm tra giãn cách lấy key (5 phút/lần)
             const lastTime = localStorage.getItem("last_get_key_time");
             const nowTime = new Date().getTime();
             const cooldownTime = 5 * 60 * 1000;
@@ -85,7 +90,7 @@
                 return;
             }
 
-            // 2. CHECK MÃ XÁC MINH
+            // 2. Kiểm tra Mã xác minh (Khung hiện tại hoặc 10 phút trước đó)
             const now = new Date();
             const currentValidPass = getPassByTime(now);
             const prevTime = new Date(now.getTime() - 10 * 60 * 1000);
@@ -96,21 +101,8 @@
                 return;
             }
 
-            // 3. TẠO KEY RIÊNG ĐỘC NHẤT
-            const timestamp = new Date().getTime();
-            const randomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-            const rawKeyData = `TLZ-${timestamp}-${randomCode}`;
-            
-            let hash = 0;
-            const signString = rawKeyData + SECRET_KEY_SALT;
-            for (let i = 0; i < signString.length; i++) {
-                hash = ((hash << 5) - hash) + signString.charCodeAt(i);
-                hash |= 0;
-            }
-            const signature = Math.abs(hash).toString(16).toUpperCase().slice(0, 4);
-            const uniqueUserKey = `${rawKeyData}-${signature}`;
-
-            document.getElementById("keyDisplay").innerText = uniqueUserKey;
+            // 3. Hiển thị Key thành công (dùng chính Mã xác minh này để gửi cho bot)
+            document.getElementById("keyDisplay").innerText = passInput;
             document.getElementById("resultBox").style.display = "block";
             localStorage.setItem("last_get_key_time", nowTime);
             alert("Lấy Key thành công!");
