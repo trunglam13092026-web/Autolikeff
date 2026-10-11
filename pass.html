@@ -24,17 +24,7 @@
     </div>
 
     <script>
-        // KIỂM TRA XEM CÓ BẤM TỪ TRANG LẤY KEY QUA KHÔNG
-        const checkFlag = localStorage.getItem("did_click_link");
-        
-        if (checkFlag !== "true") {
-            alert("⚠️ Phát hiện hành vi truy cập trực tiếp không qua vượt link! Vui lòng thực hiện lại.");
-            window.location.href = "getkey.html";
-        } else {
-            // Xóa ngay cờ sau khi đã vào được pass.html để chống F5 lạm dụng nhiều lần nếu cần, hoặc giữ nguyên tùy ý
-            localStorage.removeItem("did_click_link");
-        }
-
+        // Thuật toán tạo mã ngẫu nhiên theo khung 10 phút
         function generateRandomPass() {
             const now = new Date();
             const day = now.getDate();
