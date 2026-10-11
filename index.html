@@ -3,228 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buff Like Free Fire</title><meta name="google-adsense-account" content="ca-pub-6774808835156890">
+    <title>BUFF LIKE FREE FIRE</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 30px; background-color: #f4f4f9; }
-        .card { background: white; padding: 20px; border-radius: 10px; max-width: 400px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        input, button { width: 90%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
-        button { background-color: #28a745; color: white; border: none; font-weight: bold; cursor: pointer; font-size: 16px; }
-        button:disabled { background-color: #cccccc; }
-        .key-link { color: #007bff; text-decoration: none; font-weight: bold; }
-        #statusMsg { margin-top: 15px; font-weight: bold; }
-        .sub-description { font-size: 13px; color: #666; margin-bottom: 15px; line-height: 1.5; }
-        
-        .social-links { margin: 12px 0; font-size: 13px; }
-        .social-links a { text-decoration: none; font-weight: bold; margin: 0 8px; }
-        .telegram-link { color: #0088cc; }
-        .tiktok-link { color: #000000; }
-
-        .notice-box {
-            margin-top: 15px;
-            padding: 12px;
-            background-color: #fff3cd;
-            border: 1px solid #ffeeba;
-            border-radius: 6px;
-            color: #856404;
-            font-size: 13px;
-            text-align: left;
-            line-height: 1.5;
-        }
-        .notice-box b { color: #533f03; }
-
-        /* Style cho khung đếm ngược 12 tiếng */
-        .cooldown-box {
-            background-color: #e2e3e5;
-            border: 1px solid #d6d8db;
-            color: #383d41;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-        }
-        .timer {
-            font-size: 24px;
-            font-weight: bold;
-            color: #dc3545;
-            margin-top: 8px;
-        }
+        body { font-family: Arial, sans-serif; background-color: #121212; color: #fff; text-align: center; padding: 30px 15px; margin: 0; }
+        .container { max-width: 420px; margin: auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        h2 { color: #fff; margin-bottom: 5px; }
+        .dev { font-size: 13px; color: #00ff88; margin-bottom: 20px; }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        input { width: 100%; padding: 12px; background: #2a2a2a; border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
+        input:focus { border-color: #00ff88; outline: none; }
+        .get-key-link { display: block; margin: 10px 0 20px 0; color: #3399ff; text-decoration: none; font-size: 14px; font-weight: bold; }
+        .get-key-link:hover { text-decoration: underline; }
+        .btn-run { background: #28a745; color: white; border: none; padding: 14px; width: 100%; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; }
+        .btn-run:hover { background: #218838; }
+        #errorBox { margin-top: 15px; font-size: 14px; font-weight: bold; color: #ff4d4d; }
+        .notice { margin-top: 25px; background: #2a261a; border: 1px solid #d4af37; padding: 12px; border-radius: 8px; text-align: left; font-size: 13px; color: #ffd700; line-height: 1.4; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>BUFF LIKE FREE FIRE</h2>
-    
-    <div class="sub-description">
-        Được phát triển bởi hệ thống <a href="https://t.me/tlzproject" target="_blank" class="telegram-link">@tlzproject</a>
-    </div>
+    <div class="container">
+        <h2>BUFF LIKE FREE FIRE</h2>
+        <div class="dev">Được phát triển bởi hệ thống @tlzproject</div>
 
-    <div class="social-links">
-        <b>Hỗ trợ chính thức:</b><br>
-        <a href="https://t.me/tlzproject" target="_blank" class="telegram-link">💬 Telegram: @tlzproject</a><br>
-        <a href="https://www.tiktok.com/@Hvpcutis1tg" target="_blank" class="tiktok-link">🎵 TikTok: @Hvpcutis1tg</a>
-    </div>
-    
-    <!-- KHỐI FORM NHẬP -->
-    <div id="formBuff">
-        <input type="text" id="uidInput" placeholder="Nhập UID Free Fire">
-        <input type="text" id="keyInput" placeholder="Nhập Key sử dụng">
-        
-        <div>
-            <a href="getkey.html" class="key-link">👉 Nhấp vào đây để lấy Key miễn phí</a>
+        <div class="input-group">
+            <input type="text" id="uidInput" placeholder="Nhập UID Free Fire của bạn...">
         </div>
 
-        <button id="btnSubmit" onclick="startBuff()">Chạy</button>
+        <div class="input-group">
+            <input type="text" id="keyInput" placeholder="Nhập Key xác minh...">
+        </div>
+
+        <a href="getkey.html" class="get-key-link">👉 Nhấp vào đây để lấy Key miễn phí</a>
+
+        <button class="btn-run" onclick="handleRunBuff()">Chạy</button>
+
+        <div id="errorBox"></div>
+
+        <div class="notice">
+            <b>📢 THÔNG BÁO QUAN TRỌNG:</b><br>
+            • Mỗi người tranh thủ buff sớm nhất có thể nha (từ 6h sáng đến 20h tối).<br>
+            • Khoảng thời gian này sẽ buff đủ cho +200 like.<br>
+            • Nếu như mọi người buff sau 20h sẽ bị thiếu like nha!
+        </div>
     </div>
 
-    <!-- KHỐI ĐẾM NGƯỢC -->
-    <div id="cooldownArea" class="cooldown-box" style="display: none;">
-        ⏳ <b>HỆ THỐNG ĐANG TRONG THỜI GIAN CHỜ</b>
-        <div class="sub-description" style="margin-top: 5px;">Mỗi lượt buff cách nhau 12 tiếng. Vui lòng quay lại sau:</div>
-        <div class="timer" id="timerDisplay">12:00:00</div>
-    </div>
+    <script>
+        const SECRET_KEY = "TLZ_PROJECT_SECRET_2026"; // Phải khớp với pass.html
 
-    <div id="statusMsg"></div>
-
-    <div class="notice-box">
-        📢 <b>THÔNG BÁO QUAN TRỌNG:</b><br>
-        • Mỗi người tranh thủ buff sớm nhất có thể nha (từ <b>6h sáng đến 20h tối</b>).<br>
-        • Khoảng thời gian này sẽ buff đủ cho <b>+200 like</b>.<br>
-        • Nếu như mọi người buff <b>sau 20h sẽ bị thiếu like</b> nha!
-    </div>
-</div>
-
-<script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
-    const COOLDOWN_DURATION = 12 * 60 * 60 * 1000; // 12 Tiếng (ms)
-    let timerInterval = null;
-
-    // Tự động kiểm tra ngay khi load xong trang
-    document.addEventListener("DOMContentLoaded", function() {
-        checkCooldown();
-    });
-
-    function checkCooldown() {
-        const unlockTime = localStorage.getItem("buffUnlockTime");
-        if (unlockTime) {
-            const now = Date.now();
-            const remain = parseInt(unlockTime) - now;
-
-            if (remain > 0) {
-                // Thời gian vẫn còn -> Tiếp tục đếm ngược đúng số thời gian còn lại
-                runTimer(parseInt(unlockTime));
-            } else {
-                // Đã hết 12 tiếng -> Xóa bộ nhớ và mở lại form
-                localStorage.removeItem("buffUnlockTime");
-                showForm();
+        function simpleHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = ((hash << 5) - hash) + str.charCodeAt(i);
+                hash |= 0;
             }
-        } else {
-            showForm();
+            return Math.abs(hash).toString(16);
         }
-    }
 
-    function runTimer(targetTime) {
-        document.getElementById("formBuff").style.display = "none";
-        document.getElementById("cooldownArea").style.display = "block";
+        function handleRunBuff() {
+            const uid = document.getElementById("uidInput").value.trim();
+            const userKey = document.getElementById("keyInput").value.trim().toUpperCase();
+            const errorBox = document.getElementById("errorBox");
 
-        if (timerInterval) clearInterval(timerInterval);
+            errorBox.style.color = "#ff4d4d";
 
-        function updateDisplay() {
-            const now = Date.now();
-            const remain = targetTime - now;
-
-            if (remain <= 0) {
-                clearInterval(timerInterval);
-                localStorage.removeItem("buffUnlockTime");
-                showForm();
+            if (!uid) {
+                errorBox.innerText = "Vui lòng nhập UID Free Fire!";
                 return;
             }
 
-            let hours = Math.floor(remain / (1000 * 60 * 60));
-            let minutes = Math.floor((remain % (1000 * 60 * 60)) / (1000 * 60));
-            let seconds = Math.floor((remain % (1000 * 60)) / 1000);
-
-            document.getElementById("timerDisplay").innerText = 
-                (hours < 10 ? "0" + hours : hours) + ":" + 
-                (minutes < 10 ? "0" + minutes : minutes) + ":" + 
-                (seconds < 10 ? "0" + seconds : seconds);
-        }
-
-        updateDisplay();
-        timerInterval = setInterval(updateDisplay, 1000);
-    }
-
-    function showForm() {
-        document.getElementById("formBuff").style.display = "block";
-        document.getElementById("cooldownArea").style.display = "none";
-    }
-
-    async function getClientIp() {
-        try {
-            const res = await fetch("https://jsonip.com/", { cache: "no-store" });
-            const data = await res.json();
-            return data.ip || "Không lấy được IP";
-        } catch (e) {
-            return "Không lấy được IP";
-        }
-    }
-
-    async function startBuff() {
-        const uidInput = document.getElementById("uidInput").value.trim();
-        const keyInput = document.getElementById("keyInput").value.trim();
-        const statusMsg = document.getElementById("statusMsg");
-        const btnSubmit = document.getElementById("btnSubmit");
-
-        if (!uidInput || !keyInput) {
-            statusMsg.style.color = "red";
-            statusMsg.innerText = "Vui lòng nhập đầy đủ UID và Key!";
-            return;
-        }
-
-        btnSubmit.disabled = true;
-        statusMsg.style.color = "blue";
-        statusMsg.innerText = "Đang kiểm tra Key và gửi lệnh...";
-
-        const userIp = await getClientIp();
-
-        const callbackName = "cb_" + Date.now();
-        window[callbackName] = function(data) {
-            delete window[callbackName];
-            const oldScript = document.getElementById(callbackName);
-            if (oldScript) oldScript.remove();
-            
-            btnSubmit.disabled = false;
-            if (data && data.success) {
-                statusMsg.style.color = "green";
-                statusMsg.innerText = data.message || "Gửi lệnh Buff thành công!";
-                
-                // LƯU THỜI ĐIỂM SẼ MỞ KHÓA (Bây giờ + 12 Tiếng)
-                const targetUnlockTime = Date.now() + COOLDOWN_DURATION;
-                localStorage.setItem("buffUnlockTime", targetUnlockTime.toString());
-                
-                setTimeout(() => {
-                    runTimer(targetUnlockTime);
-                }, 1500);
-
-            } else {
-                statusMsg.style.color = "red";
-                statusMsg.innerText = data ? data.message : "Key không hợp lệ hoặc đã được sử dụng!";
+            if (!userKey) {
+                errorBox.innerText = "Vui lòng nhập Key xác minh!";
+                return;
             }
-        };
 
-        const script = document.createElement("script");
-        script.id = callbackName;
-        script.src = WEB_APP_URL + "?action=useKey&key=" + encodeURIComponent(keyInput) + "&uid=" + encodeURIComponent(uidInput) + "&ip=" + encodeURIComponent(userIp) + "&callback=" + callbackName;
-        script.onerror = function() {
-            delete window[callbackName];
-            const oldScript = document.getElementById(callbackName);
-            if (oldScript) oldScript.remove();
-            btnSubmit.disabled = false;
-            statusMsg.style.color = "red";
-            statusMsg.innerText = "Lỗi kết nối Server!";
-        };
-        document.body.appendChild(script);
-    }
-</script>
+            try {
+                const parts = userKey.split("-");
+                if (parts.length !== 4 || parts[0] !== "TLZ") {
+                    errorBox.innerText = "Key không tồn tại hoặc không hợp lệ!";
+                    return;
+                }
 
+                const randomPart = parts[1];
+                const providedSig = parts[2];
+                const hexExpire = parts[3];
+
+                // Giải mã thời gian hết hạn
+                const expireTime = parseInt(hexExpire, 36);
+                const now = new Date().getTime();
+
+                // 1. Kiểm tra hạn sử dụng (10 phút)
+                if (now > expireTime) {
+                    errorBox.innerText = "Key đã hết hạn sử dụng (quá 10 phút)!";
+                    return;
+                }
+
+                // 2. Kiểm tra chữ ký bảo mật
+                const rawData = expireTime + "_" + randomPart;
+                const expectedSig = simpleHash(rawData + SECRET_KEY).toUpperCase().slice(0, 4);
+
+                if (providedSig !== expectedSig) {
+                    errorBox.innerText = "Key không tồn tại hoặc không hợp lệ!";
+                    return;
+                }
+
+                // 3. Chống tái sử dụng Key (Mỗi Key chỉ dùng 1 lần)
+                const usedKeys = JSON.parse(localStorage.getItem("used_keys") || "[]");
+                if (usedKeys.includes(userKey)) {
+                    errorBox.innerText = "Key này đã được sử dụng trước đó rồi!";
+                    return;
+                }
+
+                // Đánh dấu Key đã dùng
+                usedKeys.push(userKey);
+                localStorage.setItem("used_keys", JSON.stringify(usedKeys));
+
+                // --- THÀNH CÔNG ---
+                errorBox.style.color = "#00ff88";
+                errorBox.innerText = "✅ Xác thực thành công! Đang gửi lệnh buff cho UID: " + uid;
+                
+                // (Chỗ này bạn có thể tích hợp code gửi request buff like thực tế của bạn vào đây)
+
+            } catch (e) {
+                errorBox.innerText = "Key không tồn tại hoặc không hợp lệ!";
+            }
+        }
+    </script>
 </body>
 </html>
