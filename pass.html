@@ -7,7 +7,7 @@
     <style>
         body { font-family: Arial, sans-serif; background-color: #121212; color: #fff; text-align: center; padding: 50px 20px; }
         .card { background: #1e1e1e; max-width: 400px; margin: auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .pass-box { font-size: 24px; font-weight: bold; color: #00ff88; background: #2a2a2a; padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px dashed #00ff88; letter-spacing: 2px; }
+        .pass-box { font-size: 18px; font-weight: bold; color: #00ff88; background: #2a2a2a; padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px dashed #00ff88; word-break: break-all; letter-spacing: 1px; }
         .btn-copy { background: #0088cc; color: white; border: none; padding: 12px 20px; font-size: 16px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; }
         .btn-copy:hover { background: #006699; }
     </style>
@@ -16,37 +16,57 @@
 
     <div class="card">
         <h2>🎉 VƯỢT LINK THÀNH CÔNG</h2>
-        <p>Mã xác minh của bạn là (Hiệu lực 10 phút):</p>
+        <p>Key ngẫu nhiên của bạn (Hiệu lực 10 phút):</p>
         
-        <div class="pass-box" id="passCode">Đang tải...</div>
+        <div class="pass-box" id="keyDisplay">Đang tạo Key...</div>
         
-        <button class="btn-copy" onclick="copyPass()">📋 SAO CHÉP MÃ</button>
+        <button class="btn-copy" onclick="copyKey()">📋 SAO CHÉP KEY</button>
     </div>
 
     <script>
-        // Thuật toán tạo mã ngẫu nhiên theo khung 10 phút
-        function generateRandomPass() {
-            const now = new Date();
-            const day = now.getDate();
-            const hour = now.getHours();
-            const block10 = Math.floor(now.getMinutes() / 10);
-            
-            const seed = "TLZ-SECRET-" + day + "-" + hour + "-" + block10;
-            let hash = 0;
-            for (let i = 0; i < seed.length; i++) {
-                hash = ((hash << 5) - hash) + seed.charCodeAt(i);
-                hash |= 0;
-            }
-            const hex = Math.abs(hash).toString(16).toUpperCase().padEnd(8, '0');
-            return "TLZ-" + hex.slice(0, 4) + "-" + hex.slice(4, 8);
+        // --- LỚP BẢO VỆ 1: CHẶN TRUY CẬP TRỰC TIẾP ---
+        const adStarted = localStorage.getItem("tlz_ad_started");
+        const adTime = localStorage.getItem("tlz_ad_time");
+        const now = new Date().getTime();
+
+        // Kiểm tra xem có đi từ trang getkey không và thời gian hoàn thành có hợp lý không (dưới 30 phút)
+        if (!adStarted || !adTime || (now - adTime > 30 * 60 * 1000)) {
+            alert("⚠️ Phát hiện hành vi truy cập trực tiếp không qua vượt link! Vui lòng thực hiện lại từ đầu.");
+            window.location.href = "getkey.html";
+        } else {
+            // Xóa cờ ngay sau khi cấp key để chống việc F5 lấy key mới vô tội vạ
+            localStorage.removeItem("tlz_ad_started");
         }
 
-        const currentPass = generateRandomPass();
-        document.getElementById("passCode").innerText = currentPass;
+        // --- LỚP BẢO VỆ 2: SINH KEY NGẪU NHIÊN ĐỘC LẬP KÈM THỜI HẠN ---
+        const SECRET_KEY = "TLZ_PROJECT_SECRET_2026"; // Khớp với bên trang index.html
 
-        function copyPass() {
-            navigator.clipboard.writeText(currentPass);
-            alert("Đã sao chép mã xác minh: " + currentPass);
+        function simpleHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = ((hash << 5) - hash) + str.charCodeAt(i);
+                hash |= 0;
+            }
+            return Math.abs(hash).toString(16);
+        }
+
+        function generateUniqueKey() {
+            const expireTime = now + (10 * 60 * 1000); // Hạn sử dụng: 10 phút sau
+            const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
+            
+            const rawData = expireTime + "_" + randomPart;
+            const signature = simpleHash(rawData + SECRET_KEY).toUpperCase().slice(0, 4);
+            
+            const hexExpire = expireTime.toString(36).toUpperCase();
+            return `TLZ-${randomPart}-${signature}-${hexExpire}`;
+        }
+
+        const myKey = generateUniqueKey();
+        document.getElementById("keyDisplay").innerText = myKey;
+
+        function copyKey() {
+            navigator.clipboard.writeText(myKey);
+            alert("Đã sao chép Key thành công!");
         }
     </script>
 </body>
