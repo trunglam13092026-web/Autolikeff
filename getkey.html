@@ -11,11 +11,7 @@
         .instructions { font-size: 14px; color: #ccc; text-align: left; background: #2a2a2a; padding: 12px; border-radius: 8px; margin-bottom: 20px; line-height: 1.5; }
         .btn { display: block; width: 100%; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 8px; border: none; cursor: pointer; text-decoration: none; margin-bottom: 12px; box-sizing: border-box; text-align: center; }
         .btn-link { background: #ff9900; color: #000; }
-        .btn-key { background: #0088cc; color: #fff; }
         .btn-home { background: #444; color: #fff; }
-        input[type="text"] { width: 100%; padding: 12px; font-size: 15px; border-radius: 8px; border: 1px solid #444; background: #121212; color: #fff; margin-bottom: 15px; box-sizing: border-box; text-align: center; }
-        .key-result { display: none; background: #2a2a2a; border: 1px solid #00ff88; padding: 15px; border-radius: 8px; margin-top: 15px; word-break: break-all; }
-        .key-text { font-size: 18px; font-weight: bold; color: #00ff88; letter-spacing: 1px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -26,92 +22,24 @@
 
         <div class="instructions">
             <b>HƯỚNG DẪN LẤY KEY:</b><br>
-            1. Bấm <b>"BƯỚC 1: VƯỢT LINK LẤY MÃ"</b>.<br>
-            2. Hoàn tất vượt link để nhận <b>Mã xác minh</b>.<br>
-            3. Dán Mã xác minh vào ô bên dưới rồi bấm <b>"BƯỚC 2: LẤY KEY NGAY"</b>.
+            1. Bấm nút bên dưới để bắt đầu vượt chuỗi link.<br>
+            2. Hoàn tất các bước quảng cáo để nhận Key ngẫu nhiên độc lập.
         </div>
 
-        <a href="#" onclick="startPassLink()" class="btn btn-link">👉 BƯỚC 1: VƯỢT LINK LẤY MÃ</a>
+        <a href="#" onclick="startAdFlow()" class="btn btn-link">👉 BẮT ĐẦU VƯỢT LINK LẤY KEY</a>
 
-        <input type="text" id="passInput" placeholder="Nhập mã xác minh tại đây...">
-
-        <button class="btn btn-key" onclick="generateKey()">⚡ BƯỚC 2: LẤY KEY NGAY</button>
-
-        <div id="resultBox" class="key-result">
-            <div style="font-size: 13px; color: #aaa;">KEY CỦA BẠN (DÙNG CHO BOT):</div>
-            <div class="key-text" id="keyDisplay">---</div>
-            <button class="btn btn-home" onclick="copyResultKey()">📋 SAO CHÉP KEY</button>
-        </div>
-        
         <br>
         <a href="index.html" class="btn btn-home">🏠 QUAY LẠI TRANG CHÍNH</a>
     </div>
 
     <script>
-        // Mở Link4M và đánh dấu người dùng đã bấm vượt link
-        function startPassLink() {
-            localStorage.setItem("did_click_link", "true");
-            window.open("https://link4m.net/0aFFT", "_blank");
-        }
+        function startAdFlow() {
+            // Đánh dấu người dùng đã bấm bắt đầu vượt link trên tên miền này
+            localStorage.setItem("tlz_ad_started", "true");
+            localStorage.setItem("tlz_ad_time", new Date().getTime());
 
-        // Hàm tính Mã xác minh chung 10 phút
-        function getPassByTime(dateObj) {
-            const day = dateObj.getDate();
-            const hour = dateObj.getHours();
-            const block10 = Math.floor(dateObj.getMinutes() / 10);
-            
-            const seed = "TLZ-SECRET-" + day + "-" + hour + "-" + block10;
-            let hash = 0;
-            for (let i = 0; i < seed.length; i++) {
-                hash = ((hash << 5) - hash) + seed.charCodeAt(i);
-                hash |= 0;
-            }
-            const hex = Math.abs(hash).toString(16).toUpperCase().padEnd(8, '0');
-            return "TLZ-" + hex.slice(0, 4) + "-" + hex.slice(4, 8);
-        }
-
-        function generateKey() {
-            const passInput = document.getElementById("passInput").value.trim().toUpperCase();
-
-            if (!passInput) {
-                alert("Vui lòng nhập Mã xác minh!");
-                return;
-            }
-
-            // 1. Kiểm tra giãn cách lấy key (5 phút/lần)
-            const lastTime = localStorage.getItem("last_get_key_time");
-            const nowTime = new Date().getTime();
-            const cooldownTime = 5 * 60 * 1000;
-
-            if (lastTime && (nowTime - lastTime < cooldownTime)) {
-                const timeLeft = Math.ceil((cooldownTime - (nowTime - lastTime)) / 1000);
-                const minutesLeft = Math.ceil(timeLeft / 60);
-                alert("Bạn đang lấy Key quá nhanh! Vui lòng đợi " + minutesLeft + " phút nữa.");
-                return;
-            }
-
-            // 2. Kiểm tra Mã xác minh (Khung hiện tại hoặc 10 phút trước đó)
-            const now = new Date();
-            const currentValidPass = getPassByTime(now);
-            const prevTime = new Date(now.getTime() - 10 * 60 * 1000);
-            const prevValidPass = getPassByTime(prevTime);
-
-            if (passInput !== currentValidPass && passInput !== prevValidPass) {
-                alert("Mã xác minh KHÔNG CHÍNH XÁC hoặc đã hết hạn!");
-                return;
-            }
-
-            // 3. Hiển thị Key thành công (dùng chính Mã xác minh này để gửi cho bot)
-            document.getElementById("keyDisplay").innerText = passInput;
-            document.getElementById("resultBox").style.display = "block";
-            localStorage.setItem("last_get_key_time", nowTime);
-            alert("Lấy Key thành công!");
-        }
-
-        function copyResultKey() {
-            const keyText = document.getElementById("keyDisplay").innerText;
-            navigator.clipboard.writeText(keyText);
-            alert("Đã sao chép Key thành công!");
+            // Thay link bên dưới bằng link chuỗi quảng cáo của bạn (Link4M / Sitetop / Bumx...)
+            window.location.href = "https://link4m.net/0aFFT"; 
         }
     </script>
 </body>
