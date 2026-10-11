@@ -3,43 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MÃ XÁC MINH - TLZ BUFF LIKE</title>
+    <title>Lấy Key Thành Công</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #121212; color: #fff; text-align: center; padding: 50px 20px; }
-        .card { background: #1e1e1e; max-width: 400px; margin: auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .pass-box { font-size: 18px; font-weight: bold; color: #00ff88; background: #2a2a2a; padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px dashed #00ff88; word-break: break-all; letter-spacing: 1px; }
-        .btn-copy { background: #0088cc; color: white; border: none; padding: 12px 20px; font-size: 16px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; }
-        .btn-copy:hover { background: #006699; }
+        body { font-family: Arial, sans-serif; background-color: #121212; color: #fff; text-align: center; padding: 40px 15px; margin: 0; }
+        .container { max-width: 400px; margin: auto; background: #1e1e1e; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        h3 { color: #fff; margin-bottom: 10px; }
+        p { font-size: 14px; color: #bbb; margin-bottom: 20px; }
+        .key-box { background: #2a2a2a; border: 1px dashed #00ff88; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; color: #00ff88; word-break: break-all; margin-bottom: 20px; letter-spacing: 1px; }
+        .btn { display: block; width: 100%; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; border: none; box-sizing: border-box; text-decoration: none; text-align: center; margin-bottom: 12px; }
+        .btn-copy { background: #007bff; color: white; }
+        .btn-copy:hover { background: #0056b3; }
+        .btn-go { background: #28a745; color: white; }
+        .btn-go:hover { background: #218838; }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h2>🎉 VƯỢT LINK THÀNH CÔNG</h2>
+    <div class="container">
+        <h3>🎉 VƯỢT LINK THÀNH CÔNG</h3>
         <p>Key ngẫu nhiên của bạn (Hiệu lực 10 phút):</p>
+
+        <div class="key-box" id="keyDisplay">Đang tải Key...</div>
+
+        <button class="btn btn-copy" onclick="copyKey()">📋 SAO CHÉP KEY</button>
         
-        <div class="pass-box" id="keyDisplay">Đang tạo Key...</div>
-        
-        <button class="btn-copy" onclick="copyKey()">📋 SAO CHÉP KEY</button>
+        <!-- Nút mới thêm vào để chuyển về trang buff -->
+        <a href="index.html" class="btn btn-go">🚀 Đi đến trang buff</a>
     </div>
 
     <script>
-        // --- LỚP BẢO VỆ 1: CHẶN TRUY CẬP TRỰC TIẾP ---
-        const adStarted = localStorage.getItem("tlz_ad_started");
-        const adTime = localStorage.getItem("tlz_ad_time");
-        const now = new Date().getTime();
-
-        // Kiểm tra xem có đi từ trang getkey không và thời gian hoàn thành có hợp lý không (dưới 30 phút)
-        if (!adStarted || !adTime || (now - adTime > 30 * 60 * 1000)) {
-            alert("⚠️ Phát hiện hành vi truy cập trực tiếp không qua vượt link! Vui lòng thực hiện lại từ đầu.");
-            window.location.href = "getkey.html";
-        } else {
-            // Xóa cờ ngay sau khi cấp key để chống việc F5 lấy key mới vô tội vạ
-            localStorage.removeItem("tlz_ad_started");
-        }
-
-        // --- LỚP BẢO VỆ 2: SINH KEY NGẪU NHIÊN ĐỘC LẬP KÈM THỜI HẠN ---
-        const SECRET_KEY = "TLZ_PROJECT_SECRET_2026"; // Khớp với bên trang index.html
+        // --- LOGIC TẠO KEY (GIỮ NGUYÊN HOẶC ĐỒNG BỘ VỚI CODE CŨ CỦA BẠN) ---
+        const SECRET_KEY = "TLZ_PROJECT_SECRET_2026";
 
         function simpleHash(str) {
             let hash = 0;
@@ -50,23 +44,31 @@
             return Math.abs(hash).toString(16);
         }
 
-        function generateUniqueKey() {
-            const expireTime = now + (10 * 60 * 1000); // Hạn sử dụng: 10 phút sau
-            const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
-            
+        function generateKey() {
+            const expireTime = new Date().getTime() + (10 * 60 * 1000); // 10 phút
+            const randomPart = Math.random().toString(36.substring(2, 8)).toUpperCase();
             const rawData = expireTime + "_" + randomPart;
-            const signature = simpleHash(rawData + SECRET_KEY).toUpperCase().slice(0, 4);
-            
+            const sig = simpleHash(rawData + SECRET_KEY).toUpperCase().slice(0, 4);
             const hexExpire = expireTime.toString(36).toUpperCase();
-            return `TLZ-${randomPart}-${signature}-${hexExpire}`;
+
+            return `TLZ-${randomPart}-${sig}-${hexExpire}`;
         }
 
-        const myKey = generateUniqueKey();
-        document.getElementById("keyDisplay").innerText = myKey;
+        // Hiển thị Key khi load trang
+        const keyDisplay = document.getElementById("keyDisplay");
+        let currentKey = localStorage.getItem("current_valid_key");
+        
+        // Nếu chưa có hoặc muốn tạo mới mỗi lần vượt link thì dùng hàm generateKey()
+        if (!currentKey) {
+            currentKey = generateKey();
+            localStorage.setItem("current_valid_key", currentKey);
+        }
+        keyDisplay.innerText = currentKey;
 
         function copyKey() {
-            navigator.clipboard.writeText(myKey);
-            alert("Đã sao chép Key thành công!");
+            navigator.clipboard.writeText(currentKey).then(() => {
+                alert("Đã sao chép Key thành công!");
+            });
         }
     </script>
 </body>
