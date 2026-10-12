@@ -23,16 +23,14 @@
         <h3>🎉 VƯỢT LINK THÀNH CÔNG</h3>
         <p>Key ngẫu nhiên của bạn (Hiệu lực 10 phút):</p>
 
-        <div class="key-box" id="keyDisplay">Đang tải Key...</div>
+        <div class="key-box" id="keyDisplay">Đang tạo Key...</div>
 
         <button class="btn btn-copy" onclick="copyKey()">📋 SAO CHÉP KEY</button>
         
-        <!-- Nút mới thêm vào để chuyển về trang buff -->
         <a href="index.html" class="btn btn-go">🚀 Đi đến trang buff</a>
     </div>
 
     <script>
-        // --- LOGIC TẠO KEY (GIỮ NGUYÊN HOẶC ĐỒNG BỘ VỚI CODE CŨ CỦA BẠN) ---
         const SECRET_KEY = "TLZ_PROJECT_SECRET_2026";
 
         function simpleHash(str) {
@@ -45,8 +43,8 @@
         }
 
         function generateKey() {
-            const expireTime = new Date().getTime() + (10 * 60 * 1000); // 10 phút
-            const randomPart = Math.random().toString(36.substring(2, 8)).toUpperCase();
+            const expireTime = new Date().getTime() + (10 * 60 * 1000); // Hạn 10 phút
+            const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
             const rawData = expireTime + "_" + randomPart;
             const sig = simpleHash(rawData + SECRET_KEY).toUpperCase().slice(0, 4);
             const hexExpire = expireTime.toString(36).toUpperCase();
@@ -54,20 +52,20 @@
             return `TLZ-${randomPart}-${sig}-${hexExpire}`;
         }
 
-        // Hiển thị Key khi load trang
+        // Tạo mới hoàn toàn Key mỗi khi khách vượt link thành công để tránh bị kẹt cache cũ
+        const newKey = generateKey();
+        localStorage.setItem("current_valid_key", newKey);
+
+        // Hiển thị Key ra màn hình ngay lập tức
         const keyDisplay = document.getElementById("keyDisplay");
-        let currentKey = localStorage.getItem("current_valid_key");
-        
-        // Nếu chưa có hoặc muốn tạo mới mỗi lần vượt link thì dùng hàm generateKey()
-        if (!currentKey) {
-            currentKey = generateKey();
-            localStorage.setItem("current_valid_key", currentKey);
-        }
-        keyDisplay.innerText = currentKey;
+        keyDisplay.innerText = newKey;
 
         function copyKey() {
-            navigator.clipboard.writeText(currentKey).then(() => {
+            navigator.clipboard.writeText(newKey).then(() => {
                 alert("Đã sao chép Key thành công!");
+            }).catch(err => {
+                // Fallback nếu trình duyệt chặn clipboard API
+                alert("Không thể tự động copy, vui lòng bôi đen và copy thủ công!");
             });
         }
     </script>
