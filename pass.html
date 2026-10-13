@@ -43,7 +43,7 @@
         <!-- BƯỚC 2: Xác nhận hoàn thành -->
         <div id="stepVerify" class="hidden">
             <div class="step-desc" style="text-align: center; color: #00ff88;">
-                ✅ Bạn đã hoàn thành vượt link!<br>Nhấn nút bên dưới để hệ thống cấp Key.
+                ✅ Bạn đã hoàn thành vượt link!<br>Nhấn nút bên dưới để hiển thị Key của bạn.
             </div>
             <button class="btn-verify" onclick="requestKey()">🔓 Nhận Key Ngay</button>
         </div>
@@ -67,62 +67,61 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            const savedDate = localStorage.getItem('tlz_key_date');
-            const savedKey = localStorage.getItem('active_tlz_key');
-            const currentDate = getSystemDate();
-            
-            const urlParams = new URLSearchParams(window.location.search);
-            const isBypassed = urlParams.get('bypassed');
-
-            if (savedDate === currentDate && savedKey) {
-                showKeySection(savedKey);
-                cleanUrl();
-            } else if (isBypassed === 'true') {
-                document.getElementById('stepGetLink').classList.add('hidden');
-                document.getElementById('stepVerify').classList.remove('hidden');
-            } else {
-                document.getElementById('stepGetLink').classList.remove('hidden');
-                document.getElementById('stepVerify').classList.add('hidden');
-                document.getElementById('stepShowKey').classList.add('hidden');
+            try {
+                const savedDate = localStorage.getItem('tlz_key_date');
+                const savedKey = localStorage.getItem('active_tlz_key');
+                const currentDate = getSystemDate();
                 
-                if (savedDate !== currentDate) {
-                    localStorage.removeItem('active_tlz_key');
-                    localStorage.removeItem('tlz_key_date');
+                const urlParams = new URLSearchParams(window.location.search);
+                const isBypassed = urlParams.get('bypassed');
+
+                // Nếu trong ngày đã lưu Key rồi thì hiện thẳng phần Key luôn, không cần vượt link nữa
+                if (savedDate === currentDate && savedKey) {
+                    showKeySection(savedKey);
+                } 
+                else if (isBypassed === 'true') {
+                    document.getElementById('stepGetLink').classList.add('hidden');
+                    document.getElementById('stepVerify').classList.remove('hidden');
+                    document.getElementById('stepShowKey').classList.add('hidden');
+                } 
+                else {
+                    document.getElementById('stepGetLink').classList.remove('hidden');
+                    document.getElementById('stepVerify').classList.add('hidden');
+                    document.getElementById('stepShowKey').classList.add('hidden');
+                    
+                    if (savedDate && savedDate !== currentDate) {
+                        localStorage.removeItem('active_tlz_key');
+                        localStorage.removeItem('tlz_key_date');
+                    }
                 }
+            } catch (err) {
+                console.error("Lỗi khởi tạo:", err);
             }
         });
 
-        function cleanUrl() {
-            if (window.history.replaceState) {
-                const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-                window.history.replaceState({path: cleanUrl}, '', cleanUrl);
-            }
-        }
-
         async function requestKey() {
-            document.getElementById('stepVerify').classList.add('hidden');
-            document.getElementById('stepShowKey').classList.remove('hidden');
-
             const currentDate = getSystemDate();
             const savedDate = localStorage.getItem('tlz_key_date');
             const savedKey = localStorage.getItem('active_tlz_key');
 
+            // Nếu đã có sẵn trong máy thì hiện luôn
             if (savedDate === currentDate && savedKey) {
                 showKeySection(savedKey);
-                cleanUrl();
                 return;
             }
+
+            document.getElementById('stepVerify').classList.add('hidden');
+            document.getElementById('stepShowKey').classList.remove('hidden');
 
             try {
                 document.getElementById("keyDisplay").innerText = "⏳ Đang tạo Key từ hệ thống...";
                 const res = await fetch(GAS_API_URL + "?action=get_key");
                 const data = await res.json();
 
-                if (data.status === "success") {
+                if (data && data.status === "success") {
                     localStorage.setItem('tlz_key_date', currentDate);
                     localStorage.setItem('active_tlz_key', data.key);
                     showKeySection(data.key);
-                    cleanUrl();
                 } else {
                     document.getElementById("keyDisplay").innerText = "❌ Lỗi tạo Key từ Server!";
                 }
@@ -132,15 +131,20 @@
         }
 
         function showKeySection(key) {
-            document.getElementById('stepGetLink').classList.add('hidden');
-            document.getElementById('stepVerify').classList.add('hidden');
-            document.getElementById('stepShowKey').classList.remove('hidden');
-            document.getElementById("keyDisplay").innerText = key;
+            const stepGetLink = document.getElementById('stepGetLink');
+            const stepVerify = document.getElementById('stepVerify');
+            const stepShowKey = document.getElementById('stepShowKey');
+            const keyDisplay = document.getElementById('keyDisplay');
+
+            if (stepGetLink) stepGetLink.classList.add('hidden');
+            if (stepVerify) stepVerify.classList.add('hidden');
+            if (stepShowKey) stepShowKey.classList.remove('hidden');
+            if (keyDisplay) keyDisplay.innerText = key;
         }
 
         function copyKey() {
             const currentKey = document.getElementById("keyDisplay").innerText;
-            if(!currentKey.startsWith("TLZ-")) return;
+            if(!currentKey || !currentKey.startsWith("TLZ-")) return;
             
             navigator.clipboard.writeText(currentKey).then(() => {
                 document.getElementById("statusMsg").innerText = "✅ Đã sao chép Key thành công!";
