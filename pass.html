@@ -1,7 +1,69 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XÁC MINH LẤY KEY - TLZ PROJECT</title>
+    <!-- Thư viện Cloudflare Turnstile -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #121212; color: #fff; text-align: center; padding: 40px 15px; margin: 0; }
+        .container { max-width: 420px; margin: auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        h2 { color: #fff; margin-bottom: 10px; font-size: 22px; }
+        .dev { font-size: 13px; color: #00ff88; margin-bottom: 20px; }
+        .key-box { background: #2a2a2a; border: 2px dashed #00ff88; padding: 15px; border-radius: 8px; font-size: 18px; font-weight: bold; color: #00ff88; word-break: break-all; margin: 20px 0; letter-spacing: 1px; }
+        .btn-action { background: #ffc107; color: #000; border: none; padding: 14px; width: 100%; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 15px; display: block; text-decoration: none; box-sizing: border-box; }
+        .btn-action:hover { background: #e0a800; }
+        .btn-copy { background: #007bff; color: white; border: none; padding: 12px; width: 100%; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 10px; }
+        .btn-copy:hover { background: #0056b3; }
+        .btn-back { display: block; margin-top: 15px; color: #aaa; text-decoration: none; font-size: 14px; }
+        .btn-back:hover { color: #fff; text-decoration: underline; }
+        #statusMsg { font-size: 13px; color: #ffd700; margin-top: 10px; }
+        .hidden { display: none; }
+        .step-desc { font-size: 14px; color: #ddd; margin-bottom: 20px; line-height: 1.5; text-align: left; background: #2a2a2a; padding: 12px; border-radius: 8px; }
+        .captcha-box { margin: 15px 0; display: flex; justify-content: center; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>XÁC MINH LẤY KEY</h2>
+        <div class="dev">TLZ Project Security System</div>
+
+        <!-- BƯỚC 1 -->
+        <div id="stepGetLink" class="hidden">
+            <div class="step-desc">
+                <b>📌 Hướng dẫn lấy Key:</b><br>
+                1. Bấm nút bên dưới để vượt link.<br>
+                2. Sau khi vượt thành công, hệ thống sẽ đưa bạn về đây.<br>
+                3. Hoàn thành xác thực để nhận Key!
+            </div>
+            <a href="https://link4m.net/0aFFT" class="btn-action">🔗 Bấm vào đây để Vượt Link</a>
+        </div>
+
+        <!-- BƯỚC 2 -->
+        <div id="stepCaptcha" class="hidden">
+            <div class="step-desc" style="text-align: center; color: #00ff88;">
+                ✅ Bạn đã hoàn thành vượt link!<br>Vui lòng tích xác nhận bên dưới để lấy Key.
+            </div>
+            <div class="captcha-box">
+                <div class="cf-turnstile" data-sitekey="0x4AAAAAAAE-Ng5r2t56kUa0" data-callback="onCaptchaSuccess"></div>
+            </div>
+        </div>
+
+        <!-- BƯỚC 3 -->
+        <div id="stepShowKey" class="hidden">
+            <div class="key-box" id="keyDisplay">⏳ Đang xử lý...</div>
+            <button class="btn-copy" onclick="copyKey()">📋 Sao chép Key</button>
+            <div id="statusMsg"></div>
+        </div>
+
+        <a href="index.html" class="btn-back">⬅ Quay lại trang chủ Buff Like</a>
+    </div>
+
     <script>
         const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
 
-        // Lấy định dạng ngày tháng chuẩn theo năm-tháng-ngày để phân biệt các ngày khác nhau
         function getSystemDate() {
             const d = new Date();
             return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
@@ -15,24 +77,18 @@
             const urlParams = new URLSearchParams(window.location.search);
             const isBypassed = urlParams.get('bypassed');
 
-            // 1. Kiểm tra xem đã lưu Key của ngày hôm nay chưa
             if (savedDate === currentDate && savedKey) {
-                // Đã có sẵn -> Hiện thẳng Key cũ, không cho phép đổi hay reset nữa
                 showKeySection(savedKey);
                 cleanUrl();
-            } 
-            // 2. Nếu vừa vượt link Link4M / Bumx về (có ?bypassed=true) -> Mở bảng Captcha
-            else if (isBypassed === 'true') {
+            } else if (isBypassed === 'true') {
                 document.getElementById('stepGetLink').classList.add('hidden');
                 document.getElementById('stepCaptcha').classList.remove('hidden');
-            } 
-            // 3. Truy cập chay chưa qua link -> Bắt buộc vượt link
-            else {
-                document.getElementById('stepGetLink').classList.add('hidden');
+                document.getElementById('stepShowKey').classList.add('hidden');
+            } else {
+                document.getElementById('stepGetLink').classList.remove('hidden');
                 document.getElementById('stepCaptcha').classList.add('hidden');
-                document.getElementById('stepGetLink').classList.remove('hidden'); // Hiện lại nút vượt link
+                document.getElementById('stepShowKey').classList.add('hidden');
                 
-                // Nếu trước đó đã lỡ lưu key ngày cũ thì xóa đi để làm vòng mới
                 if (savedDate !== currentDate) {
                     localStorage.removeItem('active_tlz_key');
                     localStorage.removeItem('tlz_key_date');
@@ -40,7 +96,6 @@
             }
         });
 
-        // Xóa tham số ?bypassed=true trên URL để khi F5 không bị kẹt hay reset luồng
         function cleanUrl() {
             if (window.history.replaceState) {
                 const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
@@ -48,7 +103,6 @@
             }
         }
 
-        // Khi vượt qua Captcha thành công
         async function onCaptchaSuccess(token) {
             document.getElementById('stepGetLink').classList.add('hidden');
             document.getElementById('stepCaptcha').classList.add('hidden');
@@ -58,30 +112,27 @@
             const savedDate = localStorage.getItem('tlz_key_date');
             const savedKey = localStorage.getItem('active_tlz_key');
 
-            // Nếu lỡ bấm lại mà cùng ngày thì lấy lại key cũ đã lưu cho chắc chắn
             if (savedDate === currentDate && savedKey) {
                 showKeySection(savedKey);
                 cleanUrl();
                 return;
             }
 
-            // Gọi Server lấy Key mới chính thức cho ngày hôm nay
             try {
                 document.getElementById("keyDisplay").innerText = "⏳ Đang tạo Key từ hệ thống...";
                 const res = await fetch(GAS_API_URL + "?action=get_key");
                 const data = await res.json();
 
                 if (data.status === "success") {
-                    // Lưu cứng ngày và Key vào trình duyệt
                     localStorage.setItem('tlz_key_date', currentDate);
                     localStorage.setItem('active_tlz_key', data.key);
-                    
                     showKeySection(data.key);
                     cleanUrl();
                 } else {
                     document.getElementById("keyDisplay").innerText = "❌ Lỗi tạo Key từ Server!";
                 }
             } catch (e) {
+                document.getElementById("keyDisplay").zIndex = "";
                 document.getElementById("keyDisplay").innerText = "❌ Không thể kết nối tới Server!";
             }
         }
@@ -105,3 +156,5 @@
             });
         }
     </script>
+</body>
+</html>
