@@ -16,6 +16,7 @@
         .get-key-link:hover { text-decoration: underline; }
         .btn-run { background: #28a745; color: white; border: none; padding: 14px; width: 100%; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; }
         .btn-run:hover { background: #218838; }
+        .btn-run:disabled { background: #555; cursor: not-allowed; }
         #errorBox { margin-top: 15px; font-size: 14px; font-weight: bold; color: #ff4d4d; }
         .notice { margin-top: 25px; background: #2a261a; border: 1px solid #d4af37; padding: 12px; border-radius: 8px; text-align: left; font-size: 13px; color: #ffd700; line-height: 1.4; }
     </style>
@@ -23,7 +24,6 @@
 <body>
 
     <div class="container">
-        <!-- Đã đổi tiêu đề chính -->
         <h2>BUFF LIKE FI FAI MIỄN PHÍ</h2>
         <div class="dev">Được phát triển bởi hệ thống @tlzproject</div>
 
@@ -37,7 +37,7 @@
 
         <a href="getkey.html" class="get-key-link">👉 Nhấp vào đây để lấy Key miễn phí</a>
 
-        <button class="btn-run" onclick="handleRunBuff()">Chạy</button>
+        <button class="btn-run" id="btnRun" onclick="handleRunBuff()">Chạy</button>
 
         <div id="errorBox"></div>
 
@@ -50,21 +50,11 @@
     </div>
 
     <script>
-        const SECRET_KEY = "TLZ_PROJECT_SECRET_2026"; // Phải khớp với pass.html
-
-        function simpleHash(str) {
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) {
-                hash = ((hash << 5) - hash) + str.charCodeAt(i);
-                hash |= 0;
-            }
-            return Math.abs(hash).toString(16);
-        }
-
-        function handleRunBuff() {
+        async function handleRunBuff() {
             const uid = document.getElementById("uidInput").value.trim();
             const userKey = document.getElementById("keyInput").value.trim().toUpperCase();
             const errorBox = document.getElementById("errorBox");
+            const btnRun = document.getElementById("btnRun");
 
             errorBox.style.color = "#ff4d4d";
 
@@ -78,57 +68,17 @@
                 return;
             }
 
+            // Khóa nút Chạy và báo trạng thái đang gửi
+            btnRun.disabled = true;
+            errorBox.style.color = "#ffd700";
+            errorBox.innerText = "⏳ Đang xác thực với Server...";
+
             try {
-                const parts = userKey.split("-");
-                if (parts.length !== 4 || parts[0] !== "TLZ") {
-                    errorBox.innerText = "Key không tồn tại hoặc không hợp lệ!";
-                    return;
-                }
-
-                const randomPart = parts[1];
-                const providedSig = parts[2];
-                const hexExpire = parts[3];
-
-                // Giải mã thời gian hết hạn
-                const expireTime = parseInt(hexExpire, 36);
-                const now = new Date().getTime();
-
-                // 1. Kiểm tra hạn sử dụng (10 phút)
-                if (now > expireTime) {
-                    errorBox.innerText = "Key đã hết hạn sử dụng (quá 10 phút)!";
-                    return;
-                }
-
-                // 2. Kiểm tra chữ ký bảo mật
-                const rawData = expireTime + "_" + randomPart;
-                const expectedSig = simpleHash(rawData + SECRET_KEY).toUpperCase().slice(0, 4);
-
-                if (providedSig !== expectedSig) {
-                    errorBox.innerText = "Key không tồn tại hoặc không hợp lệ!";
-                    return;
-                }
-
-                // 3. Chống tái sử dụng Key (Mỗi Key chỉ dùng 1 lần)
-                const usedKeys = JSON.parse(localStorage.getItem("used_keys") || "[]");
-                if (usedKeys.includes(userKey)) {
-                    errorBox.innerText = "Key này đã được sử dụng trước đó rồi!";
-                    return;
-                }
-
-                // Đánh dấu Key đã dùng
-                usedKeys.push(userKey);
-                localStorage.setItem("used_keys", JSON.stringify(usedKeys));
-
-                // --- THÀNH CÔNG ---
-                errorBox.style.color = "#00ff88";
-                errorBox.innerText = "✅ Xác thực thành công! Đang gửi lệnh buff cho ID: " + uid;
-                
-                // Gửi thông tin UID và Key ngầm về Google Apps Script để đẩy thông báo lên nhóm Telegram
-                fetch('https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec', {
+                // Gửi dữ liệu và ĐỌC KẾT QUẢ TRẢ VỀ từ Google Apps Script
+                const response = await fetch('https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec', {
                     method: 'POST',
-                    mode: 'no-cors',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'text/plain;charset=utf-8'
                     },
                     body: JSON.stringify({
                         uid: uid,
@@ -136,8 +86,24 @@
                     })
                 });
 
+                const result = await response.json();
+
+                // Đọc phản hồi phản ánh chính xác từ Apps Script
+                if (result.status === "success") {
+                    errorBox.style.color = "#00ff88";
+                    errorBox.innerText = "✅ Xác thực thành công! Đang gửi lệnh buff cho ID: " + uid;
+                    document.getElementById("keyInput").value = ""; // Xóa ô key sau khi dùng thành công
+                } else {
+                    errorBox.style.color = "#ff4d4d";
+                    errorBox.innerText = result.message || "❌ Key không hợp lệ hoặc đã xảy ra lỗi!";
+                }
+
             } catch (e) {
-                errorBox.innerText = "Key không tồn tại hoặc không hợp lệ!";
+                errorBox.style.color = "#ff4d4d";
+                errorBox.innerText = "❌ Không thể kết nối tới Server xác thực!";
+            } finally {
+                // Mở lại nút bấm
+                btnRun.disabled = false;
             }
         }
     </script>
