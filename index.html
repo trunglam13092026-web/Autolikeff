@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BUFF LIKE FI Fai</title>
+    <title>BUFF LIKE FI FAI MIỄN PHÍ</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #121212; color: #fff; text-align: center; padding: 30px 15px; margin: 0; }
         .container { max-width: 420px; margin: auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        h2 { color: #fff; margin-bottom: 5px; }
+        h2 { color: #fff; margin-bottom: 5px; font-size: 22px; }
         .dev { font-size: 13px; color: #00ff88; margin-bottom: 20px; }
         .input-group { margin-bottom: 15px; text-align: left; }
         input { width: 100%; padding: 12px; background: #2a2a2a; border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
@@ -23,11 +23,12 @@
 <body>
 
     <div class="container">
-        <h2>BUFF LIKE FREE FIRE</h2>
+        <!-- Đã đổi tiêu đề chính -->
+        <h2>BUFF LIKE FI FAI MIỄN PHÍ</h2>
         <div class="dev">Được phát triển bởi hệ thống @tlzproject</div>
 
         <div class="input-group">
-            <input type="text" id="uidInput" placeholder="Nhập UID Game của bạn...">
+            <input type="text" id="uidInput" placeholder="Nhập ID Game của bạn...">
         </div>
 
         <div class="input-group">
@@ -68,7 +69,7 @@
             errorBox.style.color = "#ff4d4d";
 
             if (!uid) {
-                errorBox.innerText = "Vui lòng nhập UID Free Fire!";
+                errorBox.innerText = "Vui lòng nhập ID Game của bạn!";
                 return;
             }
 
@@ -120,7 +121,7 @@
 
                 // --- THÀNH CÔNG ---
                 errorBox.style.color = "#00ff88";
-                errorBox.innerText = "✅ Xác thực thành công! Đang gửi lệnh buff cho UID: " + uid;
+                errorBox.innerText = "✅ Xác thực thành công! Đang gửi lệnh buff cho ID: " + uid;
                 
                 // Gửi thông tin UID và Key ngầm về Google Apps Script để đẩy thông báo lên nhóm Telegram
                 fetch('https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec', {
