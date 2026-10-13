@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XÁC MINH LẤY KEY - TLZ PROJECT</title>
-    <!-- Thư viện Cloudflare Turnstile -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <style>
         body { font-family: Arial, sans-serif; background-color: #121212; color: #fff; text-align: center; padding: 40px 15px; margin: 0; }
@@ -19,7 +18,7 @@
         .btn-back { display: block; margin-top: 15px; color: #aaa; text-decoration: none; font-size: 14px; }
         .btn-back:hover { color: #fff; text-decoration: underline; }
         #statusMsg { font-size: 13px; color: #ffd700; margin-top: 10px; }
-        .hidden { display: none; }
+        .hidden { display: none !important; }
         .step-desc { font-size: 14px; color: #ddd; margin-bottom: 20px; line-height: 1.5; text-align: left; background: #2a2a2a; padding: 12px; border-radius: 8px; }
         .captcha-box { margin: 15px 0; display: flex; justify-content: center; }
     </style>
@@ -30,8 +29,8 @@
         <h2>XÁC MINH LẤY KEY</h2>
         <div class="dev">TLZ Project Security System</div>
 
-        <!-- BƯỚC 1 -->
-        <div id="stepGetLink" class="hidden">
+        <!-- BƯỚC 1: Mặc định luôn hiện -->
+        <div id="stepGetLink">
             <div class="step-desc">
                 <b>📌 Hướng dẫn lấy Key:</b><br>
                 1. Bấm nút bên dưới để vượt link.<br>
@@ -41,7 +40,7 @@
             <a href="https://link4m.net/0aFFT" class="btn-action">🔗 Bấm vào đây để Vượt Link</a>
         </div>
 
-        <!-- BƯỚC 2 -->
+        <!-- BƯỚC 2: Captcha -->
         <div id="stepCaptcha" class="hidden">
             <div class="step-desc" style="text-align: center; color: #00ff88;">
                 ✅ Bạn đã hoàn thành vượt link!<br>Vui lòng tích xác nhận bên dưới để lấy Key.
@@ -51,7 +50,7 @@
             </div>
         </div>
 
-        <!-- BƯỚC 3 -->
+        <!-- BƯỚC 3: Hiện Key -->
         <div id="stepShowKey" class="hidden">
             <div class="key-box" id="keyDisplay">⏳ Đang xử lý...</div>
             <button class="btn-copy" onclick="copyKey()">📋 Sao chép Key</button>
@@ -77,18 +76,18 @@
             const urlParams = new URLSearchParams(window.location.search);
             const isBypassed = urlParams.get('bypassed');
 
+            // Nếu đã lưu Key trong ngày -> Hiện thẳng Key
             if (savedDate === currentDate && savedKey) {
                 showKeySection(savedKey);
                 cleanUrl();
-            } else if (isBypassed === 'true') {
+            } 
+            // Nếu vừa vượt link về -> Hiện bảng Captcha
+            else if (isBypassed === 'true') {
                 document.getElementById('stepGetLink').classList.add('hidden');
                 document.getElementById('stepCaptcha').classList.remove('hidden');
-                document.getElementById('stepShowKey').classList.add('hidden');
-            } else {
-                document.getElementById('stepGetLink').classList.remove('hidden');
-                document.getElementById('stepCaptcha').classList.add('hidden');
-                document.getElementById('stepShowKey').classList.add('hidden');
-                
+            } 
+            // Ngược lại giữ nguyên hiển thị bước 1 để người dùng bấm
+            else {
                 if (savedDate !== currentDate) {
                     localStorage.removeItem('active_tlz_key');
                     localStorage.removeItem('tlz_key_date');
@@ -132,7 +131,6 @@
                     document.getElementById("keyDisplay").innerText = "❌ Lỗi tạo Key từ Server!";
                 }
             } catch (e) {
-                document.getElementById("keyDisplay").zIndex = "";
                 document.getElementById("keyDisplay").innerText = "❌ Không thể kết nối tới Server!";
             }
         }
