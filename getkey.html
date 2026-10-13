@@ -10,29 +10,47 @@
         h2 { color: #fff; margin-bottom: 10px; font-size: 22px; }
         .dev { font-size: 13px; color: #00ff88; margin-bottom: 20px; }
         .key-box { background: #2a2a2a; border: 2px dashed #00ff88; padding: 15px; border-radius: 8px; font-size: 18px; font-weight: bold; color: #00ff88; word-break: break-all; margin: 20px 0; letter-spacing: 1px; }
+        .btn-action { background: #ffc107; color: #000; border: none; padding: 14px; width: 100%; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 15px; display: block; text-decoration: none; box-sizing: border-box; }
+        .btn-action:hover { background: #e0a800; }
         .btn-copy { background: #007bff; color: white; border: none; padding: 12px; width: 100%; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 10px; }
         .btn-copy:hover { background: #0056b3; }
         .btn-back { display: block; margin-top: 15px; color: #aaa; text-decoration: none; font-size: 14px; }
         .btn-back:hover { color: #fff; text-decoration: underline; }
         #statusMsg { font-size: 13px; color: #ffd700; margin-top: 10px; }
+        .hidden { display: none; }
+        .step-desc { font-size: 14px; color: #ddd; margin-bottom: 20px; line-height: 1.5; text-align: left; background: #2a2a2a; padding: 12px; border-radius: 8px; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>MÃ KEY XÁC MINH CỦA BẠN</h2>
-        <div class="dev">Hệ thống tạo Key tự động @tlzproject</div>
+        <h2>HỆ THỐNG LẤY KEY</h2>
+        <div class="dev">TLZ Project Security</div>
 
-        <div class="key-box" id="keyDisplay">Đang tạo Key...</div>
+        <!-- Bước 1: Yêu cầu vượt link rút gọn -->
+        <div id="stepGetLink">
+            <div class="step-desc">
+                <b>📌 Hướng dẫn lấy Key:</b><br>
+                1. Nhấn nút bên dưới để đi đến trang vượt link.<br>
+                2. Hoàn thành vượt link Link4M.<br>
+                3. Quay lại đây để nhận Key miễn phí!
+            </div>
+            <!-- Đã gắn link rút gọn Link4M của bạn vào đây -->
+            <a href="https://link4m.net/0aFFT" target="_blank" class="btn-action" onclick="unlockKey()">🔗 Vượt Link Lấy Key Ngay</a>
+        </div>
 
-        <button class="btn-copy" onclick="copyKey()">📋 Sao chép Key</button>
-        <div id="statusMsg"></div>
+        <!-- Bước 2: Hiển thị Key sau khi đã bấm vượt link -->
+        <div id="stepShowKey" class="hidden">
+            <div class="key-box" id="keyDisplay">Đang tạo Key...</div>
+            <button class="btn-copy" onclick="copyKey()">📋 Sao chép Key</button>
+            <div id="statusMsg"></div>
+        </div>
 
         <a href="index.html" class="btn-back">⬅ Quay lại trang chủ Buff Like</a>
     </div>
 
     <script>
-        const SECRET_KEY = "TLZ_PROJECT_SECRET_2026"; // Phải khớp hoàn toàn với file Code.gs và index.html
+        const SECRET_KEY = "TLZ_PROJECT_SECRET_2026";
 
         function simpleHash(str) {
             let hash = 0;
@@ -45,8 +63,7 @@
 
         function generateKey() {
             const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
-            // Thời gian hết hạn: 10 phút từ hiện tại (10 * 60 * 1000 ms)
-            const expireTime = new Date().getTime() + (10 * 60 * 1000); 
+            const expireTime = new Date().getTime() + (10 * 60 * 1000); // Hạn 10 phút
             const hexExpire = expireTime.toString(36);
 
             const rawData = expireTime + "_" + randomPart;
@@ -55,37 +72,55 @@
             return `TLZ-${randomPart}-${sig}-${hexExpire}`;
         }
 
-        // Kiểm tra xem trình duyệt đã lưu Key chưa hết hạn hay chưa
-        function getOrCreateKey() {
+        // Khi người dùng bấm vào nút vượt link, lưu trạng thái vào trình duyệt
+        function unlockKey() {
+            localStorage.setItem('tlz_unlocked', 'true');
+            setTimeout(() => {
+                showKeySection();
+            }, 1000);
+        }
+
+        function showKeySection() {
+            document.getElementById('stepGetLink').classList.add('hidden');
+            document.getElementById('stepShowKey').classList.remove('hidden');
+
             let savedData = localStorage.getItem('active_tlz_key_data');
             let now = new Date().getTime();
+            let currentKey = "";
 
             if (savedData) {
                 try {
                     let parsed = JSON.parse(savedData);
-                    // Nếu Key cũ vẫn còn hạn (chưa quá 10 phút kể từ lúc tạo), giữ nguyên không đổi
                     if (parsed.expireTime > now) {
-                        return parsed.key;
+                        currentKey = parsed.key;
                     }
                 } catch (e) {}
             }
 
-            // Nếu chưa có hoặc đã hết hạn, tạo mới hoàn toàn
-            let newKey = generateKey();
-            let expireTime = now + (10 * 60 * 1000);
-            localStorage.setItem('active_tlz_key_data', JSON.stringify({ key: newKey, expireTime: expireTime }));
-            return newKey;
+            if (!currentKey) {
+                currentKey = generateKey();
+                let expireTime = now + (10 * 60 * 1000);
+                localStorage.setItem('active_tlz_key_data', JSON.stringify({ key: currentKey, expireTime: expireTime }));
+            }
+
+            document.getElementById("keyDisplay").innerText = currentKey;
         }
 
-        const currentKey = getOrCreateKey();
-        document.getElementById("keyDisplay").innerText = currentKey;
+        // Kiểm tra xem người dùng đã bấm vượt link trước đó chưa
+        window.addEventListener('DOMContentLoaded', () => {
+            const isUnlocked = localStorage.getItem('tlz_unlocked');
+            if (isUnlocked === 'true') {
+                showKeySection();
+            }
+        });
 
         function copyKey() {
+            const currentKey = document.getElementById("keyDisplay").innerText;
             navigator.clipboard.writeText(currentKey).then(() => {
                 document.getElementById("statusMsg").innerText = "✅ Đã sao chép Key thành công!";
                 setTimeout(() => { document.getElementById("statusMsg").innerText = ""; }, 3000);
             }).catch(err => {
-                document.getElementById("statusMsg").innerText = "❌ Không thể tự động sao chép, vui lòng bôi đen và copy thủ công!";
+                document.getElementById("statusMsg").innerText = "❌ Không thể tự động sao chép!";
             });
         }
     </script>
