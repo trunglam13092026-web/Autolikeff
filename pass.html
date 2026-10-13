@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XÁC MINH LẤY KEY - TLZ PROJECT</title>
+    <title>Hệ Thống Lấy Key - TLZ Project</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #121212; color: #fff; text-align: center; padding: 40px 15px; margin: 0; }
         .container { max-width: 420px; margin: auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
@@ -11,13 +11,9 @@
         .dev { font-size: 13px; color: #00ff88; margin-bottom: 20px; }
         .key-box { background: #2a2a2a; border: 2px dashed #00ff88; padding: 15px; border-radius: 8px; font-size: 18px; font-weight: bold; color: #00ff88; word-break: break-all; margin: 20px 0; letter-spacing: 1px; }
         .btn-action { background: #ffc107; color: #000; border: none; padding: 14px; width: 100%; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 15px; display: block; text-decoration: none; box-sizing: border-box; }
-        .btn-action:hover { background: #e0a800; }
-        .btn-verify { background: #00ff88; color: #000; border: none; padding: 14px; width: 100%; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 15px; }
-        .btn-verify:hover { background: #00cc6a; }
-        .btn-copy { background: #007bff; color: white; border: none; padding: 12px; width: 100%; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 10px; }
-        .btn-copy:hover { background: #0056b3; }
+        .btn-verify { background: #00ff88; color: #000; border: none; padding: 14px; width: 100%; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 15px; display: block; }
+        .btn-copy { background: #007bff; color: white; border: none; padding: 12px; width: 100%; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 10px; display: block; }
         .btn-back { display: block; margin-top: 15px; color: #aaa; text-decoration: none; font-size: 14px; }
-        .btn-back:hover { color: #fff; text-decoration: underline; }
         #statusMsg { font-size: 13px; color: #ffd700; margin-top: 10px; }
         .hidden { display: none !important; }
         .step-desc { font-size: 14px; color: #ddd; margin-bottom: 20px; line-height: 1.5; text-align: left; background: #2a2a2a; padding: 12px; border-radius: 8px; }
@@ -29,33 +25,33 @@
         <h2>XÁC MINH LẤY KEY</h2>
         <div class="dev">TLZ Project Security System</div>
 
-        <!-- BƯỚC 1: Hướng dẫn vượt link -->
+        <!-- Bước 1: Yêu cầu vượt link -->
         <div id="stepGetLink">
             <div class="step-desc">
                 <b>📌 Hướng dẫn lấy Key:</b><br>
-                1. Bấm nút bên dưới để vượt link.<br>
-                2. Sau khi vượt thành công, hệ thống sẽ đưa bạn về đây.<br>
-                3. Hoàn thành xác thực để nhận Key!
+                1. Bấm nút bên dưới để vượt link rút gọn.<br>
+                2. Sau khi hoàn thành, hệ thống sẽ tự động đưa bạn về đây.<br>
+                3. Nhận mã Key bản quyền trong ngày!
             </div>
             <a href="https://link4m.net/0aFFT" class="btn-action">🔗 Bấm vào đây để Vượt Link</a>
         </div>
 
-        <!-- BƯỚC 2: Xác nhận hoàn thành -->
+        <!-- Bước 2: Xác nhận hoàn thành vượt link -->
         <div id="stepVerify" class="hidden">
             <div class="step-desc" style="text-align: center; color: #00ff88;">
-                ✅ Bạn đã hoàn thành vượt link!<br>Nhấn nút bên dưới để hiển thị Key của bạn.
+                ✅ Bạn đã hoàn thành vượt link!<br>Nhấn nút bên dưới để nhận Key.
             </div>
             <button class="btn-verify" onclick="requestKey()">🔓 Nhận Key Ngay</button>
         </div>
 
-        <!-- BƯỚC 3: Hiển thị Key -->
+        <!-- Bước 3: Hiển thị Key hoàn chỉnh -->
         <div id="stepShowKey" class="hidden">
             <div class="key-box" id="keyDisplay">⏳ Đang xử lý...</div>
             <button class="btn-copy" onclick="copyKey()">📋 Sao chép Key</button>
             <div id="statusMsg"></div>
         </div>
 
-        <a href="index.html" class="btn-back">⬅ Quay lại trang chủ Buff Like</a>
+        <a href="index.html" class="btn-back">⬅ Quay lại trang chủ</a>
     </div>
 
     <script>
@@ -66,7 +62,7 @@
             return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
+        window.onload = function() {
             try {
                 const savedDate = localStorage.getItem('tlz_key_date');
                 const savedKey = localStorage.getItem('active_tlz_key');
@@ -75,36 +71,37 @@
                 const urlParams = new URLSearchParams(window.location.search);
                 const isBypassed = urlParams.get('bypassed');
 
-                // Nếu trong ngày đã lưu Key rồi thì hiện thẳng phần Key luôn, không cần vượt link nữa
+                // Nếu đã lấy key trong ngày -> Hiển thị thẳng key cũ
                 if (savedDate === currentDate && savedKey) {
                     showKeySection(savedKey);
                 } 
+                // Nếu vừa từ Link4M về có chứa ?bypassed=true -> Mở nút nhận key
                 else if (isBypassed === 'true') {
                     document.getElementById('stepGetLink').classList.add('hidden');
                     document.getElementById('stepVerify').classList.remove('hidden');
-                    document.getElementById('stepShowKey').classList.add('hidden');
                 } 
+                // Mặc định hiển thị yêu cầu vượt link
                 else {
                     document.getElementById('stepGetLink').classList.remove('hidden');
                     document.getElementById('stepVerify').classList.add('hidden');
                     document.getElementById('stepShowKey').classList.add('hidden');
-                    
+
+                    // Xóa dữ liệu cũ nếu đã sang ngày mới
                     if (savedDate && savedDate !== currentDate) {
                         localStorage.removeItem('active_tlz_key');
                         localStorage.removeItem('tlz_key_date');
                     }
                 }
             } catch (err) {
-                console.error("Lỗi khởi tạo:", err);
+                console.error("Lỗi tải trang:", err);
             }
-        });
+        };
 
         async function requestKey() {
             const currentDate = getSystemDate();
             const savedDate = localStorage.getItem('tlz_key_date');
             const savedKey = localStorage.getItem('active_tlz_key');
 
-            // Nếu đã có sẵn trong máy thì hiện luôn
             if (savedDate === currentDate && savedKey) {
                 showKeySection(savedKey);
                 return;
@@ -114,7 +111,7 @@
             document.getElementById('stepShowKey').classList.remove('hidden');
 
             try {
-                document.getElementById("keyDisplay").innerText = "⏳ Đang tạo Key từ hệ thống...";
+                document.getElementById("keyDisplay").innerText = "⏳ Đang tạo Key...";
                 const res = await fetch(GAS_API_URL + "?action=get_key");
                 const data = await res.json();
 
@@ -123,34 +120,25 @@
                     localStorage.setItem('active_tlz_key', data.key);
                     showKeySection(data.key);
                 } else {
-                    document.getElementById("keyDisplay").innerText = "❌ Lỗi tạo Key từ Server!";
+                    document.getElementById("keyDisplay").innerText = "❌ Lỗi từ Server!";
                 }
             } catch (e) {
-                document.getElementById("keyDisplay").innerText = "❌ Không thể kết nối tới Server!";
+                document.getElementById("keyDisplay").innerText = "❌ Không thể kết nối!";
             }
         }
 
         function showKeySection(key) {
-            const stepGetLink = document.getElementById('stepGetLink');
-            const stepVerify = document.getElementById('stepVerify');
-            const stepShowKey = document.getElementById('stepShowKey');
-            const keyDisplay = document.getElementById('keyDisplay');
-
-            if (stepGetLink) stepGetLink.classList.add('hidden');
-            if (stepVerify) stepVerify.classList.add('hidden');
-            if (stepShowKey) stepShowKey.classList.remove('hidden');
-            if (keyDisplay) keyDisplay.innerText = key;
+            document.getElementById('stepGetLink').classList.add('hidden');
+            document.getElementById('stepVerify').classList.add('hidden');
+            document.getElementById('stepShowKey').classList.remove('hidden');
+            document.getElementById('keyDisplay').innerText = key;
         }
 
         function copyKey() {
             const currentKey = document.getElementById("keyDisplay").innerText;
-            if(!currentKey || !currentKey.startsWith("TLZ-")) return;
-            
             navigator.clipboard.writeText(currentKey).then(() => {
-                document.getElementById("statusMsg").innerText = "✅ Đã sao chép Key thành công!";
-                setTimeout(() => { document.getElementById("statusMsg").innerText = ""; }, 3000);
-            }).catch(err => {
-                document.getElementById("statusMsg").innerText = "❌ Không thể tự động sao chép!";
+                document.getElementById("statusMsg").innerText = "✅ Đã sao chép!";
+                setTimeout(() => { document.getElementById("statusMsg").innerText = ""; }, 2000);
             });
         }
     </script>
