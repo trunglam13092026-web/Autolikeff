@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LẤY KEY XÁC MINH - TLZ PROJECT</title>
+    <title>XÁC MINH LẤY KEY - TLZ PROJECT</title>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <style>
         body { font-family: Arial, sans-serif; background-color: #121212; color: #fff; text-align: center; padding: 40px 15px; margin: 0; }
         .container { max-width: 420px; margin: auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
@@ -19,29 +20,40 @@
         #statusMsg { font-size: 13px; color: #ffd700; margin-top: 10px; }
         .hidden { display: none; }
         .step-desc { font-size: 14px; color: #ddd; margin-bottom: 20px; line-height: 1.5; text-align: left; background: #2a2a2a; padding: 12px; border-radius: 8px; }
+        .captcha-box { margin: 15px 0; display: flex; justify-content: center; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>HỆ THỐNG LẤY KEY</h2>
-        <div class="dev">TLZ Project Security</div>
+        <h2>XÁC MINH LẤY KEY</h2>
+        <div class="dev">TLZ Project Security System</div>
 
-        <!-- Bước 1: Yêu cầu vượt link rút gọn -->
+        <!-- BƯỚC 1 -->
         <div id="stepGetLink">
             <div class="step-desc">
                 <b>📌 Hướng dẫn lấy Key:</b><br>
-                1. Nhấn nút bên dưới để đi đến trang vượt link.<br>
-                2. Hoàn thành vượt link Link4M.<br>
-                3. Quay lại đây để nhận Key miễn phí!
+                1. Bấm nút bên dưới để vượt link Link4M.<br>
+                2. Sau khi vượt thành công, hệ thống sẽ tự chuyển bạn về đây.<br>
+                3. Hoàn thành xác thực người dùng để nhận Key!
             </div>
-            <!-- Đã gắn link rút gọn Link4M của bạn vào đây -->
-            <a href="https://link4m.net/0aFFT" target="_blank" class="btn-action" onclick="unlockKey()">🔗 Vượt Link Lấy Key Ngay</a>
+            <a href="https://link4m.net/0aFFT" class="btn-action">🔗 Bấm vào đây để Vượt Link</a>
         </div>
 
-        <!-- Bước 2: Hiển thị Key sau khi đã bấm vượt link -->
+        <!-- BƯỚC 2 -->
+        <div id="stepCaptcha" class="hidden">
+            <div class="step-desc" style="text-align: center; color: #00ff88;">
+                ✅ Bạn đã hoàn thành vượt link!<br>Vui lòng tích xác nhận bên dưới để lấy Key.
+            </div>
+            
+            <div class="captcha-box">
+                <div class="cf-turnstile" data-sitekey="0x4AAAAAAAE-Ng5r2t56kUa0" data-callback="onCaptchaSuccess"></div>
+            </div>
+        </div>
+
+        <!-- BƯỚC 3 -->
         <div id="stepShowKey" class="hidden">
-            <div class="key-box" id="keyDisplay">Đang tạo Key...</div>
+            <div class="key-box" id="keyDisplay">⏳ Đang lấy Key từ Server...</div>
             <button class="btn-copy" onclick="copyKey()">📋 Sao chép Key</button>
             <div id="statusMsg"></div>
         </div>
@@ -50,69 +62,59 @@
     </div>
 
     <script>
-        const SECRET_KEY = "TLZ_PROJECT_SECRET_2026";
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
 
-        function simpleHash(str) {
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) {
-                hash = ((hash << 5) - hash) + str.charCodeAt(i);
-                hash |= 0;
-            }
-            return Math.abs(hash).toString(16);
+        function getTodayString() {
+            const d = new Date();
+            return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
         }
 
-        function generateKey() {
-            const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
-            const expireTime = new Date().getTime() + (10 * 60 * 1000); // Hạn 10 phút
-            const hexExpire = expireTime.toString(36);
-
-            const rawData = expireTime + "_" + randomPart;
-            const sig = simpleHash(rawData + SECRET_KEY).toUpperCase().slice(0, 4);
-
-            return `TLZ-${randomPart}-${sig}-${hexExpire}`;
-        }
-
-        // Khi người dùng bấm vào nút vượt link, lưu trạng thái vào trình duyệt
-        function unlockKey() {
-            localStorage.setItem('tlz_unlocked', 'true');
-            setTimeout(() => {
-                showKeySection();
-            }, 1000);
-        }
-
-        function showKeySection() {
-            document.getElementById('stepGetLink').classList.add('hidden');
-            document.getElementById('stepShowKey').classList.remove('hidden');
-
-            let savedData = localStorage.getItem('active_tlz_key_data');
-            let now = new Date().getTime();
-            let currentKey = "";
-
-            if (savedData) {
-                try {
-                    let parsed = JSON.parse(savedData);
-                    if (parsed.expireTime > now) {
-                        currentKey = parsed.key;
-                    }
-                } catch (e) {}
-            }
-
-            if (!currentKey) {
-                currentKey = generateKey();
-                let expireTime = now + (10 * 60 * 1000);
-                localStorage.setItem('active_tlz_key_data', JSON.stringify({ key: currentKey, expireTime: expireTime }));
-            }
-
-            document.getElementById("keyDisplay").innerText = currentKey;
-        }
-
-        // Kiểm tra xem người dùng đã bấm vượt link trước đó chưa
         window.addEventListener('DOMContentLoaded', () => {
-            const isUnlocked = localStorage.getItem('tlz_unlocked');
-            if (isUnlocked === 'true') {
-                showKeySection();
+            const urlParams = new URLSearchParams(window.location.search);
+            const isBypassed = urlParams.get('bypassed');
+            const savedUnlockDate = localStorage.getItem('tlz_unlock_date');
+            const today = getTodayString();
+
+            if (savedUnlockDate === today && localStorage.getItem('active_tlz_key')) {
+                showKeySection(localStorage.getItem('active_tlz_key'));
+            } else if (isBypassed === 'true') {
+                document.getElementById('stepGetLink').classList.add('hidden');
+                document.getElementById('stepCaptcha').classList.remove('hidden');
+            } else {
+                document.getElementById('stepGetLink').classList.remove('hidden');
+                document.getElementById('stepCaptcha').classList.add('hidden');
+                document.getElementById('stepShowKey').classList.add('hidden');
             }
         });
+
+        // Chỉ khi tick Captcha xong mới gọi về Server xin Key
+        async function onCaptchaSuccess(token) {
+            document.getElementById('stepGetLink').classList.add('hidden');
+            document.getElementById('stepCaptcha').classList.add('hidden');
+            document.getElementById('stepShowKey').classList.remove('hidden');
+
+            try {
+                const res = await fetch(GAS_API_URL + "?action=get_key");
+                const data = await res.json();
+
+                if (data.status === "success") {
+                    localStorage.setItem('tlz_unlock_date', getTodayString());
+                    localStorage.setItem('active_tlz_key', data.key);
+                    showKeySection(data.key);
+                } else {
+                    document.getElementById("keyDisplay").innerText = "❌ Lỗi tạo Key từ Server!";
+                }
+            } catch (e) {
+                document.getElementById("keyDisplay").innerText = "❌ Không thể kết nối tới Server!";
+            }
+        }
+
+        function showKeySection(key) {
+            document.getElementById('stepGetLink').classList.add('hidden');
+            document.getElementById('stepCaptcha').classList.add('hidden');
+            document.getElementById('stepShowKey').classList.remove('hidden');
+            document.getElementById("keyDisplay").innerText = key;
+        }
 
         function copyKey() {
             const currentKey = document.getElementById("keyDisplay").innerText;
