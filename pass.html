@@ -1,73 +1,107 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lấy Key Thành Công</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #121212; color: #fff; text-align: center; padding: 40px 15px; margin: 0; }
-        .container { max-width: 400px; margin: auto; background: #1e1e1e; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        h3 { color: #fff; margin-bottom: 10px; }
-        p { font-size: 14px; color: #bbb; margin-bottom: 20px; }
-        .key-box { background: #2a2a2a; border: 1px dashed #00ff88; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; color: #00ff88; word-break: break-all; margin-bottom: 20px; letter-spacing: 1px; }
-        .btn { display: block; width: 100%; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; border: none; box-sizing: border-box; text-decoration: none; text-align: center; margin-bottom: 12px; }
-        .btn-copy { background: #007bff; color: white; }
-        .btn-copy:hover { background: #0056b3; }
-        .btn-go { background: #28a745; color: white; }
-        .btn-go:hover { background: #218838; }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <h3>🎉 VƯỢT LINK THÀNH CÔNG</h3>
-        <p>Key ngẫu nhiên của bạn (Hiệu lực 10 phút):</p>
-
-        <div class="key-box" id="keyDisplay">Đang tạo Key...</div>
-
-        <button class="btn btn-copy" onclick="copyKey()">📋 SAO CHÉP KEY</button>
-        
-        <a href="index.html" class="btn btn-go">🚀 Đi đến trang buff</a>
-    </div>
-
     <script>
-        const SECRET_KEY = "TLZ_PROJECT_SECRET_2026";
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
 
-        function simpleHash(str) {
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) {
-                hash = ((hash << 5) - hash) + str.charCodeAt(i);
-                hash |= 0;
+        // Lấy định dạng ngày tháng chuẩn theo năm-tháng-ngày để phân biệt các ngày khác nhau
+        function getSystemDate() {
+            const d = new Date();
+            return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedDate = localStorage.getItem('tlz_key_date');
+            const savedKey = localStorage.getItem('active_tlz_key');
+            const currentDate = getSystemDate();
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const isBypassed = urlParams.get('bypassed');
+
+            // 1. Kiểm tra xem đã lưu Key của ngày hôm nay chưa
+            if (savedDate === currentDate && savedKey) {
+                // Đã có sẵn -> Hiện thẳng Key cũ, không cho phép đổi hay reset nữa
+                showKeySection(savedKey);
+                cleanUrl();
+            } 
+            // 2. Nếu vừa vượt link Link4M / Bumx về (có ?bypassed=true) -> Mở bảng Captcha
+            else if (isBypassed === 'true') {
+                document.getElementById('stepGetLink').classList.add('hidden');
+                document.getElementById('stepCaptcha').classList.remove('hidden');
+            } 
+            // 3. Truy cập chay chưa qua link -> Bắt buộc vượt link
+            else {
+                document.getElementById('stepGetLink').classList.add('hidden');
+                document.getElementById('stepCaptcha').classList.add('hidden');
+                document.getElementById('stepGetLink').classList.remove('hidden'); // Hiện lại nút vượt link
+                
+                // Nếu trước đó đã lỡ lưu key ngày cũ thì xóa đi để làm vòng mới
+                if (savedDate !== currentDate) {
+                    localStorage.removeItem('active_tlz_key');
+                    localStorage.removeItem('tlz_key_date');
+                }
             }
-            return Math.abs(hash).toString(16);
+        });
+
+        // Xóa tham số ?bypassed=true trên URL để khi F5 không bị kẹt hay reset luồng
+        function cleanUrl() {
+            if (window.history.replaceState) {
+                const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                window.history.replaceState({path: cleanUrl}, '', cleanUrl);
+            }
         }
 
-        function generateKey() {
-            const expireTime = new Date().getTime() + (10 * 60 * 1000); // Hạn 10 phút
-            const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
-            const rawData = expireTime + "_" + randomPart;
-            const sig = simpleHash(rawData + SECRET_KEY).toUpperCase().slice(0, 4);
-            const hexExpire = expireTime.toString(36).toUpperCase();
+        // Khi vượt qua Captcha thành công
+        async function onCaptchaSuccess(token) {
+            document.getElementById('stepGetLink').classList.add('hidden');
+            document.getElementById('stepCaptcha').classList.add('hidden');
+            document.getElementById('stepShowKey').classList.remove('hidden');
 
-            return `TLZ-${randomPart}-${sig}-${hexExpire}`;
+            const currentDate = getSystemDate();
+            const savedDate = localStorage.getItem('tlz_key_date');
+            const savedKey = localStorage.getItem('active_tlz_key');
+
+            // Nếu lỡ bấm lại mà cùng ngày thì lấy lại key cũ đã lưu cho chắc chắn
+            if (savedDate === currentDate && savedKey) {
+                showKeySection(savedKey);
+                cleanUrl();
+                return;
+            }
+
+            // Gọi Server lấy Key mới chính thức cho ngày hôm nay
+            try {
+                document.getElementById("keyDisplay").innerText = "⏳ Đang tạo Key từ hệ thống...";
+                const res = await fetch(GAS_API_URL + "?action=get_key");
+                const data = await res.json();
+
+                if (data.status === "success") {
+                    // Lưu cứng ngày và Key vào trình duyệt
+                    localStorage.setItem('tlz_key_date', currentDate);
+                    localStorage.setItem('active_tlz_key', data.key);
+                    
+                    showKeySection(data.key);
+                    cleanUrl();
+                } else {
+                    document.getElementById("keyDisplay").innerText = "❌ Lỗi tạo Key từ Server!";
+                }
+            } catch (e) {
+                document.getElementById("keyDisplay").innerText = "❌ Không thể kết nối tới Server!";
+            }
         }
 
-        // Tạo mới hoàn toàn Key mỗi khi khách vượt link thành công để tránh bị kẹt cache cũ
-        const newKey = generateKey();
-        localStorage.setItem("current_valid_key", newKey);
-
-        // Hiển thị Key ra màn hình ngay lập tức
-        const keyDisplay = document.getElementById("keyDisplay");
-        keyDisplay.innerText = newKey;
+        function showKeySection(key) {
+            document.getElementById('stepGetLink').classList.add('hidden');
+            document.getElementById('stepCaptcha').classList.add('hidden');
+            document.getElementById('stepShowKey').classList.remove('hidden');
+            document.getElementById("keyDisplay").innerText = key;
+        }
 
         function copyKey() {
-            navigator.clipboard.writeText(newKey).then(() => {
-                alert("Đã sao chép Key thành công!");
+            const currentKey = document.getElementById("keyDisplay").innerText;
+            if(!currentKey.startsWith("TLZ-")) return;
+            
+            navigator.clipboard.writeText(currentKey).then(() => {
+                document.getElementById("statusMsg").innerText = "✅ Đã sao chép Key thành công!";
+                setTimeout(() => { document.getElementById("statusMsg").innerText = ""; }, 3000);
             }).catch(err => {
-                // Fallback nếu trình duyệt chặn clipboard API
-                alert("Không thể tự động copy, vui lòng bôi đen và copy thủ công!");
+                document.getElementById("statusMsg").innerText = "❌ Không thể tự động sao chép!";
             });
         }
     </script>
-</body>
-</html>
