@@ -3,43 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LẤY KEY - TLZ BUFF LIKE</title>
+    <title>LẤY KEY XÁC MINH - TLZ PROJECT</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #121212; color: #fff; text-align: center; padding: 30px 15px; }
-        .container { max-width: 450px; margin: auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        h2 { color: #00ff88; margin-bottom: 5px; }
-        .instructions { font-size: 14px; color: #ccc; text-align: left; background: #2a2a2a; padding: 12px; border-radius: 8px; margin-bottom: 20px; line-height: 1.5; }
-        .btn { display: block; width: 100%; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 8px; border: none; cursor: pointer; text-decoration: none; margin-bottom: 12px; box-sizing: border-box; text-align: center; }
-        .btn-link { background: #ff9900; color: #000; }
-        .btn-home { background: #444; color: #fff; }
+        body { font-family: Arial, sans-serif; background-color: #121212; color: #fff; text-align: center; padding: 40px 15px; margin: 0; }
+        .container { max-width: 420px; margin: auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        h2 { color: #fff; margin-bottom: 10px; font-size: 22px; }
+        .dev { font-size: 13px; color: #00ff88; margin-bottom: 20px; }
+        .key-box { background: #2a2a2a; border: 2px dashed #00ff88; padding: 15px; border-radius: 8px; font-size: 18px; font-weight: bold; color: #00ff88; word-break: break-all; margin: 20px 0; letter-spacing: 1px; }
+        .btn-copy { background: #007bff; color: white; border: none; padding: 12px; width: 100%; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 10px; }
+        .btn-copy:hover { background: #0056b3; }
+        .btn-back { display: block; margin-top: 15px; color: #aaa; text-decoration: none; font-size: 14px; }
+        .btn-back:hover { color: #fff; text-decoration: underline; }
+        #statusMsg { font-size: 13px; color: #ffd700; margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>🚀 LẤY KEY BUFF LIKE</h2>
-        <p style="font-size: 13px; color: #888;">Hệ thống xác minh chống Spam</p>
+        <h2>MÃ KEY XÁC MINH CỦA BẠN</h2>
+        <div class="dev">Hệ thống tạo Key tự động @tlzproject</div>
 
-        <div class="instructions">
-            <b>HƯỚNG DẪN LẤY KEY:</b><br>
-            1. Bấm nút bên dưới để bắt đầu vượt chuỗi link.<br>
-            2. Hoàn tất các bước quảng cáo để nhận Key ngẫu nhiên độc lập.
-        </div>
+        <div class="key-box" id="keyDisplay">Đang tạo Key...</div>
 
-        <a href="#" onclick="startAdFlow()" class="btn btn-link">👉 BẮT ĐẦU VƯỢT LINK LẤY KEY</a>
+        <button class="btn-copy" onclick="copyKey()">📋 Sao chép Key</button>
+        <div id="statusMsg"></div>
 
-        <br>
-        <a href="index.html" class="btn btn-home">🏠 QUAY LẠI TRANG CHÍNH</a>
+        <a href="index.html" class="btn-back">⬅ Quay lại trang chủ Buff Like</a>
     </div>
 
     <script>
-        function startAdFlow() {
-            // Đánh dấu người dùng đã bấm bắt đầu vượt link trên tên miền này
-            localStorage.setItem("tlz_ad_started", "true");
-            localStorage.setItem("tlz_ad_time", new Date().getTime());
+        const SECRET_KEY = "TLZ_PROJECT_SECRET_2026"; // Phải khớp hoàn toàn với file Code.gs và index.html
 
-            // Thay link bên dưới bằng link chuỗi quảng cáo của bạn (Link4M / Sitetop / Bumx...)
-            window.location.href = "https://link4m.net/0aFFT"; 
+        function simpleHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = ((hash << 5) - hash) + str.charCodeAt(i);
+                hash |= 0;
+            }
+            return Math.abs(hash).toString(16);
+        }
+
+        function generateKey() {
+            const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
+            // Thời gian hết hạn: 10 phút từ hiện tại (10 * 60 * 1000 ms)
+            const expireTime = new Date().getTime() + (10 * 60 * 1000); 
+            const hexExpire = expireTime.toString(36);
+
+            const rawData = expireTime + "_" + randomPart;
+            const sig = simpleHash(rawData + SECRET_KEY).toUpperCase().slice(0, 4);
+
+            return `TLZ-${randomPart}-${sig}-${hexExpire}`;
+        }
+
+        // Kiểm tra xem trình duyệt đã lưu Key chưa hết hạn hay chưa
+        function getOrCreateKey() {
+            let savedData = localStorage.getItem('active_tlz_key_data');
+            let now = new Date().getTime();
+
+            if (savedData) {
+                try {
+                    let parsed = JSON.parse(savedData);
+                    // Nếu Key cũ vẫn còn hạn (chưa quá 10 phút kể từ lúc tạo), giữ nguyên không đổi
+                    if (parsed.expireTime > now) {
+                        return parsed.key;
+                    }
+                } catch (e) {}
+            }
+
+            // Nếu chưa có hoặc đã hết hạn, tạo mới hoàn toàn
+            let newKey = generateKey();
+            let expireTime = now + (10 * 60 * 1000);
+            localStorage.setItem('active_tlz_key_data', JSON.stringify({ key: newKey, expireTime: expireTime }));
+            return newKey;
+        }
+
+        const currentKey = getOrCreateKey();
+        document.getElementById("keyDisplay").innerText = currentKey;
+
+        function copyKey() {
+            navigator.clipboard.writeText(currentKey).then(() => {
+                document.getElementById("statusMsg").innerText = "✅ Đã sao chép Key thành công!";
+                setTimeout(() => { document.getElementById("statusMsg").innerText = ""; }, 3000);
+            }).catch(err => {
+                document.getElementById("statusMsg").innerText = "❌ Không thể tự động sao chép, vui lòng bôi đen và copy thủ công!";
+            });
         }
     </script>
 </body>
