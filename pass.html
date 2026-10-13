@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XÁC MINH LẤY KEY - TLZ PROJECT</title>
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <style>
         body { font-family: Arial, sans-serif; background-color: #121212; color: #fff; text-align: center; padding: 40px 15px; margin: 0; }
         .container { max-width: 420px; margin: auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
@@ -13,6 +12,8 @@
         .key-box { background: #2a2a2a; border: 2px dashed #00ff88; padding: 15px; border-radius: 8px; font-size: 18px; font-weight: bold; color: #00ff88; word-break: break-all; margin: 20px 0; letter-spacing: 1px; }
         .btn-action { background: #ffc107; color: #000; border: none; padding: 14px; width: 100%; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 15px; display: block; text-decoration: none; box-sizing: border-box; }
         .btn-action:hover { background: #e0a800; }
+        .btn-verify { background: #00ff88; color: #000; border: none; padding: 14px; width: 100%; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 15px; }
+        .btn-verify:hover { background: #00cc6a; }
         .btn-copy { background: #007bff; color: white; border: none; padding: 12px; width: 100%; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 10px; }
         .btn-copy:hover { background: #0056b3; }
         .btn-back { display: block; margin-top: 15px; color: #aaa; text-decoration: none; font-size: 14px; }
@@ -20,7 +21,6 @@
         #statusMsg { font-size: 13px; color: #ffd700; margin-top: 10px; }
         .hidden { display: none !important; }
         .step-desc { font-size: 14px; color: #ddd; margin-bottom: 20px; line-height: 1.5; text-align: left; background: #2a2a2a; padding: 12px; border-radius: 8px; }
-        .captcha-box { margin: 15px 0; display: flex; justify-content: center; }
     </style>
 </head>
 <body>
@@ -29,7 +29,7 @@
         <h2>XÁC MINH LẤY KEY</h2>
         <div class="dev">TLZ Project Security System</div>
 
-        <!-- BƯỚC 1: Mặc định luôn hiện -->
+        <!-- BƯỚC 1: Hướng dẫn vượt link -->
         <div id="stepGetLink">
             <div class="step-desc">
                 <b>📌 Hướng dẫn lấy Key:</b><br>
@@ -40,17 +40,15 @@
             <a href="https://link4m.net/0aFFT" class="btn-action">🔗 Bấm vào đây để Vượt Link</a>
         </div>
 
-        <!-- BƯỚC 2: Captcha -->
-        <div id="stepCaptcha" class="hidden">
+        <!-- BƯỚC 2: Xác nhận hoàn thành -->
+        <div id="stepVerify" class="hidden">
             <div class="step-desc" style="text-align: center; color: #00ff88;">
-                ✅ Bạn đã hoàn thành vượt link!<br>Vui lòng tích xác nhận bên dưới để lấy Key.
+                ✅ Bạn đã hoàn thành vượt link!<br>Nhấn nút bên dưới để hệ thống cấp Key.
             </div>
-            <div class="captcha-box">
-                <div class="cf-turnstile" data-sitekey="0x4AAAAAAAE-Ng5r2t56kUa0" data-callback="onCaptchaSuccess"></div>
-            </div>
+            <button class="btn-verify" onclick="requestKey()">🔓 Nhận Key Ngay</button>
         </div>
 
-        <!-- BƯỚC 3: Hiện Key -->
+        <!-- BƯỚC 3: Hiển thị Key -->
         <div id="stepShowKey" class="hidden">
             <div class="key-box" id="keyDisplay">⏳ Đang xử lý...</div>
             <button class="btn-copy" onclick="copyKey()">📋 Sao chép Key</button>
@@ -76,18 +74,17 @@
             const urlParams = new URLSearchParams(window.location.search);
             const isBypassed = urlParams.get('bypassed');
 
-            // Nếu đã lưu Key trong ngày -> Hiện thẳng Key
             if (savedDate === currentDate && savedKey) {
                 showKeySection(savedKey);
                 cleanUrl();
-            } 
-            // Nếu vừa vượt link về -> Hiện bảng Captcha
-            else if (isBypassed === 'true') {
+            } else if (isBypassed === 'true') {
                 document.getElementById('stepGetLink').classList.add('hidden');
-                document.getElementById('stepCaptcha').classList.remove('hidden');
-            } 
-            // Ngược lại giữ nguyên hiển thị bước 1 để người dùng bấm
-            else {
+                document.getElementById('stepVerify').classList.remove('hidden');
+            } else {
+                document.getElementById('stepGetLink').classList.remove('hidden');
+                document.getElementById('stepVerify').classList.add('hidden');
+                document.getElementById('stepShowKey').classList.add('hidden');
+                
                 if (savedDate !== currentDate) {
                     localStorage.removeItem('active_tlz_key');
                     localStorage.removeItem('tlz_key_date');
@@ -102,9 +99,8 @@
             }
         }
 
-        async function onCaptchaSuccess(token) {
-            document.getElementById('stepGetLink').classList.add('hidden');
-            document.getElementById('stepCaptcha').classList.add('hidden');
+        async function requestKey() {
+            document.getElementById('stepVerify').classList.add('hidden');
             document.getElementById('stepShowKey').classList.remove('hidden');
 
             const currentDate = getSystemDate();
@@ -137,7 +133,7 @@
 
         function showKeySection(key) {
             document.getElementById('stepGetLink').classList.add('hidden');
-            document.getElementById('stepCaptcha').classList.add('hidden');
+            document.getElementById('stepVerify').classList.add('hidden');
             document.getElementById('stepShowKey').classList.remove('hidden');
             document.getElementById("keyDisplay").innerText = key;
         }
