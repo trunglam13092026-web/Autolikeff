@@ -18,7 +18,8 @@
         .btn-run:hover { background: #218838; }
         .btn-run:disabled { background: #555; cursor: not-allowed; }
         #errorBox { margin-top: 15px; font-size: 14px; font-weight: bold; color: #ff4d4d; }
-        .notice { margin-top: 25px; background: #2a261a; border: 1px solid #d4af37; padding: 12px; border-radius: 8px; text-align: left; font-size: 13px; color: #ffd700; line-height: 1.4; }
+        .notice { margin-top: 25px; background: #2a261a; border: 1px solid #d4af37; padding: 12px; border-radius: 8px; text-align: left; font-size: 13px; color: #ffd700; line-height: 1.5; }
+        .notice a { color: #00ff88; text-decoration: underline; word-break: break-all; }
     </style>
 </head>
 <body>
@@ -35,21 +36,39 @@
             <input type="text" id="keyInput" placeholder="Nhập Key xác minh...">
         </div>
 
-        <a href="getkey.html" class="get-key-link">👉 Nhấp vào đây để lấy Key miễn phí</a>
+        <a href="getkey.html" target="_blank" class="get-key-link">👉 Nhấp vào đây để lấy Key miễn phí</a>
 
         <button class="btn-run" id="btnRun" onclick="handleRunBuff()">Chạy</button>
 
         <div id="errorBox"></div>
 
+        <!-- MỤC THÔNG BÁO ĐÃ ĐƯỢC CẬP NHẬT -->
         <div class="notice">
             <b>📢 THÔNG BÁO QUAN TRỌNG:</b><br>
-            • Mỗi người tranh thủ buff sớm nhất có thể nha (từ 6h sáng đến 20h tối).<br>
-            • Khoảng thời gian này sẽ buff đủ cho +200 like.<br>
-            • Nếu như mọi người buff sau 20h sẽ bị thiếu like nha!
+            • Buff bên khác buff thêm bên đây sẽ không được nữa, chỉ tính được 1 lần duy nhất 1 ngày.<br>
+            • Tranh thủ buff từ (6h - 20h), khoảng thời gian này like lên đủ 200 like (nếu buff sau khung giờ đó sẽ bị thiếu like rất nhiều nha, ước tính 20 ~ 90 like).<br>
+            • Cấm buff nhiều ID trên 1 IP, phát hiện sẽ ban ID đó ra khỏi hệ thống mãi mãi không buff được nữa!<br>
+            • Kênh hỗ trợ: <a href="https://www.tiktok.com/@hvpcutis1tg" target="_blank">https://www.tiktok.com/@hvpcutis1tg</a>
         </div>
     </div>
 
     <script>
+        // Tự động điền lại Key và UID nếu người dùng lỡ load lại trang
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedKey = localStorage.getItem('saved_user_key');
+            const savedUid = localStorage.getItem('saved_user_uid');
+            if (savedKey) document.getElementById("keyInput").value = savedKey;
+            if (savedUid) document.getElementById("uidInput").value = savedUid;
+        });
+
+        // Lưu lại thông tin nhập khi người dùng gõ phím
+        document.getElementById("keyInput").addEventListener('input', (e) => {
+            localStorage.setItem('saved_user_key', e.target.value.trim());
+        });
+        document.getElementById("uidInput").addEventListener('input', (e) => {
+            localStorage.setItem('saved_user_uid', e.target.value.trim());
+        });
+
         async function handleRunBuff() {
             const uid = document.getElementById("uidInput").value.trim();
             const userKey = document.getElementById("keyInput").value.trim().toUpperCase();
@@ -89,6 +108,8 @@
                 if (result.status === "success") {
                     errorBox.style.color = "#00ff88";
                     errorBox.innerText = "✅ Xác thực thành công! Đang gửi lệnh buff cho ID: " + uid;
+                    
+                    localStorage.removeItem('saved_user_key');
                     document.getElementById("keyInput").value = "";
                 } else {
                     errorBox.style.color = "#ff4d4d";
