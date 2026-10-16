@@ -3,17 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Lấy Key - TLZ Project</title>
+    <title id="pageTitle">Hệ Thống Lấy Key - TLZ Project</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #121212; color: #fff; text-align: center; padding: 40px 15px; margin: 0; }
-        .container { max-width: 420px; margin: auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .container { max-width: 420px; margin: auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative; }
+        .lang-switch { position: absolute; top: 15px; right: 15px; background: #2a2a2a; border: 1px solid #444; color: #fff; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .lang-switch:hover { background: #3a3a3a; }
         h2 { color: #fff; margin-bottom: 10px; font-size: 22px; }
         .dev { font-size: 13px; color: #00ff88; margin-bottom: 20px; }
         .key-box { background: #2a2a2a; border: 2px dashed #00ff88; padding: 15px; border-radius: 8px; font-size: 18px; font-weight: bold; color: #00ff88; word-break: break-all; margin: 20px 0; letter-spacing: 1px; }
         .btn-action { background: #ffc107; color: #000; border: none; padding: 14px; width: 100%; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 15px; display: block; text-decoration: none; box-sizing: border-box; }
+        .btn-action:hover { background: #e0a800; }
         .btn-verify { background: #00ff88; color: #000; border: none; padding: 14px; width: 100%; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 15px; display: block; }
+        .btn-verify:hover { background: #00cc6a; }
         .btn-copy { background: #007bff; color: white; border: none; padding: 12px; width: 100%; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 10px; display: block; }
+        .btn-copy:hover { background: #0056b3; }
         .btn-back { display: block; margin-top: 15px; color: #aaa; text-decoration: none; font-size: 14px; }
+        .btn-back:hover { color: #fff; text-decoration: underline; }
         #statusMsg { font-size: 13px; color: #ffd700; margin-top: 10px; }
         .hidden { display: none !important; }
         .step-desc { font-size: 14px; color: #ddd; margin-bottom: 20px; line-height: 1.5; text-align: left; background: #2a2a2a; padding: 12px; border-radius: 8px; }
@@ -22,40 +28,124 @@
 <body>
 
     <div class="container">
-        <h2>XÁC MINH LẤY KEY</h2>
+        <button class="lang-switch" onclick="toggleLanguage()">🌐 EN / VI</button>
+        <h2 id="txtTitle">XÁC MINH LẤY KEY</h2>
         <div class="dev">TLZ Project Security System</div>
 
-        <!-- Bước 1: Yêu cầu vượt link -->
+        <!-- BƯỚC 1: Hướng dẫn & Nút Vượt Link -->
         <div id="stepGetLink">
-            <div class="step-desc">
+            <div class="step-desc" id="descStep1">
                 <b>📌 Hướng dẫn lấy Key:</b><br>
                 1. Bấm nút bên dưới để vượt link rút gọn.<br>
                 2. Sau khi hoàn thành, hệ thống sẽ tự động đưa bạn về đây.<br>
                 3. Nhận mã Key bản quyền trong ngày!
             </div>
-            <a href="https://link4m.net/0aFFT" class="btn-action">🔗 Bấm vào đây để Vượt Link</a>
+            <a href="https://link4m.net/0aFFT" id="btnLink" class="btn-action" target="_blank">🔗 Bấm vào đây để Vượt Link</a>
         </div>
 
-        <!-- Bước 2: Xác nhận hoàn thành vượt link -->
+        <!-- BƯỚC 2: Xác nhận hoàn thành vượt link -->
         <div id="stepVerify" class="hidden">
-            <div class="step-desc" style="text-align: center; color: #00ff88;">
+            <div class="step-desc" style="text-align: center; color: #00ff88;" id="descStep2">
                 ✅ Bạn đã hoàn thành vượt link!<br>Nhấn nút bên dưới để nhận Key.
             </div>
-            <button class="btn-verify" onclick="requestKey()">🔓 Nhận Key Ngay</button>
+            <button class="btn-verify" onclick="requestKey()" id="btnVerify">🔓 Nhận Key Ngay</button>
         </div>
 
-        <!-- Bước 3: Hiển thị Key hoàn chỉnh -->
+        <!-- BƯỚC 3: Hiển thị Key -->
         <div id="stepShowKey" class="hidden">
             <div class="key-box" id="keyDisplay">⏳ Đang xử lý...</div>
-            <button class="btn-copy" onclick="copyKey()">📋 Sao chép Key</button>
+            <button class="btn-copy" onclick="copyKey()" id="btnCopy">📋 Sao chép Key</button>
             <div id="statusMsg"></div>
         </div>
 
-        <a href="index.html" class="btn-back">⬅ Quay lại trang chủ</a>
+        <a href="index.html" class="btn-back" id="btnBack">⬅ Quay lại trang chủ</a>
     </div>
 
     <script>
         const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
+
+        // CẤU HÌNH LINK RÚT GỌN TẠI ĐÂY
+        const LINK_VN = "https://link4m.net/0aFFT";
+        const LINK_GLOBAL = "https://shrinkme.io/your_global_link"; // Thay link rút gọn quốc tế của bạn tại đây
+
+        let isVietnamUser = true;
+
+        const langData = {
+            vi: {
+                title: "Hệ Thống Lấy Key - TLZ Project",
+                heading: "XÁC MINH LẤY KEY",
+                step1: "<b>📌 Hướng dẫn lấy Key:</b><br>1. Bấm nút bên dưới để vượt link rút gọn.<br>2. Sau khi hoàn thành, hệ thống sẽ tự động đưa bạn về đây.<br>3. Nhận mã Key bản quyền trong ngày!",
+                btnLinkText: "🔗 Bấm vào đây để Vượt Link",
+                step2: "✅ Bạn đã hoàn thành vượt link!<br>Nhấn nút bên dưới để nhận Key.",
+                btnVerifyText: "🔓 Nhận Key Ngay",
+                btnCopyText: "📋 Sao chép Key",
+                btnBackText: "⬅ Quay lại trang chủ",
+                loading: "⏳ Đang tạo Key...",
+                successCopy: "✅ Đã sao chép thành công!",
+                errorServer: "❌ Lỗi từ Server!",
+                errorConnect: "❌ Không thể kết nối!"
+            },
+            en: {
+                title: "Key Retrieval System - TLZ Project",
+                heading: "VERIFY & GET KEY",
+                step1: "<b>📌 Instructions:</b><br>1. Click the button below to bypass the shortened link.<br>2. After completion, you will be automatically redirected back here.<br>3. Get your active license key for today!",
+                btnLinkText: "🔗 Click Here to Bypass Link",
+                step2: "✅ You have successfully bypassed the link!<br>Click the button below to retrieve your Key.",
+                btnVerifyText: "🔓 Get Key Now",
+                btnCopyText: "📋 Copy Key",
+                btnBackText: "⬅ Back to Home",
+                loading: "⏳ Generating Key...",
+                successCopy: "✅ Copied successfully!",
+                errorServer: "❌ Server Error!",
+                errorConnect: "❌ Connection Failed!"
+            }
+        };
+
+        let currentLang = localStorage.getItem('tlz_lang') || (navigator.language.startsWith('vi') ? 'vi' : 'en');
+
+        async function checkUserCountry() {
+            try {
+                const res = await fetch("https://ipapi.co/json/");
+                const data = await res.json();
+                if (data && data.country_code) {
+                    isVietnamUser = (data.country_code === 'VN');
+                }
+            } catch (e) {
+                isVietnamUser = true; 
+            }
+            updateLinkUrl();
+        }
+
+        function updateLinkUrl() {
+            const btnLink = document.getElementById('btnLink');
+            if (isVietnamUser) {
+                btnLink.href = LINK_VN;
+            } else {
+                btnLink.href = LINK_GLOBAL;
+            }
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('tlz_lang', lang);
+            const d = langData[lang];
+
+            document.getElementById('pageTitle').innerText = d.title;
+            document.getElementById('txtTitle').innerText = d.heading;
+            document.getElementById('descStep1').innerHTML = d.step1;
+            document.getElementById('btnLink').innerText = d.btnLinkText;
+
+            updateLinkUrl();
+
+            document.getElementById('descStep2').innerHTML = d.step2;
+            document.getElementById('btnVerify').innerText = d.btnVerifyText;
+            document.getElementById('btnCopy').innerText = d.btnCopyText;
+            document.getElementById('btnBack').innerText = d.btnBackText;
+        }
+
+        function toggleLanguage() {
+            setLanguage(currentLang === 'vi' ? 'en' : 'vi');
+        }
 
         function getSystemDate() {
             const d = new Date();
@@ -63,6 +153,9 @@
         }
 
         window.onload = function() {
+            setLanguage(currentLang);
+            checkUserCountry();
+
             try {
                 const savedDate = localStorage.getItem('tlz_key_date');
                 const savedKey = localStorage.getItem('active_tlz_key');
@@ -71,22 +164,17 @@
                 const urlParams = new URLSearchParams(window.location.search);
                 const isBypassed = urlParams.get('bypassed');
 
-                // Nếu đã lấy key trong ngày -> Hiển thị thẳng key cũ
                 if (savedDate === currentDate && savedKey) {
                     showKeySection(savedKey);
-                } 
-                // Nếu vừa từ Link4M về có chứa ?bypassed=true -> Mở nút nhận key
-                else if (isBypassed === 'true') {
+                } else if (isBypassed === 'true') {
                     document.getElementById('stepGetLink').classList.add('hidden');
                     document.getElementById('stepVerify').classList.remove('hidden');
-                } 
-                // Mặc định hiển thị yêu cầu vượt link
-                else {
+                    document.getElementById('stepShowKey').classList.add('hidden');
+                } else {
                     document.getElementById('stepGetLink').classList.remove('hidden');
                     document.getElementById('stepVerify').classList.add('hidden');
                     document.getElementById('stepShowKey').classList.add('hidden');
 
-                    // Xóa dữ liệu cũ nếu đã sang ngày mới
                     if (savedDate && savedDate !== currentDate) {
                         localStorage.removeItem('active_tlz_key');
                         localStorage.removeItem('tlz_key_date');
@@ -101,6 +189,7 @@
             const currentDate = getSystemDate();
             const savedDate = localStorage.getItem('tlz_key_date');
             const savedKey = localStorage.getItem('active_tlz_key');
+            const t = langData[currentLang];
 
             if (savedDate === currentDate && savedKey) {
                 showKeySection(savedKey);
@@ -111,7 +200,7 @@
             document.getElementById('stepShowKey').classList.remove('hidden');
 
             try {
-                document.getElementById("keyDisplay").innerText = "⏳ Đang tạo Key...";
+                document.getElementById("keyDisplay").innerText = t.loading;
                 const res = await fetch(GAS_API_URL + "?action=get_key");
                 const data = await res.json();
 
@@ -120,10 +209,10 @@
                     localStorage.setItem('active_tlz_key', data.key);
                     showKeySection(data.key);
                 } else {
-                    document.getElementById("keyDisplay").innerText = "❌ Lỗi từ Server!";
+                    document.getElementById("keyDisplay").innerText = t.errorServer;
                 }
             } catch (e) {
-                document.getElementById("keyDisplay").innerText = "❌ Không thể kết nối!";
+                document.getElementById("keyDisplay").innerText = t.errorConnect;
             }
         }
 
@@ -136,8 +225,9 @@
 
         function copyKey() {
             const currentKey = document.getElementById("keyDisplay").innerText;
+            const t = langData[currentLang];
             navigator.clipboard.writeText(currentKey).then(() => {
-                document.getElementById("statusMsg").innerText = "✅ Đã sao chép!";
+                document.getElementById("statusMsg").innerText = t.successCopy;
                 setTimeout(() => { document.getElementById("statusMsg").innerText = ""; }, 2000);
             });
         }
