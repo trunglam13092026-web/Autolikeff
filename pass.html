@@ -40,7 +40,7 @@
                 2. Sau khi hoàn thành, hệ thống sẽ tự động đưa bạn về đây.<br>
                 3. Nhận mã Key bản quyền trong ngày!
             </div>
-            <a href="https://link4m.net/0aFFT" id="btnLink" class="btn-action" target="_blank">🔗 Bấm vào đây để Vượt Link</a>
+            <a href="https://link4m.net/0aFFT" id="btnLink" class="btn-action" target="_blank" onclick="generateBypassToken()">🔗 Bấm vào đây để Vượt Link</a>
         </div>
 
         <!-- BƯỚC 2: Xác nhận hoàn thành vượt link -->
@@ -51,10 +51,10 @@
             <button class="btn-verify" onclick="requestKey()" id="btnVerify">🔓 Nhận Key Ngay</button>
         </div>
 
-        <!-- BƯỚC 3: Hiển thị Key -->
+        <!-- BƯỚC 3: Hiển thị Key hoặc Thông báo hết lượt -->
         <div id="stepShowKey" class="hidden">
             <div class="key-box" id="keyDisplay">⏳ Đang xử lý...</div>
-            <button class="btn-copy" onclick="copyKey()" id="btnCopy">📋 Sao chép Key</button>
+            <button class="btn-copy" id="btnCopy" onclick="copyKey()">📋 Sao chép Key</button>
             <div id="statusMsg"></div>
         </div>
 
@@ -64,9 +64,8 @@
     <script>
         const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
 
-        // CẤU HÌNH LINK RÚT GỌN
         const LINK_VN = "https://link4m.net/0aFFT";
-        const LINK_GLOBAL = "https://fc-lc.com/0jiQ"; // Đã cập nhật link Global của bạn
+        const LINK_GLOBAL = "https://fc-lc.com/0jiQ";
 
         let isVietnamUser = true;
 
@@ -81,6 +80,7 @@
                 btnCopyText: "📋 Sao chép Key",
                 btnBackText: "⬅ Quay lại trang chủ",
                 loading: "⏳ Đang tạo Key...",
+                limitExceeded: "❌ Hôm nay đã hết lượt free, hãy quay lại vào ngày mai!",
                 successCopy: "✅ Đã sao chép thành công!",
                 errorServer: "❌ Lỗi từ Server!",
                 errorConnect: "❌ Không thể kết nối!"
@@ -95,6 +95,7 @@
                 btnCopyText: "📋 Copy Key",
                 btnBackText: "⬅ Back to Home",
                 loading: "⏳ Generating Key...",
+                limitExceeded: "❌ Today's free limit has been reached, please come back tomorrow!",
                 successCopy: "✅ Copied successfully!",
                 errorServer: "❌ Server Error!",
                 errorConnect: "❌ Connection Failed!"
@@ -102,6 +103,12 @@
         };
 
         let currentLang = localStorage.getItem('tlz_lang') || (navigator.language.startsWith('vi') ? 'vi' : 'en');
+
+        // Hàm tạo Token bảo mật khi người dùng thực sự bấm nút vượt link
+        function generateBypassToken() {
+            const token = "TLZ_TOKEN_" + Math.random().toString(36).substring(2, 10);
+            sessionStorage.setItem('bypass_token', token);
+        }
 
         async function checkUserCountry() {
             try {
@@ -163,14 +170,20 @@
                 
                 const urlParams = new URLSearchParams(window.location.search);
                 const isBypassed = urlParams.get('bypassed');
+                const validToken = sessionStorage.getItem('bypass_token');
 
+                // 1. Nếu đã có key trong ngày -> Hiển thị Key
                 if (savedDate === currentDate && savedKey) {
                     showKeySection(savedKey);
-                } else if (isBypassed === 'true') {
+                } 
+                // 2. Kiểm tra chặt chẽ: Phải vừa có ?bypassed=true VÀ vừa có Token bảo mật trong bộ nhớ phiên
+                else if (isBypassed === 'true' && validToken) {
                     document.getElementById('stepGetLink').classList.add('hidden');
                     document.getElementById('stepVerify').classList.remove('hidden');
                     document.getElementById('stepShowKey').classList.add('hidden');
-                } else {
+                } 
+                // 3. Nếu cố tình gõ link ?bypassed=true mà KHÔNG CÓ Token -> Đẩy về Bước 1 ngay lập tức
+                else {
                     document.getElementById('stepGetLink').classList.remove('hidden');
                     document.getElementById('stepVerify').classList.add('hidden');
                     document.getElementById('stepShowKey').classList.add('hidden');
@@ -207,7 +220,11 @@
                 if (data && data.status === "success") {
                     localStorage.setItem('tlz_key_date', currentDate);
                     localStorage.setItem('active_tlz_key', data.key);
+                    sessionStorage.removeItem('bypass_token'); // Xóa token sau khi đã đổi Key thành công
                     showKeySection(data.key);
+                } else if (data && data.status === "limit_exceeded") {
+                    document.getElementById("keyDisplay").innerText = t.limitExceeded;
+                    document.getElementById("btnCopy").style.display = "none";
                 } else {
                     document.getElementById("keyDisplay").innerText = t.errorServer;
                 }
@@ -220,6 +237,7 @@
             document.getElementById('stepGetLink').classList.add('hidden');
             document.getElementById('stepVerify').classList.add('hidden');
             document.getElementById('stepShowKey').classList.remove('hidden');
+            document.getElementById("btnCopy").style.display = "block";
             document.getElementById('keyDisplay').innerText = key;
         }
 
