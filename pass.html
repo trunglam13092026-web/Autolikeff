@@ -40,7 +40,7 @@
                 2. Sau khi hoàn thành, hệ thống sẽ tự động đưa bạn về đây.<br>
                 3. Nhận mã Key bản quyền trong ngày!
             </div>
-            <a href="https://link4m.net/0aFFT" id="btnLink" class="btn-action" target="_blank">🔗 Bấm vào đây để Vượt Link</a>
+            <a href="https://link4m.net/0aFFT" id="btnLink" class="btn-action" target="_blank" onclick="generateToken()">🔗 Bấm vào đây để Vượt Link</a>
         </div>
 
         <!-- BƯỚC 2: Nút xác nhận nhận Key -->
@@ -104,6 +104,12 @@
 
         let currentLang = localStorage.getItem('tlz_lang') || (navigator.language.startsWith('vi') ? 'vi' : 'en');
 
+        // Sinh Token xác thực khi bấm nút vượt link (Có hạn trong 3 phút)
+        function generateToken() {
+            const expireTime = new Date().getTime() + (3 * 60 * 1000); // 3 phút
+            localStorage.setItem('tlz_bypass_session', expireTime);
+        }
+
         async function checkUserCountry() {
             try {
                 const res = await fetch("https://ipapi.co/json/");
@@ -148,7 +154,6 @@
             setLanguage(currentLang === 'vi' ? 'en' : 'vi');
         }
 
-        // Lấy chuỗi ngày hôm nay (Ví dụ: 2026-10-17)
         function getTodayString() {
             const d = new Date();
             return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
@@ -163,25 +168,27 @@
 
             const savedDate = localStorage.getItem('tlz_saved_date');
             const savedKey = localStorage.getItem('tlz_saved_key');
+            const sessionExpire = localStorage.getItem('tlz_bypass_session');
+            const now = new Date().getTime();
             const today = getTodayString();
 
-            // Nếu ngày đã cũ -> Xóa Key cũ đi
+            // Nếu ngày cũ -> Dọn dẹp dữ liệu
             if (savedDate && savedDate !== today) {
                 localStorage.removeItem('tlz_saved_date');
                 localStorage.removeItem('tlz_saved_key');
             }
 
-            // NẾU ĐÃ CÓ KEY HÔM NAY -> Hiện thẳng Key đó luôn (không cần bắt vượt lại)
+            // 1. ĐÃ CÓ KEY TRONG NGÀY -> Hiển thị ngay
             if (savedDate === today && savedKey) {
                 showKeySection(savedKey);
             }
-            // NẾU VƯỢT LINK XONG CÓ ?bypassed=true -> Mở Bước 2
-            else if (isBypassed === 'true') {
+            // 2. PHẢI CÓ CẢ ?bypassed=true VÀ TOKEN CÒN HẠN TRONG MÁY -> Mới mở Bước 2
+            else if (isBypassed === 'true' && sessionExpire && now < parseInt(sessionExpire)) {
                 document.getElementById('stepGetLink').classList.add('hidden');
                 document.getElementById('stepVerify').classList.remove('hidden');
                 document.getElementById('stepShowKey').classList.add('hidden');
             } 
-            // KHÔNG CÓ CẢ 2 -> Giữ ở Bước 1
+            // 3. COPY LINK TRỰC TIẾP HOẶC TOKEN QUÁ HẠN -> Ép về Bước 1
             else {
                 document.getElementById('stepGetLink').classList.remove('hidden');
                 document.getElementById('stepVerify').classList.add('hidden');
@@ -195,7 +202,6 @@
             const savedDate = localStorage.getItem('tlz_saved_date');
             const savedKey = localStorage.getItem('tlz_saved_key');
 
-            // Nếu đã lưu Key trong ngày rồi thì hiển thị lại Key cũ
             if (savedDate === today && savedKey) {
                 showKeySection(savedKey);
                 return;
@@ -210,9 +216,9 @@
                 const data = await res.json();
 
                 if (data && data.status === "success") {
-                    // LƯU KEY LẠI THEO NGÀY ĐỂ KHÔNG BỊ ĐỔI KEY KHÁC KHI LOAD LẠI
                     localStorage.setItem('tlz_saved_date', today);
                     localStorage.setItem('tlz_saved_key', data.key);
+                    localStorage.removeItem('tlz_bypass_session'); // Xóa token sau khi lấy key thành công
                     showKeySection(data.key);
                 } else if (data && data.status === "limit_exceeded") {
                     document.getElementById("keyDisplay").innerText = t.limitExceeded;
