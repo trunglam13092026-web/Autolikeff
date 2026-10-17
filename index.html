@@ -63,11 +63,11 @@
         </div>
         
         <div class="input-group">
-            <input type="text" id="key-input" placeholder="Nhập Key xác minh hoặc bấm Lấy Key...">
+            <input type="text" id="key-input" placeholder="Nhập Key xác minh...">
         </div>
         
-        <!-- Khi bấm vào đây sẽ chuyển hướng qua link rút gọn, đồng thời tự sinh key ngầm -->
-        <a id="btn-get-key" href="https://link4m.net/vuvdqt" target="_blank" class="key-link" onclick="layKeyTuDong()">👉 Nhấp vào đây để lấy Key miễn phí</a>
+        <!-- Nút chuyển sang trang lấy key qua link rút gọn -->
+        <a href="getkey.html" class="key-link">👉 Nhấp vào đây để lấy Key miễn phí</a>
         
         <button class="btn-submit" id="btn-run" onclick="thucHienBuff()">Chạy</button>
         
@@ -94,34 +94,9 @@
     </div>
 
     <script>
-        // Dán chính xác Link Web App Google Apps Script của Lâm vào đây
+        // Dán Link Web App Google Apps Script của Lâm vào đây
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
 
-        // Hàm gọi sang Google Apps Script để tự động sinh Key mới khi khách bấm lấy key
-        async function layKeyTuDong() {
-            let statusDiv = document.getElementById("status");
-            statusDiv.style.color = "#4dabf7";
-            statusDiv.innerText = "⏳ Đang tạo Key tự động cho bạn...";
-
-            try {
-                let response = await fetch(WEB_APP_URL);
-                let result = await response.json();
-
-                if (result.status === "success") {
-                    document.getElementById("key-input").value = result.key;
-                    statusDiv.style.color = "#22c55e";
-                    statusDiv.innerText = "✅ Đã tạo Key thành công! Key đã được điền tự động bên dưới.";
-                } else {
-                    statusDiv.style.color = "#ef4444";
-                    statusDiv.innerText = "❌ Không thể tạo key tự động!";
-                }
-            } catch (err) {
-                statusDiv.style.color = "#ef4444";
-                statusDiv.innerText = "❌ Lỗi kết nối đến máy chủ tạo key!";
-            }
-        }
-
-        // Hàm thực hiện gửi yêu cầu Buff
         async function thucHienBuff() {
             let uid = document.getElementById("uid-input").value.trim();
             let key = document.getElementById("key-input").value.trim();
