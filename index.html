@@ -3,126 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BUFF LIKE FI FAI MIỄN PHÍ</title>
+    <title>BuffLikeFF.site - Hệ Thống Tương Tác Game</title>
     <style>
-        body {
-            background-color: #121212;
-            color: #ffffff;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        .container {
-            background-color: #1e1e1e;
-            border-radius: 12px;
-            padding: 24px;
-            width: 100%;
-            max-width: 420px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-            text-align: center;
-        }
-        h1 {
-            font-size: 22px;
-            margin-bottom: 4px;
-            color: #ffffff;
-            text-transform: uppercase;
-        }
-        .subtitle {
-            color: #2ed573;
-            font-size: 13px;
-            margin-bottom: 12px;
-        }
-        .stats-box {
-            color: #aaa;
-            font-size: 14px;
-            margin-bottom: 18px;
-            background: #262626;
-            padding: 8px 12px;
-            border-radius: 6px;
-            display: inline-block;
-        }
-        .input-group {
-            margin-bottom: 12px;
-        }
-        input {
-            width: 100%;
-            padding: 12px;
-            background-color: #2a2a2a;
-            border: 1px solid #3a3a3a;
-            border-radius: 8px;
-            color: #ffffff;
-            font-size: 14px;
-            box-sizing: border-box;
-            outline: none;
-        }
-        input::placeholder {
-            color: #777;
-        }
-        .key-link {
-            display: block;
-            color: #38ef7d;
-            font-size: 13px;
-            text-decoration: none;
-            margin: 10px 0 16px;
-            font-weight: bold;
-        }
-        .btn-submit {
-            width: 100%;
-            padding: 12px;
-            background-color: #2ed573;
-            color: #ffffff;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .btn-submit:hover {
-            background-color: #26af5f;
-        }
-        .btn-submit:disabled {
-            background-color: #555555;
-            cursor: not-allowed;
-        }
-        .info-box {
-            border: 1px solid #d4af37;
-            border-radius: 8px;
-            padding: 14px;
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #121212; color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .card { background: #1e1e1e; padding: 25px; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.6); width: 100%; max-width: 420px; text-align: center; border: 1px solid #333; }
+        
+        h2 { color: #22c55e; margin-bottom: 5px; font-size: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .sub-owner { font-size: 13px; color: #4ade80; margin-bottom: 15px; }
+
+        /* Thanh đếm lượt miễn phí */
+        .counter-box { background: #2a2a2a; border: 1px solid #444; padding: 10px; border-radius: 8px; font-size: 14px; margin-bottom: 15px; color: #cbd5e1; }
+        .counter-box span { color: #22c55e; font-weight: bold; }
+
+        .input-group { margin-bottom: 12px; text-align: left; }
+        input { width: 100%; padding: 12px; border: 1px solid #333; background: #2a2a2a; color: #fff; border-radius: 8px; font-size: 15px; outline: none; }
+        input:focus { border-color: #22c55e; }
+
+        .key-link { display: inline-block; margin: 8px 0 15px 0; color: #4dabf7; text-decoration: none; font-size: 14px; font-weight: 600; }
+        .key-link:hover { text-decoration: underline; }
+
+        .btn-submit { width: 100%; padding: 12px; background: #22c55e; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: background 0.2s; }
+        .btn-submit:hover { background: #16a34a; }
+
+        /* Khung thông báo và lưu ý bên dưới */
+        .notice-box {
+            background: #222;
+            border: 1px solid #eab308;
+            border-radius: 10px;
+            padding: 15px;
             margin-top: 20px;
             text-align: left;
+            font-size: 12.5px;
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+        .notice-title {
+            color: #eab308;
+            font-weight: bold;
+            margin-bottom: 8px;
             font-size: 13px;
-            background-color: #1a1a1a;
         }
-        .info-box h3 {
-            margin-top: 0;
-            color: #d4af37;
-            font-size: 13px;
-        }
-        .info-box ul {
-            padding-left: 18px;
-            margin: 6px 0;
-        }
-        .info-box li {
-            margin-bottom: 4px;
-            color: #ccc;
-        }
+        .notice-box ul { padding-left: 16px; margin-top: 5px; }
+        .notice-box li { margin-bottom: 4px; }
+
+        #status { margin-top: 15px; font-size: 14px; line-height: 1.4; word-break: break-word; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>BUFF LIKE FI FAI MIỄN PHÍ</h1>
-        <div class="subtitle">Được phát triển bởi hệ thống @tlzproject</div>
-
-        <!-- BỘ ĐẾM 150 LƯỢT -->
-        <div class="stats-box">
-            Lượt miễn phí hôm nay: <span id="current-count" style="color: #2ed573; font-weight: bold;">0</span>/150
+    <div class="card">
+        <h2>BUFF LIKE FI FAI MIEN PHI</h2>
+        <div class="sub-owner">Được phát triển bởi hệ thống @tlzproject</div>
+        
+        <!-- Thanh đếm lượt -->
+        <div class="counter-box">
+            Lượt miễn phí hôm nay: <span id="limitCount">0/150</span>
         </div>
 
         <div class="input-group">
@@ -132,24 +68,25 @@
         <div class="input-group">
             <input type="text" id="key-input" placeholder="Nhập Key xác minh...">
         </div>
-
+        
+        <!-- Link sang Link4M -->
         <a href="https://link4m.net/vuvdqt" target="_blank" class="key-link">👉 Nhấp vào đây để lấy Key miễn phí</a>
-
+        
         <button class="btn-submit" id="btn-run" onclick="thucHienBuff()">Chạy</button>
+        
+        <div id="status"></div>
 
-        <!-- KHUNG LƯU Ý VÀ THỜI GIAN HOẠT ĐỘNG -->
-        <div class="info-box">
-            <h3>📢 THỜI GIAN HOẠT ĐỘNG HỆ THỐNG:</h3>
-            <ul>
-                <li>Việt Nam 🇻🇳: 9h–23h</li>
-                <li>Prathet Thai 🇹🇭: 9:00–23:00 น.</li>
-                <li>Indonesia 🇮🇩: 09.00–23.00 WIB (Jakarta)</li>
-                <li>پاکستان 🇵🇰: صبح 7 بجے سے رات 9 بجے تک</li>
-                <li>भारत 🇮🇳: सुबह 7:30–रात 9:30 बजे</li>
-                <li>Brasil 🇧🇷: 21h–11h (horário de Brasília)</li>
-            </ul>
+        <!-- Khung thông báo hệ thống & lưu ý -->
+        <div class="notice-box">
+            <div class="notice-title">📢 THỜI GIAN HOẠT ĐỘNG HỆ THỐNG:</div>
+            • Việt Nam 🇻🇳: 9h–23h<br>
+            • Prathet Thai 🇹🇭: 9:00–23:00 น.<br>
+            • Indonesia 🇮🇩: 09.00–23.00 WIB (Jakarta)<br>
+            • 🇵🇰 پاکستان: صبح 7 بجے سے رات 9 بجے تک<br>
+            • भारत 🇮🇳: सुबह 7:30–रात 9:30 बजे<br>
+            • Brasil 🇧🇷: 21h–11h (horário de Brasília)<br><br>
 
-            <h3 style="margin-top: 12px;">📌 LƯU Ý QUAN TRỌNG:</h3>
+            <div class="notice-title" style="color: #ef4444;">📌 LƯU Ý QUAN TRỌNG:</div>
             <ul>
                 <li>Thời gian lên like nhanh từ 9h sáng đến 20h tối có thể đến 23h.</li>
                 <li>Gần chiều tối sẽ hết tài nguyên like!</li>
@@ -161,73 +98,44 @@
     </div>
 
     <script>
-        // DÁN ĐƯỜNG LINK WEB APP GOOGLE APPS SCRIPT CỦA LÂM VÀO ĐÂY
-        const APPS_SCRIPT_URL = 'DÁN_LINK_WEB_APP_APPS_SCRIPT_VÀO_ĐÂY';
+        const WEB_APP_URL = "URL_GOOGLE_APPS_SCRIPT_CUA_LAM"; // Thay link Web App GAS vào đây
 
-        // Lấy số lượt hiện tại khi vừa tải trang
-        async function kiemTraLuot() {
-            try {
-                let res = await fetch(APPS_SCRIPT_URL);
-                let data = await res.json();
-                document.getElementById('current-count').innerText = data.currentCount;
-            } catch (e) {
-                console.error("Lỗi lấy số lượt:", e);
-            }
-        }
-
-        // Hàm xử lý khi bấm nút "Chạy"
         async function thucHienBuff() {
-            let uidInput = document.getElementById('uid-input');
-            let uid = uidInput ? uidInput.value.trim() : "";
+            let uid = document.getElementById("uid-input").value.trim();
+            let key = document.getElementById("key-input").value.trim();
+            let statusDiv = document.getElementById("status");
 
-            if (!uid) {
-                alert("Vui lòng nhập ID Game của bạn!");
+            if (!uid || !key) {
+                statusDiv.style.color = "#ef4444";
+                statusDiv.innerText = "❌ Vui lòng điền đầy đủ ID và Key!";
                 return;
             }
 
-            let btn = document.getElementById('btn-run');
-            btn.innerText = "Đang xử lý...";
-            btn.disabled = true;
+            statusDiv.style.color = "#eab308";
+            statusDiv.innerText = "⏳ Đang gửi yêu cầu...";
 
             try {
-                // Lấy IP người dùng
-                let userIp = "Không rõ IP";
-                try {
-                    let ipRes = await fetch('https://api.ipify.org?format=json');
-                    let ipData = await ipRes.json();
-                    userIp = ipData.ip || "Không rõ IP";
-                } catch(e) {}
-
-                // Gửi dữ liệu về Google Apps Script
-                let response = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ uid: uid, ip: userIp })
+                let response = await fetch(WEB_APP_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ uid: uid, key: key })
                 });
-
                 let result = await response.json();
 
-                // Hiển thị thông báo kết quả
-                alert(result.message);
-
-                // Cập nhật số lượt trên màn hình
-                if (result.currentCount !== undefined) {
-                    document.getElementById('current-count').innerText = result.currentCount;
-                }
-
                 if (result.status === "success") {
-                    uidInput.value = "";
+                    statusDiv.style.color = "#22c55e";
+                    statusDiv.innerText = "✅ " + result.message;
+                    if(result.remaining !== undefined) {
+                        document.getElementById("limitCount").innerText = (150 - result.remaining) + "/150";
+                    }
+                } else {
+                    statusDiv.style.color = "#ef4444";
+                    statusDiv.innerText = "❌ " + result.message;
                 }
-
             } catch (err) {
-                console.error(err);
-                alert("Đã xảy ra lỗi kết nối, vui lòng thử lại!");
-            } finally {
-                btn.innerText = "Chạy";
-                btn.disabled = false;
+                statusDiv.style.color = "#ef4444";
+                statusDiv.innerText = "❌ Không thể kết nối máy chủ!";
             }
         }
-
-        window.onload = kiemTraLuot;
     </script>
 </body>
 </html>
