@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Lấy Key - TLZ Project</title>
+    <title id="pageTitle">Hệ Thống Lấy Key - TLZ Project</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #121212; color: #fff; text-align: center; padding: 40px 15px; margin: 0; }
         .container { max-width: 420px; margin: auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative; }
+        .lang-switch { position: absolute; top: 15px; right: 15px; background: #2a2a2a; border: 1px solid #444; color: #fff; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .lang-switch:hover { background: #3a3a3a; }
         h2 { color: #fff; margin-bottom: 10px; font-size: 22px; }
         .dev { font-size: 13px; color: #00ff88; margin-bottom: 20px; }
         .key-box { background: #2a2a2a; border: 2px dashed #00ff88; padding: 15px; border-radius: 8px; font-size: 18px; font-weight: bold; color: #00ff88; word-break: break-all; margin: 20px 0; letter-spacing: 1px; }
@@ -26,27 +28,27 @@
 <body>
 
     <div class="container">
-        <h2>XÁC MINH LẤY KEY</h2>
+        <button class="lang-switch" onclick="toggleLanguage()">🌐 EN / VI</button>
+        <h2 id="txtTitle">XÁC MINH LẤY KEY</h2>
         <div class="dev">TLZ Project Security System</div>
 
         <!-- BƯỚC 1 -->
         <div id="stepGetLink">
-            <div class="step-desc">
+            <div class="step-desc" id="descStep1">
                 <b>📌 Hướng dẫn lấy Key:</b><br>
                 1. Bấm nút bên dưới để vượt link rút gọn.<br>
                 2. Sau khi hoàn thành, hệ thống sẽ tự động đưa bạn về đây.<br>
                 3. Nhận mã Key bản quyền trong ngày!
             </div>
-            <!-- Khi bấm vào đây, lập tức lưu trạng thái đã click vào máy -->
-            <a href="https://link4m.net/wflHy3" id="btnLink" class="btn-action" target="_blank" onclick="markClicked()">🔗 Bấm vào đây để Vượt Link</a>
+            <a href="javascript:void(0)" id="btnLink" class="btn-action" onclick="redirectToShortLink()">🔗 Bấm vào đây để Vượt Link</a>
         </div>
 
         <!-- BƯỚC 2 -->
         <div id="stepVerify" class="hidden">
-            <div class="step-desc" style="text-align: center; color: #00ff88;">
+            <div class="step-desc" style="text-align: center; color: #00ff88;" id="descStep2">
                 ✅ Bạn đã hoàn thành vượt link!<br>Nhấn nút bên dưới để nhận Key.
             </div>
-            <button class="btn-verify" onclick="requestKey()">🔓 Nhận Key Ngay</button>
+            <button class="btn-verify" onclick="requestKey()" id="btnVerify">🔓 Nhận Key Ngay</button>
         </div>
 
         <!-- BƯỚC 3 -->
@@ -56,15 +58,98 @@
             <div id="statusMsg"></div>
         </div>
 
-        <a href="index.html" class="btn-back">⬅ Quay lại trang chủ</a>
+        <a href="index.html" class="btn-back" id="btnBack">⬅ Quay lại trang chủ</a>
     </div>
 
     <script>
         const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
 
-        function markClicked() {
-            // Lưu thời gian người dùng bấm vượt link (Hiệu lực trong 30 phút)
-            localStorage.setItem('tlz_clicked_time', new Date().getTime());
+        const LINK_VN = "https://link4m.net/vuvdqt";
+        const LINK_GLOBAL = "https://fc-lc.com/0jiQ";
+
+        let isVietnamUser = true;
+
+        const langData = {
+            vi: {
+                title: "Hệ Thống Lấy Key - TLZ Project",
+                heading: "XÁC MINH LẤY KEY",
+                step1: "<b>📌 Hướng dẫn lấy Key:</b><br>1. Bấm nút bên dưới để vượt link rút gọn.<br>2. Sau khi hoàn thành, hệ thống sẽ tự động đưa bạn về đây.<br>3. Nhận mã Key bản quyền trong ngày!",
+                btnLinkText: "🔗 Bấm vào đây để Vượt Link",
+                step2: "✅ Bạn đã hoàn thành vượt link!<br>Nhấn nút bên dưới để nhận Key.",
+                btnVerifyText: "🔓 Nhận Key Ngay",
+                btnCopyText: "📋 Sao chép Key",
+                btnBackText: "⬅ Quay lại trang chủ",
+                loading: "⏳ Đang tạo Key...",
+                limitExceeded: "❌ Hôm nay đã hết lượt free, hãy quay lại vào ngày mai!",
+                successCopy: "✅ Đã sao chép thành công!",
+                errorServer: "❌ Lỗi từ Server!",
+                errorConnect: "❌ Không thể kết nối!"
+            },
+            en: {
+                title: "Key Retrieval System - TLZ Project",
+                heading: "VERIFY & GET KEY",
+                step1: "<b>📌 Instructions:</b><br>1. Click the button below to bypass the shortened link.<br>2. After completion, you will be automatically redirected back here.<br>3. Get your active license key for today!",
+                btnLinkText: "🔗 Click Here to Bypass Link",
+                step2: "✅ You have successfully bypassed the link!<br>Click the button below to retrieve your Key.",
+                btnVerifyText: "🔓 Get Key Now",
+                btnCopyText: "📋 Copy Key",
+                btnBackText: "⬅ Back to Home",
+                loading: "⏳ Generating Key...",
+                limitExceeded: "❌ Today's free limit has been reached, please come back tomorrow!",
+                successCopy: "✅ Copied successfully!",
+                errorServer: "❌ Server Error!",
+                errorConnect: "❌ Connection Failed!"
+            }
+        };
+
+        let currentLang = localStorage.getItem('tlz_lang') || (navigator.language.startsWith('vi') ? 'vi' : 'en');
+
+        // 1. HÀM TẠO TOKEN NGẪU NHIÊN VÀ CHUYỂN HƯỚNG
+        function redirectToShortLink() {
+            // Tạo mã token ngẫu nhiên dạng: TLZ_x9k2p8a1
+            const randomToken = "TLZ_" + Math.random().toString(36).substring(2, 10);
+            
+            // Lưu Token và thời gian tạo vào máy người dùng
+            localStorage.setItem('active_tlz_token', randomToken);
+            localStorage.setItem('tlz_token_time', new Date().getTime());
+
+            // Chọn link theo quốc gia
+            const baseUrl = isVietnamUser ? LINK_VN : LINK_GLOBAL;
+            
+            // Mở link rút gọn trong tab mới
+            window.open(baseUrl, '_blank');
+        }
+
+        async function checkUserCountry() {
+            try {
+                const res = await fetch("https://ipapi.co/json/");
+                const data = await res.json();
+                if (data && data.country_code) {
+                    isVietnamUser = (data.country_code === 'VN');
+                }
+            } catch (e) {
+                isVietnamUser = true; 
+            }
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('tlz_lang', lang);
+            const d = langData[lang];
+
+            document.getElementById('pageTitle').innerText = d.title;
+            document.getElementById('txtTitle').innerText = d.heading;
+            document.getElementById('descStep1').innerHTML = d.step1;
+            document.getElementById('btnLink').innerText = d.btnLinkText;
+
+            document.getElementById('descStep2').innerHTML = d.step2;
+            document.getElementById('btnVerify').innerText = d.btnVerifyText;
+            document.getElementById('btnCopy').innerText = d.btnCopyText;
+            document.getElementById('btnBack').innerText = d.btnBackText;
+        }
+
+        function toggleLanguage() {
+            setLanguage(currentLang === 'vi' ? 'en' : 'vi');
         }
 
         function getTodayString() {
@@ -72,29 +157,47 @@
             return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
         }
 
+        // 2. PHẦN XÁC THỰC TOKEN KHI TRANG LOAD
         window.onload = function() {
+            setLanguage(currentLang);
+            checkUserCountry();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlToken = urlParams.get('token'); // Lấy token từ URL (nếu có)
+            const isBypassed = urlParams.get('bypassed'); // Lấy tham số bypassed đơn giản
+
+            const storedToken = localStorage.getItem('active_tlz_token');
+            const tokenTime = localStorage.getItem('tlz_token_time');
             const savedDate = localStorage.getItem('tlz_saved_date');
             const savedKey = localStorage.getItem('tlz_saved_key');
-            const clickedTime = localStorage.getItem('tlz_clicked_time');
+            
             const now = new Date().getTime();
             const today = getTodayString();
 
+            // Xóa Key cũ nếu sang ngày mới
             if (savedDate && savedDate !== today) {
                 localStorage.removeItem('tlz_saved_date');
                 localStorage.removeItem('tlz_saved_key');
             }
 
-            // 1. Nếu đã có key trong ngày -> Hiện Key
+            // A. ĐÃ CÓ KEY TRONG NGÀY -> Hiện Key luôn
             if (savedDate === today && savedKey) {
                 showKeySection(savedKey);
             }
-            // 2. Nếu người dùng vừa bấm nút vượt link trong vòng 30 phút trước đó -> Cho qua Bước 2 luôn (bất chấp link rút gọn trả về có ?bypassed hay không)
-            else if (clickedTime && (now - parseInt(clickedTime) < 30 * 60 * 1000)) {
+            // B. ĐIỀU KIỆN MỞ BƯỚC 2:
+            // Khớp Token HOẶC có ?bypassed=true kèm Token chưa quá 30 phút
+            else if (
+                (urlToken && urlToken === storedToken) || 
+                (isBypassed === 'true' && storedToken && tokenTime && (now - parseInt(tokenTime) < 30 * 60 * 1000))
+            ) {
+                // Làm sạch URL (Ẩn token và bypassed khỏi thanh địa chỉ)
+                window.history.replaceState({}, document.title, window.location.pathname);
+                
                 document.getElementById('stepGetLink').classList.add('hidden');
                 document.getElementById('stepVerify').classList.remove('hidden');
                 document.getElementById('stepShowKey').classList.add('hidden');
             } 
-            // 3. Ngược lại giữ ở Bước 1
+            // C. KHÔNG HỢP LỆ -> Giữ ở Bước 1
             else {
                 document.getElementById('stepGetLink').classList.remove('hidden');
                 document.getElementById('stepVerify').classList.add('hidden');
@@ -103,6 +206,7 @@
         };
 
         async function requestKey() {
+            const t = langData[currentLang];
             const today = getTodayString();
             const savedDate = localStorage.getItem('tlz_saved_date');
             const savedKey = localStorage.getItem('tlz_saved_key');
@@ -116,23 +220,25 @@
             document.getElementById('stepShowKey').classList.remove('hidden');
 
             try {
-                document.getElementById("keyDisplay").innerText = "⏳ Đang tạo Key...";
+                document.getElementById("keyDisplay").innerText = t.loading;
                 const res = await fetch(GAS_API_URL + "?action=get_key");
                 const data = await res.json();
 
                 if (data && data.status === "success") {
                     localStorage.setItem('tlz_saved_date', today);
                     localStorage.setItem('tlz_saved_key', data.key);
-                    localStorage.removeItem('tlz_clicked_time'); // Xóa trạng thái click
+                    // Xóa token sau khi đã đổi được Key thành công
+                    localStorage.removeItem('active_tlz_token');
+                    localStorage.removeItem('tlz_token_time');
                     showKeySection(data.key);
                 } else if (data && data.status === "limit_exceeded") {
-                    document.getElementById("keyDisplay").innerText = "❌ Hôm nay đã hết lượt free, hãy quay lại vào ngày mai!";
+                    document.getElementById("keyDisplay").innerText = t.limitExceeded;
                     document.getElementById("btnCopy").style.display = "none";
                 } else {
-                    document.getElementById("keyDisplay").innerText = "❌ Lỗi từ Server!";
+                    document.getElementById("keyDisplay").innerText = t.errorServer;
                 }
             } catch (e) {
-                document.getElementById("keyDisplay").innerText = "❌ Không thể kết nối!";
+                document.getElementById("keyDisplay").innerText = t.errorConnect;
             }
         }
 
@@ -146,8 +252,9 @@
 
         function copyKey() {
             const currentKey = document.getElementById("keyDisplay").innerText;
+            const t = langData[currentLang];
             navigator.clipboard.writeText(currentKey).then(() => {
-                document.getElementById("statusMsg").innerText = "✅ Đã sao chép thành công!";
+                document.getElementById("statusMsg").innerText = t.successCopy;
                 setTimeout(() => { document.getElementById("statusMsg").innerText = ""; }, 2000);
             });
         }
