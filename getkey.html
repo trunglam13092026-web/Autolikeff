@@ -32,7 +32,7 @@
         <h2 id="txtTitle">XÁC MINH LẤY KEY</h2>
         <div class="dev">TLZ Project Security System</div>
 
-        <!-- BƯỚC 1: Hướng dẫn & Nút Vượt Link -->
+        <!-- BƯỚC 1 -->
         <div id="stepGetLink">
             <div class="step-desc" id="descStep1">
                 <b>📌 Hướng dẫn lấy Key:</b><br>
@@ -40,10 +40,10 @@
                 2. Sau khi hoàn thành, hệ thống sẽ tự động đưa bạn về đây.<br>
                 3. Nhận mã Key bản quyền trong ngày!
             </div>
-            <a href="https://link4m.net/0aFFT" id="btnLink" class="btn-action" target="_blank" onclick="generateBypassToken()">🔗 Bấm vào đây để Vượt Link</a>
+            <a href="https://link4m.net/0aFFT" id="btnLink" class="btn-action" target="_blank" onclick="markAsClicked()">🔗 Bấm vào đây để Vượt Link</a>
         </div>
 
-        <!-- BƯỚC 2: Xác nhận hoàn thành vượt link -->
+        <!-- BƯỚC 2 -->
         <div id="stepVerify" class="hidden">
             <div class="step-desc" style="text-align: center; color: #00ff88;" id="descStep2">
                 ✅ Bạn đã hoàn thành vượt link!<br>Nhấn nút bên dưới để nhận Key.
@@ -51,7 +51,7 @@
             <button class="btn-verify" onclick="requestKey()" id="btnVerify">🔓 Nhận Key Ngay</button>
         </div>
 
-        <!-- BƯỚC 3: Hiển thị Key hoặc Thông báo hết lượt -->
+        <!-- BƯỚC 3 -->
         <div id="stepShowKey" class="hidden">
             <div class="key-box" id="keyDisplay">⏳ Đang xử lý...</div>
             <button class="btn-copy" id="btnCopy" onclick="copyKey()">📋 Sao chép Key</button>
@@ -104,10 +104,8 @@
 
         let currentLang = localStorage.getItem('tlz_lang') || (navigator.language.startsWith('vi') ? 'vi' : 'en');
 
-        // Hàm tạo Token bảo mật khi người dùng thực sự bấm nút vượt link
-        function generateBypassToken() {
-            const token = "TLZ_TOKEN_" + Math.random().toString(36).substring(2, 10);
-            sessionStorage.setItem('bypass_token', token);
+        function markAsClicked() {
+            localStorage.setItem('tlz_clicked_link', 'true');
         }
 
         async function checkUserCountry() {
@@ -168,21 +166,22 @@
                 const savedKey = localStorage.getItem('active_tlz_key');
                 const currentDate = getSystemDate();
                 
+                // LẤY THAM SỐ TỪ URL LẬP TỨC
                 const urlParams = new URLSearchParams(window.location.search);
                 const isBypassed = urlParams.get('bypassed');
-                const validToken = sessionStorage.getItem('bypass_token');
+                const hasClicked = localStorage.getItem('tlz_clicked_link');
 
-                // 1. Nếu đã có key trong ngày -> Hiển thị Key
+                // 1. Đã có key hôm nay -> Hiện Key
                 if (savedDate === currentDate && savedKey) {
                     showKeySection(savedKey);
                 } 
-                // 2. Kiểm tra chặt chẽ: Phải vừa có ?bypassed=true VÀ vừa có Token bảo mật trong bộ nhớ phiên
-                else if (isBypassed === 'true' && validToken) {
+                // 2. NẾU URL CÓ ?bypassed=true HOẶC ĐÃ BẤM NÚT VƯỢT LINK -> CHO QUA BƯỚC 2 NGAY!
+                else if (isBypassed === 'true' || hasClicked === 'true') {
                     document.getElementById('stepGetLink').classList.add('hidden');
                     document.getElementById('stepVerify').classList.remove('hidden');
                     document.getElementById('stepShowKey').classList.add('hidden');
                 } 
-                // 3. Nếu cố tình gõ link ?bypassed=true mà KHÔNG CÓ Token -> Đẩy về Bước 1 ngay lập tức
+                // 3. Nếu không thỏa mãn điều kiện nào -> Mới giữ ở Bước 1
                 else {
                     document.getElementById('stepGetLink').classList.remove('hidden');
                     document.getElementById('stepVerify').classList.add('hidden');
@@ -220,7 +219,7 @@
                 if (data && data.status === "success") {
                     localStorage.setItem('tlz_key_date', currentDate);
                     localStorage.setItem('active_tlz_key', data.key);
-                    sessionStorage.removeItem('bypass_token'); // Xóa token sau khi đã đổi Key thành công
+                    localStorage.removeItem('tlz_clicked_link');
                     showKeySection(data.key);
                 } else if (data && data.status === "limit_exceeded") {
                     document.getElementById("keyDisplay").innerText = t.limitExceeded;
