@@ -4,138 +4,230 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BUFF LIKE FI FAI MIỄN PHÍ</title>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6774808835156890"
-     crossorigin="anonymous"></script>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #121212; color: #fff; text-align: center; padding: 30px 15px; margin: 0; }
-        .container { max-width: 420px; margin: auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        h2 { color: #fff; margin-bottom: 5px; font-size: 22px; }
-        .dev { font-size: 13px; color: #00ff88; margin-bottom: 20px; }
-        .input-group { margin-bottom: 15px; text-align: left; }
-        input { width: 100%; padding: 12px; background: #2a2a2a; border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
-        input:focus { border-color: #00ff88; outline: none; }
-        .get-key-link { display: block; margin: 10px 0 20px 0; color: #3399ff; text-decoration: none; font-size: 14px; font-weight: bold; }
-        .get-key-link:hover { text-decoration: underline; }
-        .btn-run { background: #28a745; color: white; border: none; padding: 14px; width: 100%; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; }
-        .btn-run:hover { background: #218838; }
-        .btn-run:disabled { background: #555; cursor: not-allowed; }
-        #errorBox { margin-top: 15px; font-size: 14px; font-weight: bold; color: #ff4d4d; }
-        .notice { margin-top: 25px; background: #2a261a; border: 1px solid #d4af37; padding: 12px; border-radius: 8px; text-align: left; font-size: 13px; color: #ffd700; line-height: 1.5; }
-        .notice a { color: #00ff88; text-decoration: underline; word-break: break-all; }
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            padding: 24px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            text-align: center;
+        }
+        h1 {
+            font-size: 22px;
+            margin-bottom: 4px;
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+        .subtitle {
+            color: #2ed573;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+        .stats-box {
+            color: #aaa;
+            font-size: 14px;
+            margin-bottom: 18px;
+            background: #262626;
+            padding: 8px 12px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        .input-group {
+            margin-bottom: 12px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            background-color: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 14px;
+            box-sizing: border-box;
+            outline: none;
+        }
+        input::placeholder {
+            color: #777;
+        }
+        .key-link {
+            display: block;
+            color: #38ef7d;
+            font-size: 13px;
+            text-decoration: none;
+            margin: 10px 0 16px;
+            font-weight: bold;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: #2ed573;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-submit:hover {
+            background-color: #26af5f;
+        }
+        .btn-submit:disabled {
+            background-color: #555555;
+            cursor: not-allowed;
+        }
+        .info-box {
+            border: 1px solid #d4af37;
+            border-radius: 8px;
+            padding: 14px;
+            margin-top: 20px;
+            text-align: left;
+            font-size: 13px;
+            background-color: #1a1a1a;
+        }
+        .info-box h3 {
+            margin-top: 0;
+            color: #d4af37;
+            font-size: 13px;
+        }
+        .info-box ul {
+            padding-left: 18px;
+            margin: 6px 0;
+        }
+        .info-box li {
+            margin-bottom: 4px;
+            color: #ccc;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>BUFF LIKE FI FAI MIỄN PHÍ</h2>
-        <div class="dev">Được phát triển bởi hệ thống @tlzproject</div>
+        <h1>BUFF LIKE FI FAI MIỄN PHÍ</h1>
+        <div class="subtitle">Được phát triển bởi hệ thống @tlzproject</div>
 
-        <div class="input-group">
-            <input type="text" id="uidInput" placeholder="Nhập ID Game của bạn...">
+        <!-- BỘ ĐẾM 150 LƯỢT -->
+        <div class="stats-box">
+            Lượt miễn phí hôm nay: <span id="current-count" style="color: #2ed573; font-weight: bold;">0</span>/150
         </div>
 
         <div class="input-group">
-            <input type="text" id="keyInput" placeholder="Nhập Key xác minh...">
+            <input type="number" id="uid-input" placeholder="Nhập ID Game của bạn...">
+        </div>
+        
+        <div class="input-group">
+            <input type="text" id="key-input" placeholder="Nhập Key xác minh...">
         </div>
 
-        <a href="getkey.html" target="_blank" class="get-key-link">👉 Nhấp vào đây để lấy Key miễn phí</a>
+        <a href="#" class="key-link">👉 Nhấp vào đây để lấy Key miễn phí</a>
 
-        <button class="btn-run" id="btnRun" onclick="handleRunBuff()">Chạy</button>
+        <button class="btn-submit" id="btn-run" onclick="thucHienBuff()">Chạy</button>
 
-        <div id="errorBox"></div>
+        <!-- KHUNG LƯU Ý VÀ THỜI GIAN HOẠT ĐỘNG -->
+        <div class="info-box">
+            <h3>📢 THỜI GIAN HOẠT ĐỘNG HỆ THỐNG:</h3>
+            <ul>
+                <li>Việt Nam 🇻🇳: 9h–23h</li>
+                <li>Prathet Thai 🇹🇭: 9:00–23:00 น.</li>
+                <li>Indonesia 🇮🇩: 09.00–23.00 WIB (Jakarta)</li>
+                <li>پاکستان 🇵🇰: صبح 7 بجے سے رات 9 بجے تک</li>
+                <li>भारत 🇮🇳: सुबह 7:30–रात 9:30 बजे</li>
+                <li>Brasil 🇧🇷: 21h–11h (horário de Brasília)</li>
+            </ul>
 
-        <!-- MỤC THÔNG BÁO ĐÃ ĐƯỢC CẬP NHẬT THEO MÚI GIỜ QUỐC TẾ -->
-        <div class="notice">
-            <b>📢 THỜI GIAN HOẠT ĐỘNG HỆ THỐNG:</b><br>
-            • Việt Nam 🇻🇳: 9h–23h<br>
-            • ประเทศไทย 🇹🇭: 9:00–23:00 น.<br>
-            • Indonesia 🇮🇩: 09.00–23.00 WIB (Jakarta)<br>
-            • پاکستان 🇵🇰: صبح 7 بجے سے رات 9 بجے تک<br>
-            • भारत 🇮🇳: सुबह 7:30–रात 9:30 बजे<br>
-            • Brasil 🇧🇷: 21h–11h (horário de Brasília, começando na noite anterior)<br><br>
-            <b>📌 LƯU Ý QUAN TRỌNG:</b><br>
-            • Thời gian lên like nhanh từ 9h sáng đến 20h tối có thể đến 23h.<br>
-            • Gần chiều tối sẽ hết tài nguyên like !<br>
-            • Một IP Spam nhiều UID Buff sẽ ban khỏi hệ thống.<br>
-            • Buff thì chờ 15 phút đến 30 phút nếu không lên gửi hỗ trợ.<br>
-            • Lệnh buff sau 00:00 sẽ không buff nữa ,gửi hỗ trợ admin không rep.<br>
-            • Nên tranh thủ buff sớm nhất để cộng đủ like.<br><br>
-            • <b>TikTok Support:</b> <a href="https://www.tiktok.com/@hvpcutis1tg?_r=1&_t=ZS-9AblCE7tsBQ" target="_blank">https://www.tiktok.com/@hvpcutis1tg</a><br>
-            • <b>Telegram Support:</b> <a href="https://t.me/tlzproject" target="_blank">t.me/tlzproject</a>
+            <h3 style="margin-top: 12px;">📌 LƯU Ý QUAN TRỌNG:</h3>
+            <ul>
+                <li>Thời gian lên like nhanh từ 9h sáng đến 20h tối có thể đến 23h.</li>
+                <li>Gần chiều tối sẽ hết tài nguyên like!</li>
+                <li>Một IP Spam nhiều UID Buff sẽ ban khỏi hệ thống.</li>
+                <li>Buff thì chờ 15 phút đến 30 phút nếu không lên gửi hỗ trợ.</li>
+                <li>Lệnh buff sau 00:00 sẽ không buff nữa, gửi hỗ trợ.</li>
+            </ul>
         </div>
     </div>
 
     <script>
-        // Tự động điền lại Key và UID nếu người dùng lỡ load lại trang
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedKey = localStorage.getItem('saved_user_key');
-            const savedUid = localStorage.getItem('saved_user_uid');
-            if (savedKey) document.getElementById("keyInput").value = savedKey;
-            if (savedUid) document.getElementById("uidInput").value = savedUid;
-        });
+        // DÁN ĐƯỜNG LINK WEB APP GOOGLE APPS SCRIPT CỦA LÂM VÀO ĐÂY
+        const APPS_SCRIPT_URL = 'DÁN_LINK_WEB_APP_APPS_SCRIPT_VÀO_ĐÂY';
 
-        // Lưu lại thông tin nhập khi người dùng gõ phím
-        document.getElementById("keyInput").addEventListener('input', (e) => {
-            localStorage.setItem('saved_user_key', e.target.value.trim());
-        });
-        document.getElementById("uidInput").addEventListener('input', (e) => {
-            localStorage.setItem('saved_user_uid', e.target.value.trim());
-        });
-
-        async function handleRunBuff() {
-            const uid = document.getElementById("uidInput").value.trim();
-            const userKey = document.getElementById("keyInput").value.trim().toUpperCase();
-            const errorBox = document.getElementById("errorBox");
-            const btnRun = document.getElementById("btnRun");
-
-            errorBox.style.color = "#ff4d4d";
-
-            if (!uid) {
-                errorBox.innerText = "Vui lòng nhập ID Game của bạn!";
-                return;
-            }
-
-            if (!userKey) {
-                errorBox.innerText = "Vui lòng nhập Key xác minh!";
-                return;
-            }
-
-            btnRun.disabled = true;
-            errorBox.style.color = "#ffd700";
-            errorBox.innerText = "⏳ Đang xác thực với Server...";
-
+        // Lấy số lượt hiện tại khi vừa tải trang
+        async function kiemTraLuot() {
             try {
-                const response = await fetch('https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8'
-                    },
-                    body: JSON.stringify({
-                        uid: uid,
-                        key: userKey
-                    })
-                });
-
-                const result = await response.json();
-
-                if (result.status === "success") {
-                    errorBox.style.color = "#00ff88";
-                    errorBox.innerText = "✅ Xác thực thành công! Đang gửi lệnh buff cho ID: " + uid;
-                    
-                    localStorage.removeItem('saved_user_key');
-                    document.getElementById("keyInput").value = "";
-                } else {
-                    errorBox.style.color = "#ff4d4d";
-                    errorBox.innerText = result.message || "❌ Key không hợp lệ hoặc đã xảy ra lỗi!";
-                }
-
+                let res = await fetch(APPS_SCRIPT_URL);
+                let data = await res.json();
+                document.getElementById('current-count').innerText = data.currentCount;
             } catch (e) {
-                errorBox.style.color = "#ff4d4d";
-                errorBox.innerText = "❌ Không thể kết nối tới Server xác thực!";
-            } finally {
-                btnRun.disabled = false;
+                console.error("Lỗi lấy số lượt:", e);
             }
         }
+
+        // Hàm xử lý khi bấm nút "Chạy"
+        async function thucHienBuff() {
+            let uidInput = document.getElementById('uid-input');
+            let uid = uidInput ? uidInput.value.trim() : "";
+
+            if (!uid) {
+                alert("Vui lòng nhập ID Game của bạn!");
+                return;
+            }
+
+            let btn = document.getElementById('btn-run');
+            btn.innerText = "Đang xử lý...";
+            btn.disabled = true;
+
+            try {
+                // Lấy IP người dùng
+                let userIp = "Không rõ IP";
+                try {
+                    let ipRes = await fetch('https://api.ipify.org?format=json');
+                    let ipData = await ipRes.json();
+                    userIp = ipData.ip || "Không rõ IP";
+                } catch(e) {}
+
+                // Gửi dữ liệu về Google Apps Script
+                let response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ uid: uid, ip: userIp })
+                });
+
+                let result = await response.json();
+
+                // Hiển thị thông báo kết quả
+                alert(result.message);
+
+                // Cập nhật số lượt trên màn hình
+                if (result.currentCount !== undefined) {
+                    document.getElementById('current-count').innerText = result.currentCount;
+                }
+
+                if (result.status === "success") {
+                    uidInput.value = "";
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert("Đã xảy ra lỗi kết nối, vui lòng thử lại!");
+            } finally {
+                btn.innerText = "Chạy";
+                btn.disabled = false;
+            }
+        }
+
+        window.onload = kiemTraLuot;
     </script>
 </body>
 </html>
