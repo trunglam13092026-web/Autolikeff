@@ -3,260 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">Hệ Thống Lấy Key - TLZ Project</title>
+    <title>Xác Minh Lấy Key - BuffLikeFF.site</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: Arial, sans-serif; background-color: #121212; color: #fff; text-align: center; padding: 40px 15px; margin: 0; }
-        .container { max-width: 420px; margin: auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative; }
-        .lang-switch { position: absolute; top: 15px; right: 15px; background: #2a2a2a; border: 1px solid #444; color: #fff; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
-        .lang-switch:hover { background: #3a3a3a; }
-        h2 { color: #fff; margin-bottom: 10px; font-size: 22px; }
-        .dev { font-size: 13px; color: #00ff88; margin-bottom: 20px; }
-        .key-box { background: #2a2a2a; border: 2px dashed #00ff88; padding: 15px; border-radius: 8px; font-size: 18px; font-weight: bold; color: #00ff88; word-break: break-all; margin: 20px 0; letter-spacing: 1px; }
-        .btn-action { background: #ffc107; color: #000; border: none; padding: 14px; width: 100%; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 15px; display: block; text-decoration: none; box-sizing: border-box; }
-        .btn-action:hover { background: #e0a800; }
-        .btn-verify { background: #00ff88; color: #000; border: none; padding: 14px; width: 100%; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 15px; display: block; }
-        .btn-verify:hover { background: #00cc6a; }
-        .btn-copy { background: #007bff; color: white; border: none; padding: 12px; width: 100%; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 10px; display: block; }
-        .btn-copy:hover { background: #0056b3; }
-        .btn-back { display: block; margin-top: 15px; color: #aaa; text-decoration: none; font-size: 14px; }
-        .btn-back:hover { color: #fff; text-decoration: underline; }
-        #statusMsg { font-size: 13px; color: #ffd700; margin-top: 10px; }
-        .hidden { display: none !important; }
-        .step-desc { font-size: 14px; color: #ddd; margin-bottom: 20px; line-height: 1.5; text-align: left; background: #2a2a2a; padding: 12px; border-radius: 8px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #0f172a; color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .card { background: #1e293b; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; max-width: 420px; text-align: center; border: 1px solid #334155; position: relative; overflow: hidden; }
+        .badge-success { display: inline-block; background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid #22c55e; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-bottom: 15px; }
+        h2 { color: #38bdf8; font-size: 22px; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
+        p.sub-title { font-size: 14px; color: #94a3b8; margin-bottom: 20px; line-height: 1.5; }
+        
+        .key-container { background: #0f172a; border: 2px dashed #38bdf8; border-radius: 12px; padding: 18px; margin-bottom: 20px; position: relative; }
+        .key-label { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .key-value { font-size: 20px; font-weight: bold; color: #38bdf8; letter-spacing: 1.5px; word-break: break-all; }
+        
+        .btn-copy { width: 100%; padding: 14px; background: #3b82f6; color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-copy:hover { background: #2563eb; transform: translateY(-1px); }
+        .btn-copy:active { transform: translateY(0); }
+        
+        .back-home { display: inline-block; margin-top: 20px; color: #94a3b8; text-decoration: none; font-size: 14px; transition: color 0.2s; }
+        .back-home:hover { color: #f8fafc; text-decoration: underline; }
+        
+        #toast { visibility: hidden; min-width: 200px; background-color: #22c55e; color: #fff; text-align: center; border-radius: 8px; padding: 10px; position: fixed; z-index: 1; bottom: 30px; left: 50%; transform: translateX(-50%); font-size: 14px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        
+        @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
+        @keyframes fadeout { from { bottom: 30px; opacity: 1; } to { bottom: 0; opacity: 0; } }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <button class="lang-switch" onclick="toggleLanguage()">🌐 EN / VI</button>
-        <h2 id="txtTitle">XÁC MINH LẤY KEY</h2>
-        <div class="dev">TLZ Project Security System</div>
-
-        <!-- BƯỚC 1 -->
-        <div id="stepGetLink">
-            <div class="step-desc" id="descStep1">
-                <b>📌 Hướng dẫn lấy Key:</b><br>
-                1. Bấm nút bên dưới để vượt link rút gọn.<br>
-                2. Sau khi hoàn thành, hệ thống sẽ tự động đưa bạn về đây.<br>
-                3. Nhận mã Key bản quyền trong ngày!
-            </div>
-            <a href="javascript:void(0)" id="btnLink" class="btn-action" onclick="redirectToShortLink()">🔗 Bấm vào đây để Vượt Link</a>
+    <div class="card">
+        <div class="badge-success"><i class="fa-solid fa-circle-check"></i> Xác Minh Thành Công</div>
+        <h2>🔑 KEY BẢN QUYỀN</h2>
+        <p class="sub-title">Cảm ơn bạn đã hoàn thành vượt link! Dưới đây là mã Key của bạn trong ngày hôm nay:</p>
+        
+        <div class="key-container">
+            <div class="key-label">Mã Key Của Bạn:</div>
+            <div class="key-value" id="keyText">BUFFLIKEFF_KEY_2026</div>
         </div>
-
-        <!-- BƯỚC 2 -->
-        <div id="stepVerify" class="hidden">
-            <div class="step-desc" style="text-align: center; color: #00ff88;" id="descStep2">
-                ✅ Bạn đã hoàn thành vượt link!<br>Nhấn nút bên dưới để nhận Key.
-            </div>
-            <button class="btn-verify" onclick="requestKey()" id="btnVerify">🔓 Nhận Key Ngay</button>
-        </div>
-
-        <!-- BƯỚC 3 -->
-        <div id="stepShowKey" class="hidden">
-            <div class="key-box" id="keyDisplay">⏳ Đang xử lý...</div>
-            <button class="btn-copy" id="btnCopy" onclick="copyKey()">📋 Sao chép Key</button>
-            <div id="statusMsg"></div>
-        </div>
-
-        <a href="index.html" class="btn-back" id="btnBack">⬅ Quay lại trang chủ</a>
+        
+        <button class="btn-copy" onclick="copyKey()">
+            <i class="fa-regular fa-copy"></i> Sao Chép Key Ngay
+        </button>
+        
+        <a href="/" class="back-home"><i class="fa-solid fa-arrow-left"></i> Quay lại trang chủ dán Key</a>
     </div>
 
+    <div id="toast">Đã sao chép Key thành công!</div>
+
     <script>
-        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
-
-        const LINK_VN = "https://link4m.net/vuvdqt";
-        const LINK_GLOBAL = "https://fc-lc.com/0jiQ";
-
-        let isVietnamUser = true;
-
-        const langData = {
-            vi: {
-                title: "Hệ Thống Lấy Key - TLZ Project",
-                heading: "XÁC MINH LẤY KEY",
-                step1: "<b>📌 Hướng dẫn lấy Key:</b><br>1. Bấm nút bên dưới để vượt link rút gọn.<br>2. Sau khi hoàn thành, hệ thống sẽ tự động đưa bạn về đây.<br>3. Nhận mã Key bản quyền trong ngày!",
-                btnLinkText: "🔗 Bấm vào đây để Vượt Link",
-                step2: "✅ Bạn đã hoàn thành vượt link!<br>Nhấn nút bên dưới để nhận Key.",
-                btnVerifyText: "🔓 Nhận Key Ngay",
-                btnCopyText: "📋 Sao chép Key",
-                btnBackText: "⬅ Quay lại trang chủ",
-                loading: "⏳ Đang tạo Key...",
-                limitExceeded: "❌ Hôm nay đã hết lượt free, hãy quay lại vào ngày mai!",
-                successCopy: "✅ Đã sao chép thành công!",
-                errorServer: "❌ Lỗi từ Server!",
-                errorConnect: "❌ Không thể kết nối!"
-            },
-            en: {
-                title: "Key Retrieval System - TLZ Project",
-                heading: "VERIFY & GET KEY",
-                step1: "<b>📌 Instructions:</b><br>1. Click the button below to bypass the shortened link.<br>2. After completion, you will be automatically redirected back here.<br>3. Get your active license key for today!",
-                btnLinkText: "🔗 Click Here to Bypass Link",
-                step2: "✅ You have successfully bypassed the link!<br>Click the button below to retrieve your Key.",
-                btnVerifyText: "🔓 Get Key Now",
-                btnCopyText: "📋 Copy Key",
-                btnBackText: "⬅ Back to Home",
-                loading: "⏳ Generating Key...",
-                limitExceeded: "❌ Today's free limit has been reached, please come back tomorrow!",
-                successCopy: "✅ Copied successfully!",
-                errorServer: "❌ Server Error!",
-                errorConnect: "❌ Connection Failed!"
-            }
-        };
-
-        let currentLang = localStorage.getItem('tlz_lang') || (navigator.language.startsWith('vi') ? 'vi' : 'en');
-
-        // 1. HÀM TẠO TOKEN NGẪU NHIÊN VÀ CHUYỂN HƯỚNG
-        function redirectToShortLink() {
-            // Tạo mã token ngẫu nhiên dạng: TLZ_x9k2p8a1
-            const randomToken = "TLZ_" + Math.random().toString(36).substring(2, 10);
-            
-            // Lưu Token và thời gian tạo vào máy người dùng
-            localStorage.setItem('active_tlz_token', randomToken);
-            localStorage.setItem('tlz_token_time', new Date().getTime());
-
-            // Chọn link theo quốc gia
-            const baseUrl = isVietnamUser ? LINK_VN : LINK_GLOBAL;
-            
-            // Mở link rút gọn trong tab mới
-            window.open(baseUrl, '_blank');
-        }
-
-        async function checkUserCountry() {
-            try {
-                const res = await fetch("https://ipapi.co/json/");
-                const data = await res.json();
-                if (data && data.country_code) {
-                    isVietnamUser = (data.country_code === 'VN');
-                }
-            } catch (e) {
-                isVietnamUser = true; 
-            }
-        }
-
-        function setLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('tlz_lang', lang);
-            const d = langData[lang];
-
-            document.getElementById('pageTitle').innerText = d.title;
-            document.getElementById('txtTitle').innerText = d.heading;
-            document.getElementById('descStep1').innerHTML = d.step1;
-            document.getElementById('btnLink').innerText = d.btnLinkText;
-
-            document.getElementById('descStep2').innerHTML = d.step2;
-            document.getElementById('btnVerify').innerText = d.btnVerifyText;
-            document.getElementById('btnCopy').innerText = d.btnCopyText;
-            document.getElementById('btnBack').innerText = d.btnBackText;
-        }
-
-        function toggleLanguage() {
-            setLanguage(currentLang === 'vi' ? 'en' : 'vi');
-        }
-
-        function getTodayString() {
-            const d = new Date();
-            return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
-        }
-
-        // 2. PHẦN XÁC THỰC TOKEN KHI TRANG LOAD
-        window.onload = function() {
-            setLanguage(currentLang);
-            checkUserCountry();
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const urlToken = urlParams.get('token'); // Lấy token từ URL (nếu có)
-            const isBypassed = urlParams.get('bypassed'); // Lấy tham số bypassed đơn giản
-
-            const storedToken = localStorage.getItem('active_tlz_token');
-            const tokenTime = localStorage.getItem('tlz_token_time');
-            const savedDate = localStorage.getItem('tlz_saved_date');
-            const savedKey = localStorage.getItem('tlz_saved_key');
-            
-            const now = new Date().getTime();
-            const today = getTodayString();
-
-            // Xóa Key cũ nếu sang ngày mới
-            if (savedDate && savedDate !== today) {
-                localStorage.removeItem('tlz_saved_date');
-                localStorage.removeItem('tlz_saved_key');
-            }
-
-            // A. ĐÃ CÓ KEY TRONG NGÀY -> Hiện Key luôn
-            if (savedDate === today && savedKey) {
-                showKeySection(savedKey);
-            }
-            // B. ĐIỀU KIỆN MỞ BƯỚC 2:
-            // Khớp Token HOẶC có ?bypassed=true kèm Token chưa quá 30 phút
-            else if (
-                (urlToken && urlToken === storedToken) || 
-                (isBypassed === 'true' && storedToken && tokenTime && (now - parseInt(tokenTime) < 30 * 60 * 1000))
-            ) {
-                // Làm sạch URL (Ẩn token và bypassed khỏi thanh địa chỉ)
-                window.history.replaceState({}, document.title, window.location.pathname);
-                
-                document.getElementById('stepGetLink').classList.add('hidden');
-                document.getElementById('stepVerify').classList.remove('hidden');
-                document.getElementById('stepShowKey').classList.add('hidden');
-            } 
-            // C. KHÔNG HỢP LỆ -> Giữ ở Bước 1
-            else {
-                document.getElementById('stepGetLink').classList.remove('hidden');
-                document.getElementById('stepVerify').classList.add('hidden');
-                document.getElementById('stepShowKey').classList.add('hidden');
-            }
-        };
-
-        async function requestKey() {
-            const t = langData[currentLang];
-            const today = getTodayString();
-            const savedDate = localStorage.getItem('tlz_saved_date');
-            const savedKey = localStorage.getItem('tlz_saved_key');
-
-            if (savedDate === today && savedKey) {
-                showKeySection(savedKey);
-                return;
-            }
-
-            document.getElementById('stepVerify').classList.add('hidden');
-            document.getElementById('stepShowKey').classList.remove('hidden');
-
-            try {
-                document.getElementById("keyDisplay").innerText = t.loading;
-                const res = await fetch(GAS_API_URL + "?action=get_key");
-                const data = await res.json();
-
-                if (data && data.status === "success") {
-                    localStorage.setItem('tlz_saved_date', today);
-                    localStorage.setItem('tlz_saved_key', data.key);
-                    // Xóa token sau khi đã đổi được Key thành công
-                    localStorage.removeItem('active_tlz_token');
-                    localStorage.removeItem('tlz_token_time');
-                    showKeySection(data.key);
-                } else if (data && data.status === "limit_exceeded") {
-                    document.getElementById("keyDisplay").innerText = t.limitExceeded;
-                    document.getElementById("btnCopy").style.display = "none";
-                } else {
-                    document.getElementById("keyDisplay").innerText = t.errorServer;
-                }
-            } catch (e) {
-                document.getElementById("keyDisplay").innerText = t.errorConnect;
-            }
-        }
-
-        function showKeySection(key) {
-            document.getElementById('stepGetLink').classList.add('hidden');
-            document.getElementById('stepVerify').classList.add('hidden');
-            document.getElementById('stepShowKey').classList.remove('hidden');
-            document.getElementById("btnCopy").style.display = "block";
-            document.getElementById('keyDisplay').innerText = key;
-        }
-
         function copyKey() {
-            const currentKey = document.getElementById("keyDisplay").innerText;
-            const t = langData[currentLang];
-            navigator.clipboard.writeText(currentKey).then(() => {
-                document.getElementById("statusMsg").innerText = t.successCopy;
-                setTimeout(() => { document.getElementById("statusMsg").innerText = ""; }, 2000);
+            var keyStr = document.getElementById("keyText").innerText;
+            navigator.clipboard.writeText(keyStr).then(() => {
+                showToast();
+            }).catch(err => {
+                var input = document.createElement("input");
+                input.value = keyStr;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand("copy");
+                document.body.removeChild(input);
+                showToast();
             });
+        }
+
+        function showToast() {
+            var toast = document.getElementById("toast");
+            toast.className = "show";
+            setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
         }
     </script>
 </body>
