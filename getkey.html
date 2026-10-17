@@ -32,7 +32,7 @@
         <h2 id="txtTitle">XÁC MINH LẤY KEY</h2>
         <div class="dev">TLZ Project Security System</div>
 
-        <!-- BƯỚC 1 -->
+        <!-- BƯỚC 1: Hướng dẫn vượt link -->
         <div id="stepGetLink">
             <div class="step-desc" id="descStep1">
                 <b>📌 Hướng dẫn lấy Key:</b><br>
@@ -43,7 +43,7 @@
             <a href="https://link4m.net/0aFFT" id="btnLink" class="btn-action" target="_blank">🔗 Bấm vào đây để Vượt Link</a>
         </div>
 
-        <!-- BƯỚC 2 -->
+        <!-- BƯỚC 2: Nút xác nhận nhận Key -->
         <div id="stepVerify" class="hidden">
             <div class="step-desc" style="text-align: center; color: #00ff88;" id="descStep2">
                 ✅ Bạn đã hoàn thành vượt link!<br>Nhấn nút bên dưới để nhận Key.
@@ -51,7 +51,7 @@
             <button class="btn-verify" onclick="requestKey()" id="btnVerify">🔓 Nhận Key Ngay</button>
         </div>
 
-        <!-- BƯỚC 3 -->
+        <!-- BƯỚC 3: Hiển thị Key -->
         <div id="stepShowKey" class="hidden">
             <div class="key-box" id="keyDisplay">⏳ Đang xử lý...</div>
             <button class="btn-copy" id="btnCopy" onclick="copyKey()">📋 Sao chép Key</button>
@@ -148,6 +148,12 @@
             setLanguage(currentLang === 'vi' ? 'en' : 'vi');
         }
 
+        // Lấy chuỗi ngày hôm nay (Ví dụ: 2026-10-17)
+        function getTodayString() {
+            const d = new Date();
+            return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+        }
+
         window.onload = function() {
             setLanguage(currentLang);
             checkUserCountry();
@@ -155,13 +161,28 @@
             const urlParams = new URLSearchParams(window.location.search);
             const isBypassed = urlParams.get('bypassed');
 
-            // BẮT BUỘC: PHẢI CÓ ?bypassed=true TRÊN URL THÌ MỚI CHO SANG BƯỚC 2
-            if (isBypassed === 'true') {
+            const savedDate = localStorage.getItem('tlz_saved_date');
+            const savedKey = localStorage.getItem('tlz_saved_key');
+            const today = getTodayString();
+
+            // Nếu ngày đã cũ -> Xóa Key cũ đi
+            if (savedDate && savedDate !== today) {
+                localStorage.removeItem('tlz_saved_date');
+                localStorage.removeItem('tlz_saved_key');
+            }
+
+            // NẾU ĐÃ CÓ KEY HÔM NAY -> Hiện thẳng Key đó luôn (không cần bắt vượt lại)
+            if (savedDate === today && savedKey) {
+                showKeySection(savedKey);
+            }
+            // NẾU VƯỢT LINK XONG CÓ ?bypassed=true -> Mở Bước 2
+            else if (isBypassed === 'true') {
                 document.getElementById('stepGetLink').classList.add('hidden');
                 document.getElementById('stepVerify').classList.remove('hidden');
                 document.getElementById('stepShowKey').classList.add('hidden');
-            } else {
-                // Mọi trường hợp vào thẳng link không có ?bypassed=true đều giữ ở Bước 1
+            } 
+            // KHÔNG CÓ CẢ 2 -> Giữ ở Bước 1
+            else {
                 document.getElementById('stepGetLink').classList.remove('hidden');
                 document.getElementById('stepVerify').classList.add('hidden');
                 document.getElementById('stepShowKey').classList.add('hidden');
@@ -170,6 +191,15 @@
 
         async function requestKey() {
             const t = langData[currentLang];
+            const today = getTodayString();
+            const savedDate = localStorage.getItem('tlz_saved_date');
+            const savedKey = localStorage.getItem('tlz_saved_key');
+
+            // Nếu đã lưu Key trong ngày rồi thì hiển thị lại Key cũ
+            if (savedDate === today && savedKey) {
+                showKeySection(savedKey);
+                return;
+            }
 
             document.getElementById('stepVerify').classList.add('hidden');
             document.getElementById('stepShowKey').classList.remove('hidden');
@@ -180,6 +210,9 @@
                 const data = await res.json();
 
                 if (data && data.status === "success") {
+                    // LƯU KEY LẠI THEO NGÀY ĐỂ KHÔNG BỊ ĐỔI KEY KHÁC KHI LOAD LẠI
+                    localStorage.setItem('tlz_saved_date', today);
+                    localStorage.setItem('tlz_saved_key', data.key);
                     showKeySection(data.key);
                 } else if (data && data.status === "limit_exceeded") {
                     document.getElementById("keyDisplay").innerText = t.limitExceeded;
