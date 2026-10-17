@@ -40,7 +40,7 @@
                 2. Sau khi hoàn thành, hệ thống sẽ tự động đưa bạn về đây.<br>
                 3. Nhận mã Key bản quyền trong ngày!
             </div>
-            <a href="https://link4m.net/0aFFT" id="btnLink" class="btn-action" target="_blank" onclick="markAsClicked()">🔗 Bấm vào đây để Vượt Link</a>
+            <a href="https://link4m.net/0aFFT" id="btnLink" class="btn-action" target="_blank">🔗 Bấm vào đây để Vượt Link</a>
         </div>
 
         <!-- BƯỚC 2 -->
@@ -104,10 +104,6 @@
 
         let currentLang = localStorage.getItem('tlz_lang') || (navigator.language.startsWith('vi') ? 'vi' : 'en');
 
-        function markAsClicked() {
-            localStorage.setItem('tlz_clicked_link', 'true');
-        }
-
         async function checkUserCountry() {
             try {
                 const res = await fetch("https://ipapi.co/json/");
@@ -152,61 +148,28 @@
             setLanguage(currentLang === 'vi' ? 'en' : 'vi');
         }
 
-        function getSystemDate() {
-            const d = new Date();
-            return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
-        }
-
         window.onload = function() {
             setLanguage(currentLang);
             checkUserCountry();
 
-            try {
-                const savedDate = localStorage.getItem('tlz_key_date');
-                const savedKey = localStorage.getItem('active_tlz_key');
-                const currentDate = getSystemDate();
-                
-                // LẤY THAM SỐ TỪ URL LẬP TỨC
-                const urlParams = new URLSearchParams(window.location.search);
-                const isBypassed = urlParams.get('bypassed');
-                const hasClicked = localStorage.getItem('tlz_clicked_link');
+            const urlParams = new URLSearchParams(window.location.search);
+            const isBypassed = urlParams.get('bypassed');
 
-                // 1. Đã có key hôm nay -> Hiện Key
-                if (savedDate === currentDate && savedKey) {
-                    showKeySection(savedKey);
-                } 
-                // 2. NẾU URL CÓ ?bypassed=true HOẶC ĐÃ BẤM NÚT VƯỢT LINK -> CHO QUA BƯỚC 2 NGAY!
-                else if (isBypassed === 'true' || hasClicked === 'true') {
-                    document.getElementById('stepGetLink').classList.add('hidden');
-                    document.getElementById('stepVerify').classList.remove('hidden');
-                    document.getElementById('stepShowKey').classList.add('hidden');
-                } 
-                // 3. Nếu không thỏa mãn điều kiện nào -> Mới giữ ở Bước 1
-                else {
-                    document.getElementById('stepGetLink').classList.remove('hidden');
-                    document.getElementById('stepVerify').classList.add('hidden');
-                    document.getElementById('stepShowKey').classList.add('hidden');
-
-                    if (savedDate && savedDate !== currentDate) {
-                        localStorage.removeItem('active_tlz_key');
-                        localStorage.removeItem('tlz_key_date');
-                    }
-                }
-            } catch (err) {
-                console.error("Lỗi tải trang:", err);
+            // BẮT BUỘC: PHẢI CÓ ?bypassed=true TRÊN URL THÌ MỚI CHO SANG BƯỚC 2
+            if (isBypassed === 'true') {
+                document.getElementById('stepGetLink').classList.add('hidden');
+                document.getElementById('stepVerify').classList.remove('hidden');
+                document.getElementById('stepShowKey').classList.add('hidden');
+            } else {
+                // Mọi trường hợp vào thẳng link không có ?bypassed=true đều giữ ở Bước 1
+                document.getElementById('stepGetLink').classList.remove('hidden');
+                document.getElementById('stepVerify').classList.add('hidden');
+                document.getElementById('stepShowKey').classList.add('hidden');
             }
         };
 
         async function requestKey() {
-            const currentDate = getSystemDate();
-            const savedDate = localStorage.getItem('tlz_key_date');
-            const savedKey = localStorage.getItem('active_tlz_key');
             const t = langData[currentLang];
-
-            if (savedDate === currentDate && savedKey) {
-                showKeySection(savedKey);
-                return;
-            }
 
             document.getElementById('stepVerify').classList.add('hidden');
             document.getElementById('stepShowKey').classList.remove('hidden');
@@ -217,9 +180,6 @@
                 const data = await res.json();
 
                 if (data && data.status === "success") {
-                    localStorage.setItem('tlz_key_date', currentDate);
-                    localStorage.setItem('active_tlz_key', data.key);
-                    localStorage.removeItem('tlz_clicked_link');
                     showKeySection(data.key);
                 } else if (data && data.status === "limit_exceeded") {
                     document.getElementById("keyDisplay").innerText = t.limitExceeded;
