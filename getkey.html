@@ -18,6 +18,8 @@
         #key-display { font-size: 20px; font-weight: bold; color: #38bdf8; word-break: break-all; }
 
         .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; transition: background 0.2s; text-decoration: none; display: inline-block; }
+        .btn-link { background: #eab308; color: #121212; margin-bottom: 10px; }
+        .btn-link:hover { background: #ca8a04; }
         .btn-copy { background: #0ea5e9; color: white; margin-bottom: 10px; }
         .btn-copy:hover { background: #0284c7; }
         
@@ -28,13 +30,16 @@
 <body>
 
     <div class="card">
-        <div class="badge">✨ Xác Minh Thành Công</div>
-        <h2>KEY BẢN QUYỀN</h2>
-        <p>Cảm ơn bạn đã vượt link! Dưới đây là mã Key tự động mới nhất trong ngày hôm nay:</p>
+        <div class="badge">✨ Vượt Link Lấy Key</div>
+        <h2>LẤY KEY BẢN QUYỀN</h2>
+        <p>Bấm vào nút dưới đây để vượt link rút gọn, sau đó hệ thống sẽ hiển thị mã Key của bạn:</p>
 
-        <div class="key-box">
+        <!-- Link rút gọn Link4M của Lâm -->
+        <a href="https://link4m.net/vuvdqt" target="_blank" class="btn btn-link">🔗 Bấm Vào Đây Để Vượt Link Lấy Key</a>
+
+        <div class="key-box" style="margin-top: 20px;">
             <div class="key-label">Mã Key Của Bạn:</div>
-            <div id="key-display">Đang tạo key...</div>
+            <div id="key-display">Đang tải key...</div>
         </div>
 
         <button class="btn btn-copy" onclick="copyKey()">📋 Sao Chép Key Ngay</button>
@@ -43,7 +48,7 @@
     </div>
 
     <script>
-        // Đường dẫn Web App Google Apps Script của Lâm
+        // Dán Link Web App Google Apps Script của Lâm vào đây
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
 
         async function layKeyTuDong() {
@@ -66,7 +71,7 @@
 
         function copyKey() {
             let keyText = document.getElementById("key-display").innerText;
-            if(keyText && keyText !== "Đang tạo key..." && keyText !== "LỖI TẠO KEY!") {
+            if(keyText && keyText !== "Đang tải key..." && keyText !== "LỖI TẠO KEY!" && keyText !== "LỖI KẾT NỐI!") {
                 navigator.clipboard.writeText(keyText);
                 alert("Đã sao chép Key: " + keyText);
             } else {
@@ -74,7 +79,7 @@
             }
         }
 
-        // Tự động gọi lấy key ngay khi trang vừa mở xong
+        // Tự động tải key cố định ngay khi vào trang getkey
         window.onload = layKeyTuDong;
     </script>
 </body>
