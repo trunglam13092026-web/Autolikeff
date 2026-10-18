@@ -10,10 +10,7 @@
         .card { background: #1e1e1e; padding: 25px; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.6); width: 100%; max-width: 420px; text-align: center; border: 1px solid #333; }
         
         h2 { color: #22c55e; margin-bottom: 5px; font-size: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .sub-owner { font-size: 13px; color: #4ade80; margin-bottom: 15px; }
-
-        .counter-box { background: #2a2a2a; border: 1px solid #444; padding: 10px; border-radius: 8px; font-size: 14px; margin-bottom: 15px; color: #cbd5e1; }
-        .counter-box span { color: #22c55e; font-weight: bold; }
+        .sub-owner { font-size: 13px; color: #4ade80; margin-bottom: 20px; }
 
         .input-group { margin-bottom: 12px; text-align: left; }
         input { width: 100%; padding: 12px; border: 1px solid #333; background: #2a2a2a; color: #fff; border-radius: 8px; font-size: 15px; outline: none; }
@@ -48,10 +45,6 @@
     <div class="card">
         <h2>BUFF LIKE FI FAI MIEN PHI</h2>
         <div class="sub-owner">Được phát triển bởi hệ thống @tlzproject</div>
-        
-        <div class="counter-box">
-            Lượt miễn phí hôm nay: <span id="limitCount">0/150</span>
-        </div>
 
         <div class="input-group">
             <input type="number" id="uid-input" placeholder="Nhập ID Game của bạn...">
@@ -61,7 +54,7 @@
             <input type="text" id="key-input" placeholder="Nhập Key xác minh...">
         </div>
         
-        <a href="getkey.html" class="key-link">👉 Nhấp vào đây để lấy Key miễn phí</a>
+        <a href="getkey.html" class="key-link" id="key-link-elem">👉 Nhấp vào đây để lấy Key miễn phí</a>
         
         <button class="btn-submit" id="btn-run" onclick="thucHienBuff()">Chạy</button>
         
@@ -69,11 +62,11 @@
 
         <div class="notice-box">
             <div class="notice-title">📢 THỜI GIAN HOẠT ĐỘNG HỆ THỐNG:</div>
-            • Việt Nam 🇻🇳: 9h–23h<br><br>
+            • Từ 9h sáng đến 23h đêm hàng ngày<br><br>
 
             <div class="notice-title" style="color: #ef4444;">📌 LƯU Ý QUAN TRỌNG:</div>
             <ul>
-                <li>Thời gian lên like nhanh từ 9h sáng đến 20h tối.</li>
+                <li>Ngoài khung giờ này hệ thống sẽ tạm đóng và không nhận buff.</li>
                 <li>Mỗi thiết bị sau khi buff thành công sẽ bị khóa 8 tiếng.</li>
             </ul>
         </div>
@@ -84,8 +77,33 @@
         const COOLDOWN_TIME = 8 * 60 * 60 * 1000; // 8 tiếng
 
         window.onload = function() {
-            kiemTraKhoaTrang();
+            kiemTraThoiGianHoatDong();
         };
+
+        // Hàm kiểm tra giờ hoạt động (Từ 9h đến 23h)
+        function kiemTraThoiGianHoatDong() {
+            let now = new Date();
+            let currentHour = now.getHours(); // Lấy giờ hiện tại (0 - 23)
+            let statusDiv = document.getElementById("status");
+            let btnRun = document.getElementById("btn-run");
+
+            if (currentHour < 9 || currentHour >= 23) {
+                // Ngoài giờ hoạt động (Trước 9h sáng hoặc từ 23h đêm trở đi)
+                btnRun.disabled = true;
+                btnRun.style.background = "#555";
+                btnRun.style.cursor = "not-allowed";
+                document.getElementById("key-link-elem").style.pointerEvents = "none";
+                document.getElementById("key-link-elem").style.color = "#777";
+
+                statusDiv.style.color = "#ef4444";
+                statusDiv.innerHTML = "⛔ Hệ thống chỉ mở cửa hoạt động từ <strong>9h00 đến 23h00</strong> hằng ngày. Hiện tại ngoài giờ hoạt động, không thể buff!";
+                return true; // Đang đóng cửa
+            }
+
+            // Nếu trong giờ hoạt động thì kiểm tra tiếp khóa 8 tiếng cá nhân
+            kiemTraKhoaTrang();
+            return false;
+        }
 
         function kiemTraKhoaTrang() {
             let lastBuffTime = localStorage.getItem("last_buff_time");
@@ -125,6 +143,9 @@
         }
 
         async function thucHienBuff() {
+            // Chặn ngay nếu ngoài giờ hoạt động
+            if (kiemTraThoiGianHoatDong()) return;
+
             let uid = document.getElementById("uid-input").value.trim();
             let key = document.getElementById("key-input").value.trim();
             let statusDiv = document.getElementById("status");
@@ -141,19 +162,18 @@
             try {
                 let response = await fetch(WEB_APP_URL, {
                     method: "POST",
-                    body: JSON.stringify({ uid: uid, key: key })
+                    body: JSON.stringify({ 
+                        uid: uid, 
+                        key: key,
+                        secret: "TLZ_SECURE_TOKEN_2026_XYZ"
+                    })
                 });
                 let result = await response.json();
 
                 if (result.status === "success") {
                     statusDiv.style.color = "#22c55e";
                     statusDiv.innerText = "✅ " + result.message;
-                    
-                    if(result.remaining !== undefined) {
-                        document.getElementById("limitCount").innerText = (150 - result.remaining) + "/150";
-                    }
 
-                    // KÍCH HOẠT CỜ KHÓA 8 TIẾNG LƯU VÀO MÁY KHÁCH
                     localStorage.setItem("last_buff_time", new Date().getTime().toString());
                     localStorage.removeItem("saved_user_key");
                     document.getElementById("key-input").value = "";
