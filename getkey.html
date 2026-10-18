@@ -13,15 +13,17 @@
         h2 { color: #38bdf8; margin-bottom: 8px; font-size: 22px; }
         p { color: #94a3b8; font-size: 14px; margin-bottom: 20px; line-height: 1.5; }
 
-        .key-box { background: #2a2a2a; border: 2px dashed #0ea5e9; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+        .key-box { background: #2a2a2a; border: 2px dashed #0ea5e9; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: none; }
         .key-label { font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
         #key-display { font-size: 20px; font-weight: bold; color: #38bdf8; word-break: break-all; }
 
         .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; transition: background 0.2s; text-decoration: none; display: inline-block; }
         .btn-link { background: #eab308; color: #121212; margin-bottom: 10px; }
         .btn-link:hover { background: #ca8a04; }
-        .btn-copy { background: #0ea5e9; color: white; margin-bottom: 10px; }
+        .btn-copy { background: #0ea5e9; color: white; margin-bottom: 10px; display: none; }
         .btn-copy:hover { background: #0284c7; }
+
+        .warning-box { background: #451a03; border: 1px solid #f59e0b; color: #fde68a; padding: 12px; border-radius: 8px; font-size: 13px; margin-bottom: 20px; line-height: 1.4; }
         
         .back-link { display: inline-block; margin-top: 15px; color: #94a3b8; text-decoration: none; font-size: 14px; }
         .back-link:hover { color: #fff; text-decoration: underline; }
@@ -30,19 +32,23 @@
 <body>
 
     <div class="card">
-        <div class="badge">✨ Vượt Link Lấy Key</div>
+        <div class="badge" id="page-badge">✨ Vượt Link Lấy Key</div>
         <h2>LẤY KEY BẢN QUYỀN</h2>
-        <p>Bấm vào nút dưới đây để vượt link rút gọn, sau đó hệ thống sẽ hiển thị mã Key của bạn:</p>
+        
+        <div id="warning-container">
+            <div class="warning-box">
+                ⚠️ Bạn chưa hoàn thành vượt link! Vui lòng bấm vào nút bên dưới để vượt link rút gọn lấy Key.
+            </div>
+            <!-- Link rút gọn Link4M của Lâm, khi khách bấm qua link rút gọn sẽ tự động cộng kèm cờ xác nhận quay về -->
+            <a href="https://link4m.net/vuvdqt?redirect=https://bufflikeff.site/getkey.html?verified=true" target="_blank" class="btn btn-link">🔗 Bấm Vào Đây Để Vượt Link Lấy Key</a>
+        </div>
 
-        <!-- Link rút gọn Link4M của Lâm -->
-        <a href="https://link4m.net/vuvdqt" target="_blank" class="btn btn-link">🔗 Bấm Vào Đây Để Vượt Link Lấy Key</a>
-
-        <div class="key-box" style="margin-top: 20px;">
+        <div class="key-box" id="key-container">
             <div class="key-label">Mã Key Của Bạn:</div>
             <div id="key-display">Đang tải key...</div>
         </div>
 
-        <button class="btn btn-copy" onclick="copyKey()">📋 Sao Chép Key Ngay</button>
+        <button class="btn btn-copy" id="btn-copy" onclick="copyKey()">📋 Sao Chép Key Ngay</button>
         
         <a href="index.html" class="back-link">← Quay lại trang chủ dán Key</a>
     </div>
@@ -51,23 +57,40 @@
         // Dán Link Web App Google Apps Script của Lâm vào đây
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
 
-        async function layKeyTuDong() {
-            let keyDisplay = document.getElementById("key-display");
-            try {
-                let response = await fetch(WEB_APP_URL);
-                let result = await response.json();
+        window.onload = async function() {
+            // Kiểm tra xem trên URL có gắn tham số xác minh vượt link chưa (?verified=true)
+            const urlParams = new URLSearchParams(window.location.search);
+            const isVerified = urlParams.get("verified");
 
-                if (result.status === "success") {
-                    keyDisplay.innerText = result.key;
-                } else {
-                    keyDisplay.innerText = "LỖI TẠO KEY!";
+            if (isVerified === "true") {
+                // Nếu đã vượt link: Ẩn cảnh báo, hiện khung chứa Key và gọi API lấy key
+                document.getElementById("warning-container").style.display = "none";
+                document.getElementById("key-container").style.display = "block";
+                document.getElementById("btn-copy").style.display = "block";
+                document.getElementById("page-badge").innerText = "✅ Xác Minh Thành Công";
+
+                let keyDisplay = document.getElementById("key-display");
+                try {
+                    let response = await fetch(WEB_APP_URL);
+                    let result = await response.json();
+
+                    if (result.status === "success") {
+                        keyDisplay.innerText = result.key;
+                    } else {
+                        keyDisplay.innerText = "LỖI TẠO KEY!";
+                        keyDisplay.style.color = "#ef4444";
+                    }
+                } catch (err) {
+                    keyDisplay.innerText = "LỖI KẾT NỐI!";
                     keyDisplay.style.color = "#ef4444";
                 }
-            } catch (err) {
-                keyDisplay.innerText = "LỖI KẾT NỐI!";
-                keyDisplay.style.color = "#ef4444";
+            } else {
+                // Nếu truy cập thẳng trực tiếp: Giữ nguyên trạng thái bắt buộc vượt link
+                document.getElementById("warning-container").style.display = "block";
+                document.getElementById("key-container").style.display = "none";
+                document.getElementById("btn-copy").style.display = "none";
             }
-        }
+        };
 
         function copyKey() {
             let keyText = document.getElementById("key-display").innerText;
@@ -78,9 +101,6 @@
                 alert("Chưa có Key hợp lệ để sao chép!");
             }
         }
-
-        // Tự động tải key cố định ngay khi vào trang getkey
-        window.onload = layKeyTuDong;
     </script>
 </body>
 </html>
