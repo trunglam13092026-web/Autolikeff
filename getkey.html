@@ -47,33 +47,21 @@
             <div id="key-display">Đang tải key...</div>
         </div>
 
-        <button class="btn btn-copy" id="btn-copy" onclick="copyKeyAndRedirect()">📋 Sao Chép Key Ngay</button>
+        <button class="btn-copy" id="btn-copy" onclick="copyKeyAndRedirect()">📋 Sao Chép Key Ngay</button>
         
         <a href="index.html" class="back-link">← Quay lại trang chủ dán Key</a>
     </div>
 
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
-        const COOLDOWN_TIME = 8 * 60 * 60 * 1000;
+        const COOLDOWN_TIME = 20 * 60 * 1000; // 20 phút
 
         function daBamVuotLink() {
             localStorage.setItem("user_clicked_link", "true");
         }
 
         window.onload = async function() {
-            // 1. KIỂM TRA KHÓA TRÊN LOCALSTORAGE
-            let lastBuffTime = localStorage.getItem("last_buff_time");
-            if (lastBuffTime) {
-                let timeLeft = COOLDOWN_TIME - (new Date().getTime() - parseInt(lastBuffTime));
-                if (timeLeft > 0) {
-                    hienDongHoDemNguoc(timeLeft);
-                    return;
-                } else {
-                    localStorage.removeItem("last_buff_time");
-                }
-            }
-
-            // 2. LẤY IP VÀ GỬI LÊN SERVER KIỂM TRA KHÓA IP
+            // Lấy IP người dùng
             let userIp = "";
             try {
                 let ipRes = await fetch("https://api.ipify.org?format=json");
@@ -84,9 +72,8 @@
             const urlParams = new URLSearchParams(window.location.search);
             const isVerified = urlParams.get("verified");
             const hasClicked = localStorage.getItem("user_clicked_link");
-            const savedKey = localStorage.getItem("saved_user_key");
 
-            if (isVerified === "true" || hasClicked === "true" || savedKey) {
+            if (isVerified === "true" || hasClicked === "true") {
                 document.getElementById("warning-container").style.display = "none";
                 document.getElementById("key-container").style.display = "block";
                 document.getElementById("btn-copy").style.display = "block";
@@ -94,31 +81,26 @@
 
                 let keyDisplay = document.getElementById("key-display");
 
-                if (savedKey) {
-                    keyDisplay.innerText = savedKey;
-                } else {
-                    try {
-                        let response = await fetch(WEB_APP_URL + "?v=" + new Date().getTime() + "&ip=" + userIp);
-                        let result = await response.json();
+                try {
+                    // Gọi API lấy Key tươi mới từ Server
+                    let response = await fetch(WEB_APP_URL + "?v=" + new Date().getTime() + "&ip=" + userIp);
+                    let result = await response.json();
 
-                        if (result.status === "locked") {
-                            localStorage.setItem("last_buff_time", (new Date().getTime() - (COOLDOWN_TIME - result.remainingMs)).toString());
-                            hienDongHoDemNguoc(result.remainingMs);
-                            return;
-                        }
+                    if (result.status === "locked") {
+                        hienDongHoDemNguoc(result.remainingMs);
+                        return;
+                    }
 
-                        if (result.status === "success") {
-                            keyDisplay.innerText = result.key;
-                            localStorage.setItem("saved_user_key", result.key);
-                            localStorage.removeItem("user_clicked_link");
-                        } else {
-                            keyDisplay.innerText = "LỖI TẠO KEY!";
-                            keyDisplay.style.color = "#ef4444";
-                        }
-                    } catch (err) {
-                        keyDisplay.innerText = "LỖI KẾT NỐI!";
+                    if (result.status === "success") {
+                        keyDisplay.innerText = result.key;
+                        localStorage.removeItem("user_clicked_link");
+                    } else {
+                        keyDisplay.innerText = "LỖI TẠO KEY!";
                         keyDisplay.style.color = "#ef4444";
                     }
+                } catch (err) {
+                    keyDisplay.innerText = "LỖI KẾT NỐI!";
+                    keyDisplay.style.color = "#ef4444";
                 }
             } else {
                 document.getElementById("warning-container").style.display = "block";
@@ -127,7 +109,7 @@
             }
         };
 
-        function hienDongHoDemNguoc(timeLeft) {
+        function hienDongHoDemNguoc(remainingMs) {
             document.getElementById("page-badge").innerText = "🔒 Đang Trong Thời Gian Khóa";
             document.getElementById("page-badge").style.background = "#7f1d1d";
             document.getElementById("page-badge").style.color = "#fca5a5";
@@ -137,24 +119,25 @@
             document.getElementById("btn-link-action").style.display = "none";
 
             let warningBox = document.getElementById("warning-content");
+            document.getElementById("warning-container").style.display = "block";
             warningBox.style.background = "#451a03";
             warningBox.style.borderColor = "#ef4444";
             
+            let endTime = new Date().getTime() + remainingMs;
+
             let timer = setInterval(function() {
-                let currentLeft = COOLDOWN_TIME - (new Date().getTime() - parseInt(localStorage.getItem("last_buff_time")));
+                let currentLeft = endTime - new Date().getTime();
                 if (currentLeft <= 0) {
                     clearInterval(timer);
-                    localStorage.removeItem("last_buff_time");
                     location.reload();
                     return;
                 }
-                let hours = Math.floor(currentLeft / (1000 * 60 * 60));
                 let minutes = Math.floor((currentLeft % (1000 * 60 * 60)) / (1000 * 60));
                 let seconds = Math.floor((currentLeft % (1000 * 60)) / 1000);
 
                 warningBox.innerHTML = `
-                    ⏳ Bạn đã buff thành công! Vui lòng chờ hết thời gian khóa để tiếp tục lấy Key mới:
-                    <span class="countdown-text">⏱️ ${hours} Giờ ${minutes} Phút ${seconds} Giây</span>
+                    ⏳ Bạn đã lấy Key hoặc vừa buff! Vui lòng chờ hết thời gian khóa để tiếp tục lấy Key mới:
+                    <span class="countdown-text">⏱️ ${minutes} Phút ${seconds} Giây</span>
                 `;
             }, 1000);
         }
