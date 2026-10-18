@@ -36,12 +36,7 @@
             color: #cbd5e1;
             line-height: 1.6;
         }
-        .notice-title {
-            color: #eab308;
-            font-weight: bold;
-            margin-bottom: 8px;
-            font-size: 13px;
-        }
+        .notice-title { color: #eab308; font-weight: bold; margin-bottom: 8px; font-size: 13px; }
         .notice-box ul { padding-left: 16px; margin-top: 5px; }
         .notice-box li { margin-bottom: 4px; }
 
@@ -74,26 +69,60 @@
 
         <div class="notice-box">
             <div class="notice-title">📢 THỜI GIAN HOẠT ĐỘNG HỆ THỐNG:</div>
-            • Việt Nam 🇻🇳: 9h–23h<br>
-            • Prathet Thai 🇹🇭: 9:00–23:00 น.<br>
-            • Indonesia 🇮🇩: 09.00–23.00 WIB (Jakarta)<br>
-            • 🇵🇰 پاکستان: صبح 7 بجے سے رات 9 بجے تک<br>
-            • भारत 🇮🇳: सुबह 7:30–रात 9:30 बजे<br>
-            • Brasil 🇧🇷: 21h–11h (horário de Brasília)<br><br>
+            • Việt Nam 🇻🇳: 9h–23h<br><br>
 
             <div class="notice-title" style="color: #ef4444;">📌 LƯU Ý QUAN TRỌNG:</div>
             <ul>
-                <li>Thời gian lên like nhanh từ 9h sáng đến 20h tối có thể đến 23h.</li>
-                <li>Gần chiều tối sẽ hết tài nguyên like!</li>
-                <li>Một IP Spam nhiều UID Buff sẽ ban khỏi hệ thống.</li>
-                <li>Buff thì chờ 15 phút đến 30 phút nếu không lên gửi hỗ trợ.</li>
-                <li>Lệnh buff sau 00:00 sẽ không buff nữa, gửi hỗ trợ.</li>
+                <li>Thời gian lên like nhanh từ 9h sáng đến 20h tối.</li>
+                <li>Mỗi thiết bị sau khi buff thành công sẽ bị khóa 8 tiếng.</li>
             </ul>
         </div>
     </div>
 
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
+        const COOLDOWN_TIME = 8 * 60 * 60 * 1000; // 8 tiếng
+
+        window.onload = function() {
+            kiemTraKhoaTrang();
+        };
+
+        function kiemTraKhoaTrang() {
+            let lastBuffTime = localStorage.getItem("last_buff_time");
+            if (lastBuffTime) {
+                let timeLeft = COOLDOWN_TIME - (new Date().getTime() - parseInt(lastBuffTime));
+                if (timeLeft > 0) {
+                    khoaGiaoDien(timeLeft);
+                } else {
+                    localStorage.removeItem("last_buff_time");
+                    localStorage.removeItem("saved_user_key");
+                }
+            }
+        }
+
+        function khoaGiaoDien(timeLeft) {
+            let btnRun = document.getElementById("btn-run");
+            let statusDiv = document.getElementById("status");
+            
+            btnRun.disabled = true;
+            btnRun.style.background = "#555";
+            btnRun.style.cursor = "not-allowed";
+
+            let interval = setInterval(function() {
+                let currentLeft = COOLDOWN_TIME - (new Date().getTime() - parseInt(localStorage.getItem("last_buff_time")));
+                if (currentLeft <= 0) {
+                    clearInterval(interval);
+                    location.reload();
+                    return;
+                }
+                let hours = Math.floor(currentLeft / (1000 * 60 * 60));
+                let minutes = Math.floor((currentLeft % (1000 * 60 * 60)) / (1000 * 60));
+                let seconds = Math.floor((currentLeft % (1000 * 60)) / 1000);
+
+                statusDiv.style.color = "#eab308";
+                statusDiv.innerText = `⏳ Bạn đã buff thành công! Vui lòng chờ ${hours}h ${minutes}p ${seconds}s nữa mới được buff tiếp.`;
+            }, 1000);
+        }
 
         async function thucHienBuff() {
             let uid = document.getElementById("uid-input").value.trim();
@@ -119,11 +148,20 @@
                 if (result.status === "success") {
                     statusDiv.style.color = "#22c55e";
                     statusDiv.innerText = "✅ " + result.message;
+                    
                     if(result.remaining !== undefined) {
                         document.getElementById("limitCount").innerText = (150 - result.remaining) + "/150";
                     }
-                    // Tự động xóa ô nhập key sau khi thành công
+
+                    // KÍCH HOẠT CỜ KHÓA 8 TIẾNG LƯU VÀO MÁY KHÁCH
+                    localStorage.setItem("last_buff_time", new Date().getTime().toString());
+                    localStorage.removeItem("saved_user_key");
                     document.getElementById("key-input").value = "";
+                    
+                    setTimeout(function() {
+                        kiemTraKhoaTrang();
+                    }, 1000);
+
                 } else {
                     statusDiv.style.color = "#ef4444";
                     statusDiv.innerText = "❌ " + result.message;
