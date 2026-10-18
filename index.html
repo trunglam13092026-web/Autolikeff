@@ -33,9 +33,11 @@
             color: #cbd5e1;
             line-height: 1.6;
         }
-        .notice-title { color: #eab308; font-weight: bold; margin-bottom: 8px; font-size: 13px; }
+        .notice-title { color: #ef4444; font-weight: bold; margin-bottom: 8px; font-size: 13px; }
         .notice-box ul { padding-left: 16px; margin-top: 5px; }
-        .notice-box li { margin-bottom: 4px; }
+        .notice-box li { margin-bottom: 6px; }
+        .notice-box a { color: #38bdf8; text-decoration: none; word-break: break-all; }
+        .notice-box a:hover { text-decoration: underline; }
 
         #status { margin-top: 15px; font-size: 14px; line-height: 1.4; word-break: break-word; }
     </style>
@@ -61,17 +63,25 @@
         <div id="status"></div>
 
         <div class="notice-box">
-            <div class="notice-title" style="color: #ef4444;">📌 LƯU Ý QUAN TRỌNG:</div>
+            <div class="notice-title">📌 LƯU Ý QUAN TRỌNG:</div>
             <ul>
-                <li>Hệ thống hoạt động ổn định 24/7.</li>
-                <li>Mỗi thiết bị sau khi buff thành công sẽ chờ 20 phút để buff tiếp.</li>
+                <li>⏰ <strong>09:00 - 23:00</strong> Hoạt Động.</li>
+                <li>⚠️ Buff Muộn Thì Có Thể Bị Thiếu Like.</li>
+                <li>🎯 1 UID Chỉ Buff Tối Đa 200 Like 1 Ngày.</li>
+                <li>🚫 Phát Hiện Cố Tình 1 Địa Chỉ IP Buff 3-5 Lần Trong 1 Ngày Sẽ Đưa Vào Blacklist (Ban).</li>
+                <li>🌐 Không Sử Dụng Proxy-VPN 1.1.1.1 Để Vượt Link.</li>
+                <li>⌛ Chỉ Tính Các Lệnh Từ 9H.</li>
+                <li>🛒 Mua Gói Like Liên Hệ:
+                    <br>• TikTok: <a href="https://www.tiktok.com/@hvpcutis1tg" target="_blank">https://www.tiktok.com/@hvpcutis1tg</a>
+                    <br>• Telegram: <a href="https://t.me/tlzproject" target="_blank">t.me/tlzproject</a>
+                </li>
             </ul>
         </div>
     </div>
 
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
-        const COOLDOWN_TIME = 20 * 60 * 1000; // Đổi thời gian chờ thành 20 phút
+        const COOLDOWN_TIME = 20 * 60 * 1000; // 20 phút
         let currentUserIp = "";
 
         window.onload = async function() {
