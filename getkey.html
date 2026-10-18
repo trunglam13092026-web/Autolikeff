@@ -61,26 +61,7 @@
         }
 
         window.onload = async function() {
-            // 1. CHẶN GIỜ HOẠT ĐỘNG (9h - 23h)
-            let now = new Date();
-            let currentHour = now.getHours();
-            if (currentHour < 9 || currentHour >= 23) {
-                document.getElementById("page-badge").innerText = "⛔ Ngoài Giờ Hoạt Động";
-                document.getElementById("page-badge").style.background = "#7f1d1d";
-                document.getElementById("page-badge").style.color = "#fca5a5";
-                
-                document.getElementById("key-container").style.display = "none";
-                document.getElementById("btn-copy").style.display = "none";
-                document.getElementById("btn-link-action").style.display = "none";
-
-                let warningBox = document.getElementById("warning-content");
-                warningBox.style.background = "#451a03";
-                warningBox.style.borderColor = "#ef4444";
-                warningBox.innerHTML = "⛔ Hệ thống chỉ mở cửa từ <strong>9h00 đến 23h00</strong>. Hiện tại ngoài giờ, bạn không thể lấy Key!";
-                return;
-            }
-
-            // 2. KIỂM TRA KHÓA TRÊN LOCALSTORAGE
+            // 1. KIỂM TRA KHÓA TRÊN LOCALSTORAGE
             let lastBuffTime = localStorage.getItem("last_buff_time");
             if (lastBuffTime) {
                 let timeLeft = COOLDOWN_TIME - (new Date().getTime() - parseInt(lastBuffTime));
@@ -92,7 +73,7 @@
                 }
             }
 
-            // 3. LẤY IP VÀ GỬI LÊN SERVER KIỂM TRA KHÓA IP (CHỐNG XÓA COOKIE)
+            // 2. LẤY IP VÀ GỬI LÊN SERVER KIỂM TRA KHÓA IP
             let userIp = "";
             try {
                 let ipRes = await fetch("https://api.ipify.org?format=json");
@@ -121,7 +102,6 @@
                         let result = await response.json();
 
                         if (result.status === "locked") {
-                            // BỊ SERVER KHÓA IP TỪ TẠI GOOGLE APPS SCRIPT
                             localStorage.setItem("last_buff_time", (new Date().getTime() - (COOLDOWN_TIME - result.remainingMs)).toString());
                             hienDongHoDemNguoc(result.remainingMs);
                             return;
