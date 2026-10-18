@@ -54,26 +54,25 @@
 
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
-        const COOLDOWN_TIME = 8 * 60 * 60 * 1000; // 8 tiếng
+        const COOLDOWN_TIME = 8 * 60 * 60 * 1000;
 
         function daBamVuotLink() {
             localStorage.setItem("user_clicked_link", "true");
         }
 
         window.onload = async function() {
-            // 1. KIỂM TRA KHÓA 8 TIẾNG NẾU KHÁCH CỐ TÌNH QUAY LẠI
+            // KIỂM TRA KHÓA 8 TIẾNG NẾU KHÁCH QUAY LẠI
             let lastBuffTime = localStorage.getItem("last_buff_time");
             if (lastBuffTime) {
                 let timeLeft = COOLDOWN_TIME - (new Date().getTime() - parseInt(lastBuffTime));
                 if (timeLeft > 0) {
                     hienDongHoDemNguoc(timeLeft);
-                    return; // Dừng chương trình, không load Key nữa
+                    return;
                 } else {
                     localStorage.removeItem("last_buff_time");
                 }
             }
 
-            // 2. XỬ LÝ LẤY KEY KHI ĐỦ ĐIỀU KIỆN
             const urlParams = new URLSearchParams(window.location.search);
             const isVerified = urlParams.get("verified");
             const hasClicked = localStorage.getItem("user_clicked_link");
@@ -114,7 +113,6 @@
             }
         };
 
-        // HÀM HIỆN ĐỒNG HỒ ĐẾM NGƯỢC 8 TIẾNG
         function hienDongHoDemNguoc(timeLeft) {
             document.getElementById("page-badge").innerText = "🔒 Đang Trong Thời Gian Khóa";
             document.getElementById("page-badge").style.background = "#7f1d1d";
@@ -147,15 +145,13 @@
             }, 1000);
         }
 
-        // HÀM SAO CHÉP KEY VÀ TỰ ĐỘNG CHUYỂN VỀ TRANG CHỦ
         function copyKeyAndRedirect() {
             let keyText = document.getElementById("key-display").innerText;
             if(keyText && keyText !== "Đang tải key..." && keyText !== "LỖI TẠO KEY!" && keyText !== "LỖI KẾT NỐI!") {
                 navigator.clipboard.writeText(keyText).then(function() {
                     alert("✅ Đã sao chép Key: " + keyText + "\n\nĐang tự động chuyển bạn về trang chủ để nhập Key...");
-                    window.location.href = "index.html"; // Tự chuyển hướng về trang chủ
+                    window.location.href = "index.html";
                 }).catch(function() {
-                    // Fallback cho trình duyệt cũ
                     alert("Đã chọn Key: " + keyText);
                     window.location.href = "index.html";
                 });
