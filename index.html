@@ -61,12 +61,9 @@
         <div id="status"></div>
 
         <div class="notice-box">
-            <div class="notice-title">📢 THỜI GIAN HOẠT ĐỘNG HỆ THỐNG:</div>
-            • Từ 9h sáng đến 23h đêm hàng ngày<br><br>
-
             <div class="notice-title" style="color: #ef4444;">📌 LƯU Ý QUAN TRỌNG:</div>
             <ul>
-                <li>Ngoài khung giờ này hệ thống sẽ tạm đóng và không nhận buff.</li>
+                <li>Hệ thống hoạt động ổn định 24/7.</li>
                 <li>Mỗi thiết bị sau khi buff thành công sẽ bị khóa 8 tiếng.</li>
             </ul>
         </div>
@@ -85,30 +82,8 @@
                 currentUserIp = data.ip || "";
             } catch(e){}
 
-            kiemTraThoiGianHoatDong();
-        };
-
-        function kiemTraThoiGianHoatDong() {
-            let now = new Date();
-            let currentHour = now.getHours();
-            let statusDiv = document.getElementById("status");
-            let btnRun = document.getElementById("btn-run");
-
-            if (currentHour < 9 || currentHour >= 23) {
-                btnRun.disabled = true;
-                btnRun.style.background = "#555";
-                btnRun.style.cursor = "not-allowed";
-                document.getElementById("key-link-elem").style.pointerEvents = "none";
-                document.getElementById("key-link-elem").style.color = "#777";
-
-                statusDiv.style.color = "#ef4444";
-                statusDiv.innerHTML = "⛔ Hệ thống chỉ mở cửa hoạt động từ <strong>9h00 đến 23h00</strong>. Hiện ngoài giờ, không thể buff!";
-                return true;
-            }
-
             kiemTraKhoaTrang();
-            return false;
-        }
+        };
 
         function kiemTraKhoaTrang() {
             let lastBuffTime = localStorage.getItem("last_buff_time");
@@ -148,8 +123,6 @@
         }
 
         async function thucHienBuff() {
-            if (kiemTraThoiGianHoatDong()) return;
-
             let uid = document.getElementById("uid-input").value.trim();
             let key = document.getElementById("key-input").value.trim();
             let statusDiv = document.getElementById("status");
@@ -170,7 +143,7 @@
                         uid: uid, 
                         key: key,
                         ip: currentUserIp,
-                        secret: "TLZ_SECURE_TOKEN_2026_XYZ"
+                        deviceId: localStorage.getItem("device_id") || "UNKNOWN"
                     })
                 });
                 let result = await response.json();
