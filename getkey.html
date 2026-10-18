@@ -39,7 +39,6 @@
             <div class="warning-box">
                 ⚠️ Bạn chưa hoàn thành vượt link! Vui lòng bấm vào nút bên dưới để vượt link rút gọn lấy Key.
             </div>
-            <!-- Khi bấm nút sẽ lưu lại trạng thái vào bộ nhớ máy khách -->
             <a href="https://link4m.net/vuvdqt" onclick="daBamVuotLink()" class="btn btn-link">🔗 Bấm Vào Đây Để Vượt Link Lấy Key</a>
         </div>
 
@@ -56,7 +55,6 @@
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
 
-        // Ghi nhớ việc nhấp nút vượt link trên trình duyệt
         function daBamVuotLink() {
             localStorage.setItem("user_clicked_link", "true");
         }
@@ -66,7 +64,6 @@
             const isVerified = urlParams.get("verified");
             const hasClicked = localStorage.getItem("user_clicked_link");
 
-            // Mở khóa hiện Key nếu có cờ verified=true HOẶC đã bấm vượt link từ trước
             if (isVerified === "true" || hasClicked === "true") {
                 document.getElementById("warning-container").style.display = "none";
                 document.getElementById("key-container").style.display = "block";
@@ -75,12 +72,12 @@
 
                 let keyDisplay = document.getElementById("key-display");
                 try {
-                    let response = await fetch(WEB_APP_URL);
+                    // Thêm tham số timestamp để chống lưu cache browser
+                    let response = await fetch(WEB_APP_URL + "?t=" + new Date().getTime());
                     let result = await response.json();
 
                     if (result.status === "success") {
                         keyDisplay.innerText = result.key;
-                        // Reset cờ ghi nhớ sau khi lấy thành công
                         localStorage.removeItem("user_clicked_link");
                     } else {
                         keyDisplay.innerText = "LỖI TẠO KEY!";
