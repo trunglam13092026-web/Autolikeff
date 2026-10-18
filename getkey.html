@@ -39,8 +39,8 @@
             <div class="warning-box">
                 ⚠️ Bạn chưa hoàn thành vượt link! Vui lòng bấm vào nút bên dưới để vượt link rút gọn lấy Key.
             </div>
-            <!-- Link rút gọn Link4M của Lâm, khi khách bấm qua link rút gọn sẽ tự động cộng kèm cờ xác nhận quay về -->
-            <a href="https://link4m.net/vuvdqt?redirect=https://bufflikeff.site/getkey.html?verified=true" target="_blank" class="btn btn-link">🔗 Bấm Vào Đây Để Vượt Link Lấy Key</a>
+            <!-- Khi bấm nút sẽ lưu lại trạng thái vào bộ nhớ máy khách -->
+            <a href="https://link4m.net/vuvdqt" onclick="daBamVuotLink()" class="btn btn-link">🔗 Bấm Vào Đây Để Vượt Link Lấy Key</a>
         </div>
 
         <div class="key-box" id="key-container">
@@ -54,16 +54,20 @@
     </div>
 
     <script>
-        // Dán Link Web App Google Apps Script của Lâm vào đây
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
 
+        // Ghi nhớ việc nhấp nút vượt link trên trình duyệt
+        function daBamVuotLink() {
+            localStorage.setItem("user_clicked_link", "true");
+        }
+
         window.onload = async function() {
-            // Kiểm tra xem trên URL có gắn tham số xác minh vượt link chưa (?verified=true)
             const urlParams = new URLSearchParams(window.location.search);
             const isVerified = urlParams.get("verified");
+            const hasClicked = localStorage.getItem("user_clicked_link");
 
-            if (isVerified === "true") {
-                // Nếu đã vượt link: Ẩn cảnh báo, hiện khung chứa Key và gọi API lấy key
+            // Mở khóa hiện Key nếu có cờ verified=true HOẶC đã bấm vượt link từ trước
+            if (isVerified === "true" || hasClicked === "true") {
                 document.getElementById("warning-container").style.display = "none";
                 document.getElementById("key-container").style.display = "block";
                 document.getElementById("btn-copy").style.display = "block";
@@ -76,6 +80,8 @@
 
                     if (result.status === "success") {
                         keyDisplay.innerText = result.key;
+                        // Reset cờ ghi nhớ sau khi lấy thành công
+                        localStorage.removeItem("user_clicked_link");
                     } else {
                         keyDisplay.innerText = "LỖI TẠO KEY!";
                         keyDisplay.style.color = "#ef4444";
@@ -85,7 +91,6 @@
                     keyDisplay.style.color = "#ef4444";
                 }
             } else {
-                // Nếu truy cập thẳng trực tiếp: Giữ nguyên trạng thái bắt buộc vượt link
                 document.getElementById("warning-container").style.display = "block";
                 document.getElementById("key-container").style.display = "none";
                 document.getElementById("btn-copy").style.display = "none";
