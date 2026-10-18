@@ -64,18 +64,17 @@
             <div class="notice-title" style="color: #ef4444;">📌 LƯU Ý QUAN TRỌNG:</div>
             <ul>
                 <li>Hệ thống hoạt động ổn định 24/7.</li>
-                <li>Mỗi thiết bị sau khi buff thành công sẽ bị khóa 8 tiếng.</li>
+                <li>Mỗi thiết bị sau khi buff thành công sẽ chờ 20 phút để buff tiếp.</li>
             </ul>
         </div>
     </div>
 
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
-        const COOLDOWN_TIME = 8 * 60 * 60 * 1000;
+        const COOLDOWN_TIME = 20 * 60 * 1000; // Đổi thời gian chờ thành 20 phút
         let currentUserIp = "";
 
         window.onload = async function() {
-            // Lấy IP người dùng
             try {
                 let res = await fetch("https://api.ipify.org?format=json");
                 let data = await res.json();
@@ -113,12 +112,11 @@
                     location.reload();
                     return;
                 }
-                let hours = Math.floor(currentLeft / (1000 * 60 * 60));
                 let minutes = Math.floor((currentLeft % (1000 * 60 * 60)) / (1000 * 60));
                 let seconds = Math.floor((currentLeft % (1000 * 60)) / 1000);
 
                 statusDiv.style.color = "#eab308";
-                statusDiv.innerText = `⏳ Bạn đã buff thành công! Vui lòng chờ ${hours}h ${minutes}p ${seconds}s nữa mới được buff tiếp.`;
+                statusDiv.innerText = `⏳ Bạn đã buff thành công! Vui lòng chờ ${minutes} phút ${seconds} giây nữa mới được buff tiếp.`;
             }, 1000);
         }
 
