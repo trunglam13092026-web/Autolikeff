@@ -74,21 +74,27 @@
 
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
-        const COOLDOWN_TIME = 8 * 60 * 60 * 1000; // 8 tiếng
+        const COOLDOWN_TIME = 8 * 60 * 60 * 1000;
+        let currentUserIp = "";
 
-        window.onload = function() {
+        window.onload = async function() {
+            // Lấy IP người dùng
+            try {
+                let res = await fetch("https://api.ipify.org?format=json");
+                let data = await res.json();
+                currentUserIp = data.ip || "";
+            } catch(e){}
+
             kiemTraThoiGianHoatDong();
         };
 
-        // Hàm kiểm tra giờ hoạt động (Từ 9h đến 23h)
         function kiemTraThoiGianHoatDong() {
             let now = new Date();
-            let currentHour = now.getHours(); // Lấy giờ hiện tại (0 - 23)
+            let currentHour = now.getHours();
             let statusDiv = document.getElementById("status");
             let btnRun = document.getElementById("btn-run");
 
             if (currentHour < 9 || currentHour >= 23) {
-                // Ngoài giờ hoạt động (Trước 9h sáng hoặc từ 23h đêm trở đi)
                 btnRun.disabled = true;
                 btnRun.style.background = "#555";
                 btnRun.style.cursor = "not-allowed";
@@ -96,11 +102,10 @@
                 document.getElementById("key-link-elem").style.color = "#777";
 
                 statusDiv.style.color = "#ef4444";
-                statusDiv.innerHTML = "⛔ Hệ thống chỉ mở cửa hoạt động từ <strong>9h00 đến 23h00</strong> hằng ngày. Hiện tại ngoài giờ hoạt động, không thể buff!";
-                return true; // Đang đóng cửa
+                statusDiv.innerHTML = "⛔ Hệ thống chỉ mở cửa hoạt động từ <strong>9h00 đến 23h00</strong>. Hiện ngoài giờ, không thể buff!";
+                return true;
             }
 
-            // Nếu trong giờ hoạt động thì kiểm tra tiếp khóa 8 tiếng cá nhân
             kiemTraKhoaTrang();
             return false;
         }
@@ -143,7 +148,6 @@
         }
 
         async function thucHienBuff() {
-            // Chặn ngay nếu ngoài giờ hoạt động
             if (kiemTraThoiGianHoatDong()) return;
 
             let uid = document.getElementById("uid-input").value.trim();
@@ -165,6 +169,7 @@
                     body: JSON.stringify({ 
                         uid: uid, 
                         key: key,
+                        ip: currentUserIp,
                         secret: "TLZ_SECURE_TOKEN_2026_XYZ"
                     })
                 });
