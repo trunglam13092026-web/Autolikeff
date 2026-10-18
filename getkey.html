@@ -22,7 +22,8 @@
         .btn-copy { background: #0ea5e9; color: white; margin-bottom: 10px; display: none; }
         .btn-copy:hover { background: #0284c7; }
 
-        .warning-box { background: #451a03; border: 1px solid #f59e0b; color: #fde68a; padding: 12px; border-radius: 8px; font-size: 13px; margin-bottom: 20px; line-height: 1.4; }
+        .warning-box { background: #451a03; border: 1px solid #f59e0b; color: #fde68a; padding: 15px; border-radius: 8px; font-size: 13.5px; margin-bottom: 20px; line-height: 1.5; }
+        .countdown-text { font-size: 18px; font-weight: bold; color: #ef4444; margin-top: 8px; display: block; }
         
         .back-link { display: inline-block; margin-top: 15px; color: #94a3b8; text-decoration: none; font-size: 14px; }
         .back-link:hover { color: #fff; text-decoration: underline; }
@@ -35,10 +36,10 @@
         <h2>LẤY KEY BẢN QUYỀN</h2>
         
         <div id="warning-container">
-            <div class="warning-box">
+            <div class="warning-box" id="warning-content">
                 ⚠️ Bạn chưa hoàn thành vượt link! Vui lòng bấm vào nút bên dưới để vượt link rút gọn lấy Key.
             </div>
-            <a href="https://link4m.net/0aFFT" onclick="daBamVuotLink()" class="btn btn-link">🔗 Bấm Vào Đây Để Vượt Link Lấy Key</a>
+            <a href="https://link4m.net/0aFFT" id="btn-link-action" onclick="daBamVuotLink()" class="btn btn-link">🔗 Bấm Vào Đây Để Vượt Link Lấy Key</a>
         </div>
 
         <div class="key-box" id="key-container">
@@ -46,25 +47,38 @@
             <div id="key-display">Đang tải key...</div>
         </div>
 
-        <button class="btn btn-copy" id="btn-copy" onclick="copyKey()">📋 Sao Chép Key Ngay</button>
+        <button class="btn btn-copy" id="btn-copy" onclick="copyKeyAndRedirect()">📋 Sao Chép Key Ngay</button>
         
         <a href="index.html" class="back-link">← Quay lại trang chủ dán Key</a>
     </div>
 
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
+        const COOLDOWN_TIME = 8 * 60 * 60 * 1000; // 8 tiếng
 
         function daBamVuotLink() {
             localStorage.setItem("user_clicked_link", "true");
         }
 
         window.onload = async function() {
+            // 1. KIỂM TRA KHÓA 8 TIẾNG NẾU KHÁCH CỐ TÌNH QUAY LẠI
+            let lastBuffTime = localStorage.getItem("last_buff_time");
+            if (lastBuffTime) {
+                let timeLeft = COOLDOWN_TIME - (new Date().getTime() - parseInt(lastBuffTime));
+                if (timeLeft > 0) {
+                    hienDongHoDemNguoc(timeLeft);
+                    return; // Dừng chương trình, không load Key nữa
+                } else {
+                    localStorage.removeItem("last_buff_time");
+                }
+            }
+
+            // 2. XỬ LÝ LẤY KEY KHI ĐỦ ĐIỀU KIỆN
             const urlParams = new URLSearchParams(window.location.search);
             const isVerified = urlParams.get("verified");
             const hasClicked = localStorage.getItem("user_clicked_link");
             const savedKey = localStorage.getItem("saved_user_key");
 
-            // Nếu đã vượt link HOẶC máy đã lưu sẵn Key cũ chưa dùng
             if (isVerified === "true" || hasClicked === "true" || savedKey) {
                 document.getElementById("warning-container").style.display = "none";
                 document.getElementById("key-container").style.display = "block";
@@ -73,17 +87,15 @@
 
                 let keyDisplay = document.getElementById("key-display");
 
-                // Nếu trong máy đã có sẵn Key thì hiển thị ngay, không cần gọi API lại để tránh đổi Key khi F5
                 if (savedKey) {
                     keyDisplay.innerText = savedKey;
                 } else {
                     try {
-                        let response = await fetch(WEB_APP_URL);
+                        let response = await fetch(WEB_APP_URL + "?v=" + new Date().getTime());
                         let result = await response.json();
 
                         if (result.status === "success") {
                             keyDisplay.innerText = result.key;
-                            // Lưu Key này vào máy người dùng để F5 không bị đổi
                             localStorage.setItem("saved_user_key", result.key);
                             localStorage.removeItem("user_clicked_link");
                         } else {
@@ -102,11 +114,51 @@
             }
         };
 
-        function copyKey() {
+        // HÀM HIỆN ĐỒNG HỒ ĐẾM NGƯỢC 8 TIẾNG
+        function hienDongHoDemNguoc(timeLeft) {
+            document.getElementById("page-badge").innerText = "🔒 Đang Trong Thời Gian Khóa";
+            document.getElementById("page-badge").style.background = "#7f1d1d";
+            document.getElementById("page-badge").style.color = "#fca5a5";
+            
+            document.getElementById("key-container").style.display = "none";
+            document.getElementById("btn-copy").style.display = "none";
+            document.getElementById("btn-link-action").style.display = "none";
+
+            let warningBox = document.getElementById("warning-content");
+            warningBox.style.background = "#451a03";
+            warningBox.style.borderColor = "#ef4444";
+            
+            let timer = setInterval(function() {
+                let currentLeft = COOLDOWN_TIME - (new Date().getTime() - parseInt(localStorage.getItem("last_buff_time")));
+                if (currentLeft <= 0) {
+                    clearInterval(timer);
+                    localStorage.removeItem("last_buff_time");
+                    location.reload();
+                    return;
+                }
+                let hours = Math.floor(currentLeft / (1000 * 60 * 60));
+                let minutes = Math.floor((currentLeft % (1000 * 60 * 60)) / (1000 * 60));
+                let seconds = Math.floor((currentLeft % (1000 * 60)) / 1000);
+
+                warningBox.innerHTML = `
+                    ⏳ Bạn đã buff thành công! Vui lòng chờ hết thời gian khóa để tiếp tục lấy Key mới:
+                    <span class="countdown-text">⏱️ ${hours} Giờ ${minutes} Phút ${seconds} Giây</span>
+                `;
+            }, 1000);
+        }
+
+        // HÀM SAO CHÉP KEY VÀ TỰ ĐỘNG CHUYỂN VỀ TRANG CHỦ
+        function copyKeyAndRedirect() {
             let keyText = document.getElementById("key-display").innerText;
             if(keyText && keyText !== "Đang tải key..." && keyText !== "LỖI TẠO KEY!" && keyText !== "LỖI KẾT NỐI!") {
-                navigator.clipboard.writeText(keyText);
-                alert("Đã sao chép Key: " + keyText);
+                navigator.clipboard.writeText(keyText).then(function() {
+                    alert("✅ Đã sao chép Key: " + keyText + "\n\nĐang tự động chuyển bạn về trang chủ để nhập Key...");
+                    window.location.href = "index.html"; // Tự chuyển hướng về trang chủ
+                }).catch(function() {
+                    // Fallback cho trình duyệt cũ
+                    alert("Đã chọn Key: " + keyText);
+                    window.location.href = "index.html";
+                });
             } else {
                 alert("Chưa có Key hợp lệ để sao chép!");
             }
