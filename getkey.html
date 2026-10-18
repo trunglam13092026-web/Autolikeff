@@ -61,7 +61,7 @@
         }
 
         window.onload = async function() {
-            // 1. KIỂM TRA GIỜ HOẠT ĐỘNG (9h - 23h)
+            // 1. CHẶN GIỜ HOẠT ĐỘNG (9h - 23h)
             let now = new Date();
             let currentHour = now.getHours();
             if (currentHour < 9 || currentHour >= 23) {
@@ -76,11 +76,11 @@
                 let warningBox = document.getElementById("warning-content");
                 warningBox.style.background = "#451a03";
                 warningBox.style.borderColor = "#ef4444";
-                warningBox.innerHTML = "⛔ Hệ thống chỉ mở cửa hoạt động từ <strong>9h00 đến 23h00</strong>. Hiện tại ngoài giờ, bạn không thể lấy hoặc sử dụng Key!";
+                warningBox.innerHTML = "⛔ Hệ thống chỉ mở cửa từ <strong>9h00 đến 23h00</strong>. Hiện tại ngoài giờ, bạn không thể lấy Key!";
                 return;
             }
 
-            // 2. KIỂM TRA KHÓA 8 TIẾNG NẾU KHÁCH QUAY LẠI
+            // 2. KIỂM TRA KHÓA TRÊN LOCALSTORAGE
             let lastBuffTime = localStorage.getItem("last_buff_time");
             if (lastBuffTime) {
                 let timeLeft = COOLDOWN_TIME - (new Date().getTime() - parseInt(lastBuffTime));
@@ -91,6 +91,14 @@
                     localStorage.removeItem("last_buff_time");
                 }
             }
+
+            // 3. LẤY IP VÀ GỬI LÊN SERVER KIỂM TRA KHÓA IP (CHỐNG XÓA COOKIE)
+            let userIp = "";
+            try {
+                let ipRes = await fetch("https://api.ipify.org?format=json");
+                let ipData = await ipRes.json();
+                userIp = ipData.ip || "";
+            } catch(e){}
 
             const urlParams = new URLSearchParams(window.location.search);
             const isVerified = urlParams.get("verified");
@@ -109,8 +117,15 @@
                     keyDisplay.innerText = savedKey;
                 } else {
                     try {
-                        let response = await fetch(WEB_APP_URL + "?v=" + new Date().getTime());
+                        let response = await fetch(WEB_APP_URL + "?v=" + new Date().getTime() + "&ip=" + userIp);
                         let result = await response.json();
+
+                        if (result.status === "locked") {
+                            // BỊ SERVER KHÓA IP TỪ TẠI GOOGLE APPS SCRIPT
+                            localStorage.setItem("last_buff_time", (new Date().getTime() - (COOLDOWN_TIME - result.remainingMs)).toString());
+                            hienDongHoDemNguoc(result.remainingMs);
+                            return;
+                        }
 
                         if (result.status === "success") {
                             keyDisplay.innerText = result.key;
