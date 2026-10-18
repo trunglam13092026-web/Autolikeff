@@ -11,7 +11,6 @@
         
         .badge { background: #065f46; color: #34d399; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; display: inline-block; margin-bottom: 15px; }
         h2 { color: #38bdf8; margin-bottom: 8px; font-size: 22px; }
-        p { color: #94a3b8; font-size: 14px; margin-bottom: 20px; line-height: 1.5; }
 
         .key-box { background: #2a2a2a; border: 2px dashed #0ea5e9; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: none; }
         .key-label { font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
@@ -39,8 +38,7 @@
             <div class="warning-box">
                 ⚠️ Bạn chưa hoàn thành vượt link! Vui lòng bấm vào nút bên dưới để vượt link rút gọn lấy Key.
             </div>
-            <!-- Đổi link Link4M của Lâm ở đây -->
-            <a href="https://link4m.net/0aFFT" onclick="daBamVuotLink()" class="btn btn-link">🔗 Bấm Vào Đây Để Vượt Link Lấy Key</a>
+            <a href="https://link4m.net/vuvdqt" onclick="daBamVuotLink()" class="btn btn-link">🔗 Bấm Vào Đây Để Vượt Link Lấy Key</a>
         </div>
 
         <div class="key-box" id="key-container">
@@ -64,30 +62,38 @@
             const urlParams = new URLSearchParams(window.location.search);
             const isVerified = urlParams.get("verified");
             const hasClicked = localStorage.getItem("user_clicked_link");
+            const savedKey = localStorage.getItem("saved_user_key");
 
-            if (isVerified === "true" || hasClicked === "true") {
+            // Nếu đã vượt link HOẶC máy đã lưu sẵn Key cũ chưa dùng
+            if (isVerified === "true" || hasClicked === "true" || savedKey) {
                 document.getElementById("warning-container").style.display = "none";
                 document.getElementById("key-container").style.display = "block";
                 document.getElementById("btn-copy").style.display = "block";
                 document.getElementById("page-badge").innerText = "✅ Xác Minh Thành Công";
 
                 let keyDisplay = document.getElementById("key-display");
-                try {
-                    // Mẹo chống cache chuẩn Google Apps Script: Nối tham số thời gian ngẫu nhiên
-                    let cleanUrl = WEB_APP_URL + "?v=" + new Date().getTime();
-                    let response = await fetch(cleanUrl);
-                    let result = await response.json();
 
-                    if (result.status === "success") {
-                        keyDisplay.innerText = result.key;
-                        localStorage.removeItem("user_clicked_link");
-                    } else {
-                        keyDisplay.innerText = "LỖI TẠO KEY!";
+                // Nếu trong máy đã có sẵn Key thì hiển thị ngay, không cần gọi API lại để tránh đổi Key khi F5
+                if (savedKey) {
+                    keyDisplay.innerText = savedKey;
+                } else {
+                    try {
+                        let response = await fetch(WEB_APP_URL);
+                        let result = await response.json();
+
+                        if (result.status === "success") {
+                            keyDisplay.innerText = result.key;
+                            // Lưu Key này vào máy người dùng để F5 không bị đổi
+                            localStorage.setItem("saved_user_key", result.key);
+                            localStorage.removeItem("user_clicked_link");
+                        } else {
+                            keyDisplay.innerText = "LỖI TẠO KEY!";
+                            keyDisplay.style.color = "#ef4444";
+                        }
+                    } catch (err) {
+                        keyDisplay.innerText = "LỖI KẾT NỐI!";
                         keyDisplay.style.color = "#ef4444";
                     }
-                } catch (err) {
-                    keyDisplay.innerText = "LỖI KẾT NỐI!";
-                    keyDisplay.style.color = "#ef4444";
                 }
             } else {
                 document.getElementById("warning-container").style.display = "block";
