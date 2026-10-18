@@ -39,7 +39,6 @@
             <div class="warning-box">
                 ⚠️ Bạn chưa hoàn thành vượt link! Vui lòng bấm vào nút bên dưới để vượt link rút gọn lấy Key.
             </div>
-            <!-- Đổi link Link4M của Lâm ở đây -->
             <a href="https://link4m.net/0aFFT" onclick="daBamVuotLink()" class="btn btn-link">🔗 Bấm Vào Đây Để Vượt Link Lấy Key</a>
         </div>
 
@@ -73,10 +72,18 @@
 
                 let keyDisplay = document.getElementById("key-display");
                 try {
-                    // Ép trình duyệt gọi dữ liệu mới bằng cache: 'no-store' và timestamp
-                    let response = await fetch(WEB_APP_URL + "?nocache=" + new Date().getTime(), {
-                        cache: 'no-store'
+                    // Ép không dùng Cache bằng cách nối timestamp duy nhất ở đằng sau URL
+                    let uniqueUrl = WEB_APP_URL + "?rand=" + new Date().getTime() + "_" + Math.random().toString(36).substring(2,7);
+                    
+                    let response = await fetch(uniqueUrl, {
+                        method: 'GET',
+                        cache: 'no-cache',
+                        headers: {
+                            'Pragma': 'no-cache',
+                            'Cache-Control': 'no-cache, no-store, must-revalidate'
+                        }
                     });
+                    
                     let result = await response.json();
 
                     if (result.status === "success") {
