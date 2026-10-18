@@ -66,7 +66,6 @@
             <input type="text" id="key-input" placeholder="Nhập Key xác minh...">
         </div>
         
-        <!-- Chuyển sang trang lấy key -->
         <a href="getkey.html" class="key-link">👉 Nhấp vào đây để lấy Key miễn phí</a>
         
         <button class="btn-submit" id="btn-run" onclick="thucHienBuff()">Chạy</button>
@@ -123,6 +122,8 @@
                     if(result.remaining !== undefined) {
                         document.getElementById("limitCount").innerText = (150 - result.remaining) + "/150";
                     }
+                    // Tự động xóa ô nhập key sau khi thành công
+                    document.getElementById("key-input").value = "";
                 } else {
                     statusDiv.style.color = "#ef4444";
                     statusDiv.innerText = "❌ " + result.message;
