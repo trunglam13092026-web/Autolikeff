@@ -7,7 +7,7 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #121212; color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .card { background: #1e1e1e; padding: 30px; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.6); width: 100%; max-width: 420px; text-align: center; border: 1px solid #333; }
+        .card { background: #1e1e1e; padding: 25px 20px; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.6); width: 100%; max-width: 420px; text-align: center; border: 1px solid #333; }
         
         .badge { background: #065f46; color: #34d399; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; display: inline-block; margin-bottom: 15px; }
         h2 { color: #38bdf8; margin-bottom: 8px; font-size: 22px; }
@@ -17,15 +17,33 @@
         #key-display { font-size: 20px; font-weight: bold; color: #38bdf8; word-break: break-all; }
 
         .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; transition: background 0.2s; text-decoration: none; display: inline-block; }
-        .btn-link { background: #eab308; color: #121212; margin-bottom: 10px; }
+        .btn-link { background: #eab308; color: #121212; margin-bottom: 15px; }
         .btn-link:hover { background: #ca8a04; }
+
         .btn-copy { background: #0ea5e9; color: white; margin-bottom: 10px; display: none; }
         .btn-copy:hover { background: #0284c7; }
 
-        .warning-box { background: #451a03; border: 1px solid #f59e0b; color: #fde68a; padding: 15px; border-radius: 8px; font-size: 13.5px; margin-bottom: 20px; line-height: 1.5; }
+        .warning-box { background: #451a03; border: 1px solid #f59e0b; color: #fde68a; padding: 12px; border-radius: 8px; font-size: 13px; margin-bottom: 15px; line-height: 1.5; }
         .countdown-text { font-size: 18px; font-weight: bold; color: #ef4444; margin-top: 8px; display: block; }
         
-        .back-link { display: inline-block; margin-top: 15px; color: #94a3b8; text-decoration: none; font-size: 14px; }
+        /* KHUNG PHÁT VIDEO TRỰC TIẾP TỪ GITHUB */
+        .video-container {
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #444;
+            margin: 10px 0 15px;
+            background: #000;
+        }
+        .video-container video {
+            width: 100%;
+            height: auto;
+            max-height: 350px;
+            display: block;
+        }
+        .video-title { font-size: 13px; color: #cbd5e1; margin-bottom: 6px; text-align: left; font-weight: bold; }
+
+        .back-link { display: inline-block; margin-top: 10px; color: #94a3b8; text-decoration: none; font-size: 14px; }
         .back-link:hover { color: #fff; text-decoration: underline; }
     </style>
 </head>
@@ -37,9 +55,18 @@
         
         <div id="warning-container">
             <div class="warning-box" id="warning-content">
-                ⚠️ Bạn chưa hoàn thành vượt link! Vui lòng bấm vào nút bên dưới để vượt link rút gọn lấy Key.
+                ⚠️ Bạn chưa hoàn thành vượt link! Vui lòng xem video hướng dẫn bên dưới và bấm nút vượt link để lấy Key.
             </div>
-            <!-- Khi cấu hình Link4M, Lâm nhớ trỏ link đích về: getkey.html?verified=true -->
+
+            <!-- HIỂN THỊ VIDEO TRỰC TIẾP TỪ FILE GITHUB -->
+            <div class="video-title">🎬 Video hướng dẫn vượt link:</div>
+            <div class="video-container">
+                <video controls playsinline preload="metadata">
+                    <source src="lv_0_20261020044711.mp4" type="video/mp4">
+                    Trình duyệt của bạn không hỗ trợ phát video.
+                </video>
+            </div>
+
             <a href="https://link4m.net/0aFFT" id="btn-link-action" class="btn btn-link">🔗 Bấm Vào Đây Để Vượt Link Lấy Key</a>
         </div>
 
@@ -57,7 +84,6 @@
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
 
         window.onload = async function() {
-            // Lấy IP người dùng
             let userIp = "";
             try {
                 let ipRes = await fetch("https://api.ipify.org?format=json");
@@ -65,12 +91,10 @@
                 userIp = ipData.ip || "";
             } catch(e){}
 
-            // Kiểm tra xem URL có chứa tham số ?verified=true do Link4M trả về không
             const urlParams = new URLSearchParams(window.location.search);
             const isVerified = urlParams.get("verified");
 
             if (isVerified === "true") {
-                // ĐÃ VƯỢT LINK THÀNH CÔNG -> HIỆN KEY
                 document.getElementById("warning-container").style.display = "none";
                 document.getElementById("key-container").style.display = "block";
                 document.getElementById("btn-copy").style.display = "block";
@@ -98,7 +122,6 @@
                     keyDisplay.style.color = "#ef4444";
                 }
             } else {
-                // CHƯA VƯỢT LINK HOẶC MỚI BẤM QUAY LẠI -> ẨN KEY HOÀN TOÀN
                 document.getElementById("warning-container").style.display = "block";
                 document.getElementById("key-container").style.display = "none";
                 document.getElementById("btn-copy").style.display = "none";
@@ -112,7 +135,6 @@
             
             document.getElementById("key-container").style.display = "none";
             document.getElementById("btn-copy").style.display = "none";
-            document.getElementById("btn-link-action").style.display = "none";
 
             let warningBox = document.getElementById("warning-content");
             document.getElementById("warning-container").style.display = "block";
