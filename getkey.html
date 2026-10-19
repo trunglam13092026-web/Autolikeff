@@ -39,7 +39,8 @@
             <div class="warning-box" id="warning-content">
                 ⚠️ Bạn chưa hoàn thành vượt link! Vui lòng bấm vào nút bên dưới để vượt link rút gọn lấy Key.
             </div>
-            <a href="https://link4m.net/0aFFT" id="btn-link-action" onclick="daBamVuotLink()" class="btn btn-link">🔗 Bấm Vào Đây Để Vượt Link Lấy Key</a>
+            <!-- Khi cấu hình Link4M, Lâm nhớ trỏ link đích về: getkey.html?verified=true -->
+            <a href="https://link4m.net/0aFFT" id="btn-link-action" class="btn btn-link">🔗 Bấm Vào Đây Để Vượt Link Lấy Key</a>
         </div>
 
         <div class="key-box" id="key-container">
@@ -54,11 +55,6 @@
 
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
-        const COOLDOWN_TIME = 20 * 60 * 1000; // 20 phút
-
-        function daBamVuotLink() {
-            localStorage.setItem("user_clicked_link", "true");
-        }
 
         window.onload = async function() {
             // Lấy IP người dùng
@@ -69,11 +65,12 @@
                 userIp = ipData.ip || "";
             } catch(e){}
 
+            // Kiểm tra xem URL có chứa tham số ?verified=true do Link4M trả về không
             const urlParams = new URLSearchParams(window.location.search);
             const isVerified = urlParams.get("verified");
-            const hasClicked = localStorage.getItem("user_clicked_link");
 
-            if (isVerified === "true" || hasClicked === "true") {
+            if (isVerified === "true") {
+                // ĐÃ VƯỢT LINK THÀNH CÔNG -> HIỆN KEY
                 document.getElementById("warning-container").style.display = "none";
                 document.getElementById("key-container").style.display = "block";
                 document.getElementById("btn-copy").style.display = "block";
@@ -82,7 +79,6 @@
                 let keyDisplay = document.getElementById("key-display");
 
                 try {
-                    // Gọi API lấy Key tươi mới từ Server
                     let response = await fetch(WEB_APP_URL + "?v=" + new Date().getTime() + "&ip=" + userIp);
                     let result = await response.json();
 
@@ -93,7 +89,6 @@
 
                     if (result.status === "success") {
                         keyDisplay.innerText = result.key;
-                        localStorage.removeItem("user_clicked_link");
                     } else {
                         keyDisplay.innerText = "LỖI TẠO KEY!";
                         keyDisplay.style.color = "#ef4444";
@@ -103,6 +98,7 @@
                     keyDisplay.style.color = "#ef4444";
                 }
             } else {
+                // CHƯA VƯỢT LINK HOẶC MỚI BẤM QUAY LẠI -> ẨN KEY HOÀN TOÀN
                 document.getElementById("warning-container").style.display = "block";
                 document.getElementById("key-container").style.display = "none";
                 document.getElementById("btn-copy").style.display = "none";
@@ -136,7 +132,7 @@
                 let seconds = Math.floor((currentLeft % (1000 * 60)) / 1000);
 
                 warningBox.innerHTML = `
-                    ⏳ Bạn đã lấy Key hoặc vừa buff! Vui lòng chờ hết thời gian khóa để tiếp tục lấy Key mới:
+                    ⏳ Bạn đang trong thời gian chờ 20 phút:
                     <span class="countdown-text">⏱️ ${minutes} Phút ${seconds} Giây</span>
                 `;
             }, 1000);
