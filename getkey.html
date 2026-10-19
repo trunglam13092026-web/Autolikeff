@@ -26,21 +26,8 @@
         .warning-box { background: #451a03; border: 1px solid #f59e0b; color: #fde68a; padding: 12px; border-radius: 8px; font-size: 13px; margin-bottom: 15px; line-height: 1.5; }
         .countdown-text { font-size: 18px; font-weight: bold; color: #ef4444; margin-top: 8px; display: block; }
         
-        /* KHUNG PHÁT VIDEO TRỰC TIẾP TỪ GITHUB */
-        .video-container {
-            width: 100%;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid #444;
-            margin: 10px 0 15px;
-            background: #000;
-        }
-        .video-container video {
-            width: 100%;
-            height: auto;
-            max-height: 350px;
-            display: block;
-        }
+        .video-container { width: 100%; border-radius: 10px; overflow: hidden; border: 1px solid #444; margin: 10px 0 15px; background: #000; }
+        .video-container video { width: 100%; height: auto; max-height: 350px; display: block; }
         .video-title { font-size: 13px; color: #cbd5e1; margin-bottom: 6px; text-align: left; font-weight: bold; }
 
         .back-link { display: inline-block; margin-top: 10px; color: #94a3b8; text-decoration: none; font-size: 14px; }
@@ -58,7 +45,6 @@
                 ⚠️ Bạn chưa hoàn thành vượt link! Vui lòng xem video hướng dẫn bên dưới và bấm nút vượt link để lấy Key.
             </div>
 
-            <!-- HIỂN THỊ VIDEO TRỰC TIẾP TỪ FILE GITHUB -->
             <div class="video-title">🎬 Video hướng dẫn vượt link:</div>
             <div class="video-container">
                 <video controls playsinline preload="metadata">
@@ -72,7 +58,7 @@
 
         <div class="key-box" id="key-container">
             <div class="key-label">Mã Key Của Bạn:</div>
-            <div id="key-display">Đang tải key...</div>
+            <div id="key-display">Đang tạo key an toàn...</div>
         </div>
 
         <button class="btn-copy" id="btn-copy" onclick="copyKeyAndRedirect()">📋 Sao Chép Key Ngay</button>
@@ -94,39 +80,56 @@
             const urlParams = new URLSearchParams(window.location.search);
             const isVerified = urlParams.get("verified");
 
+            // Chặn đứng nếu gõ bừa ?verified=true mà không có dấu hiệu chuyển hướng thực tế từ Link4M
             if (isVerified === "true") {
-                document.getElementById("warning-container").style.display = "none";
-                document.getElementById("key-container").style.display = "block";
-                document.getElementById("btn-copy").style.display = "block";
-                document.getElementById("page-badge").innerText = "✅ Xác Minh Thành Công";
-
+                // Kiểm tra xem backend Google Apps Script có thực sự cấp quyền tạo key cho IP này không hay đang gian lận
                 let keyDisplay = document.getElementById("key-display");
 
                 try {
                     let response = await fetch(WEB_APP_URL + "?v=" + new Date().getTime() + "&ip=" + userIp);
                     let result = await response.json();
 
+                    // Nếu hệ thống phát hiện IP này chưa qua thời gian chờ hoặc cố tình gõ link vượt tuyến
                     if (result.status === "locked") {
                         hienDongHoDemNguoc(result.remainingMs);
                         return;
                     }
 
                     if (result.status === "success") {
+                        // Ẩn bảng cảnh báo, hiện Key thật
+                        document.getElementById("warning-container").style.display = "none";
+                        document.getElementById("key-container").style.display = "block";
+                        document.getElementById("btn-copy").style.display = "block";
+                        document.getElementById("page-badge").innerText = "✅ Xác Minh Thành Công";
                         keyDisplay.innerText = result.key;
                     } else {
-                        keyDisplay.innerText = "LỖI TẠO KEY!";
-                        keyDisplay.style.color = "#ef4444";
+                        hienTrangThaiLoi("LỖI XÁC MINH HOẶC BẠN CHƯA VƯỢT LINK!");
                     }
                 } catch (err) {
-                    keyDisplay.innerText = "LỖI KẾT NỐI!";
-                    keyDisplay.style.color = "#ef4444";
+                    hienTrangThaiLoi("LỖI KẾT NỐI HỆ THỐNG!");
                 }
             } else {
-                document.getElementById("warning-container").style.display = "block";
-                document.getElementById("key-container").style.display = "none";
-                document.getElementById("btn-copy").style.display = "none";
+                hienTrangThaiBinhThuong();
             }
         };
+
+        function hienTrangThaiBinhThuong() {
+            document.getElementById("warning-container").style.display = "block";
+            document.getElementById("key-container").style.display = "none";
+            document.getElementById("btn-copy").style.display = "none";
+        }
+
+        function hienTrangThaiLoi(thongBao) {
+            document.getElementById("warning-container").style.display = "block";
+            document.getElementById("warning-content.style")
+            let warningBox = document.getElementById("warning-content");
+            warningBox.style.background = "#451a03";
+            warningBox.style.borderColor = "#ef4444";
+            warningBox.innerHTML = `❌ ${thongBao}<br><br>Vui lòng bấm vào nút <b>Bấm Vào Đây Để Vượt Link Lấy Key</b> màu vàng bên dưới để thực hiện đúng quy trình!`;
+            
+            document.getElementById("key-container").style.display = "none";
+            document.getElementById("btn-copy").style.display = "none";
+        }
 
         function hienDongHoDemNguoc(remainingMs) {
             document.getElementById("page-badge").innerText = "🔒 Đang Trong Thời Gian Khóa";
@@ -162,7 +165,7 @@
 
         function copyKeyAndRedirect() {
             let keyText = document.getElementById("key-display").innerText;
-            if(keyText && keyText !== "Đang tải key..." && keyText !== "LỖI TẠO KEY!" && keyText !== "LỖI KẾT NỐI!") {
+            if(keyText && keyText !== "Đang tạo key an toàn..." && !keyText.includes("LỖI")) {
                 navigator.clipboard.writeText(keyText).then(function() {
                     alert("✅ Đã sao chép Key: " + keyText + "\n\nĐang tự động chuyển bạn về trang chủ để nhập Key...");
                     window.location.href = "index.html";
