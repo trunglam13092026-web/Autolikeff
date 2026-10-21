@@ -136,7 +136,7 @@
     <span class="badge">✨ Vượt Link Lấy Key</span>
     <h2>LẤY KEY BẢN QUYỀN</h2>
 
-    <!-- THÔNG BÁO LỖI NẾU CHƯA VƯỢT LINK -->
+    <!-- THÔNG BÁO LỖI NẾU CHƯA VƯỢT LINK HOẶC ĐÃ BỊ KHÓA -->
     <div id="errorArea" class="msg-box" style="display: none;">
       <strong style="color: #ef4444;">❌ LỖI XÁC MINH HOẶC BẠN CHƯA VƯỢT LINK!</strong><br><br>
       Vui lòng bấm vào nút <span style="color: #eab308; font-weight: bold;">Bấm Vào Đây Để Vượt Link Lấy Key</span> màu vàng bên dưới để thực hiện đúng quy trình!
@@ -148,7 +148,7 @@
     <!-- NÚT SAO CHÉP KEY -->
     <button class="btn" onclick="copyKey()">SAO CHÉP KEY</button>
 
-    <!-- VIDEO HƯỚNG DẪN (Đã khớp đúng tên file trên GitHub của Lâm) -->
+    <!-- VIDEO HƯỚNG DẪN -->
     <p style="font-size: 13px; color: #aaaaaa; text-align: left; margin-top: 15px;">🎬 Video hướng dẫn vượt link:</p>
     <div class="video-box">
       <video controls>
@@ -158,7 +158,7 @@
     </div>
 
     <!-- NÚT DẪN SANG LINK4M -->
-    <a href="https://link4m.net/zmCd8grg" class="btn btn-link4m">⚡ Bấm Vào Đây Để Vượt Link Lấy Key</a>
+    <a href="https://link4m.net/zmCd8grg" class="btn btn-link4m" id="link4mBtn">⚡ Bấm Vào Đây Để Vượt Link Lấy Key</a>
 
     <a href="index.html" class="btn-back">← Quay lại trang chủ dán Key</a>
 
@@ -175,42 +175,56 @@
     const urlParams = new URLSearchParams(window.location.search);
     const isVerified = urlParams.get('verified') === 'true';
 
-    if (!isVerified) {
-      document.getElementById("errorArea").style.display = "block";
-      document.getElementById("keyDisplay").innerText = "CHƯA XÁC MINH";
-      document.getElementById("msg").innerText = "";
-    } else {
-      document.getElementById("errorArea").style.display = "none";
-      document.getElementById("keyDisplay").innerText = "ĐANG TẠO KEY...";
-      
-      fetch('https://api.ipify.org?format=json')
-        .then(res => res.json())
-        .then(data => {
-          return fetch(`${SCRIPT_URL}?ip=${data.ip}`);
-        })
-        .then(res => res.json())
-        .then(data => {
-          if (data.status === "success") {
-            currentKey = data.key;
-            document.getElementById("keyDisplay").innerText = data.key;
-            document.getElementById("msg").style.color = "#4ade80";
-            document.getElementById("msg").innerText = "✅ Lấy Key thành công! Hãy bấm Sao chép Key.";
-          } else if (data.status === "locked") {
-            document.getElementById("keyDisplay").innerText = "ĐÃ KHÓA";
-            document.getElementById("msg").style.color = "#f87171";
-            document.getElementById("msg").innerText = data.message || "Bạn đã dùng lượt hôm nay! Hãy quay lại vào ngày mai.";
-          } else {
-            document.getElementById("keyDisplay").innerText = "LỖI";
-            document.getElementById("msg").style.color = "#f87171";
-            document.getElementById("msg").innerText = data.message || "Lỗi lấy Key!";
+    // Lấy IP khách để kiểm tra ngay khi vừa mở trang
+    fetch('https://api.ipify.org?format=json')
+      .then(res => res.json())
+      .then(data => {
+        return fetch(`${SCRIPT_URL}?ip=${data.ip}`);
+      })
+      .then(res => res.json())
+      .then(data => {
+        // TRƯỜNG HỢP 1: IP ĐÃ BUFF RỒI (ĐÃ BỊ KHÓA TRONG NGÀY)
+        if (data.status === "locked") {
+          document.getElementById("keyDisplay").innerText = "ĐÃ KHÓA";
+          document.getElementById("errorArea").style.display = "block";
+          document.getElementById("errorArea").innerHTML = `<strong style="color: #ef4444;">🔒 BẠN ĐÃ DÙNG HẾT LƯỢT HÔM NAY!</strong><br><br>${data.message}`;
+          document.getElementById("msg").innerText = "";
+
+          // Vô hiệu hóa nút Vượt Link4M
+          const btnLink = document.getElementById("link4mBtn");
+          if (btnLink) {
+            btnLink.href = "javascript:void(0)";
+            btnLink.style.backgroundColor = "#444444";
+            btnLink.style.color = "#888888";
+            btnLink.style.cursor = "not-allowed";
+            btnLink.innerText = "🔒 ĐÃ HẾT LƯỢT BUFF HÔM NAY";
           }
-        })
-        .catch(() => {
-          document.getElementById("keyDisplay").innerText = "LỖI KẾT NỐI";
+          return;
+        }
+
+        // TRƯỜNG HỢP 2: CHƯA VƯỢT LINK
+        if (!isVerified) {
+          document.getElementById("errorArea").style.display = "block";
+          document.getElementById("keyDisplay").innerText = "CHƯA XÁC MINH";
+          document.getElementById("msg").innerText = "";
+        } else if (data.status === "success") {
+          // TRƯỜNG HỢP 3: ĐÃ VƯỢT LINK THÀNH CÔNG & ĐƯỢC CẤP KEY
+          document.getElementById("errorArea").style.display = "none";
+          currentKey = data.key;
+          document.getElementById("keyDisplay").innerText = data.key;
+          document.getElementById("msg").style.color = "#4ade80";
+          document.getElementById("msg").innerText = "✅ Lấy Key thành công! Hãy bấm Sao chép Key.";
+        } else {
+          document.getElementById("keyDisplay").innerText = "LỖI";
           document.getElementById("msg").style.color = "#f87171";
-          document.getElementById("msg").innerText = "Lỗi kết nối hệ thống!";
-        });
-    }
+          document.getElementById("msg").innerText = data.message || "Lỗi hệ thống!";
+        }
+      })
+      .catch(() => {
+        document.getElementById("keyDisplay").innerText = "LỖI KẾT NỐI";
+        document.getElementById("msg").style.color = "#f87171";
+        document.getElementById("msg").innerText = "Lỗi kết nối tới Server!";
+      });
 
     function copyKey() {
       if (!currentKey) {
