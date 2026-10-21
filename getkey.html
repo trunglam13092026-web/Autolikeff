@@ -61,16 +61,6 @@
       color: #ffffff;
       word-break: break-all;
     }
-    .video-box {
-      margin: 15px 0;
-      border-radius: 8px;
-      overflow: hidden;
-      border: 1px solid #333;
-    }
-    video {
-      width: 100%;
-      display: block;
-    }
     .btn {
       width: 100%;
       padding: 14px;
@@ -107,11 +97,22 @@
       text-decoration: none;
       border: 1px solid #444444;
       box-sizing: border-box;
+      margin-top: 15px;
     }
     .btn-back:hover {
       color: #ffffff;
       border-color: #ffffff;
       background-color: #222;
+    }
+    .video-box {
+      margin: 15px 0 5px 0;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #333;
+    }
+    video {
+      width: 100%;
+      display: block;
     }
     #msg {
       margin-top: 15px;
@@ -145,11 +146,14 @@
     <!-- Ô HIỂN THỊ KEY -->
     <div class="key-box" id="keyDisplay">ĐANG KIỂM TRA...</div>
 
+    <!-- NÚT DẪN SANG LINK4M (ĐÃ CHUYỂN LÊN TRÊN) -->
+    <a href="https://link4m.net/zmCd8grg" class="btn btn-link4m" id="link4mBtn">⚡ Bấm Vào Đây Để Vượt Link Lấy Key</a>
+
     <!-- NÚT SAO CHÉP KEY -->
     <button class="btn" onclick="copyKey()">SAO CHÉP KEY</button>
 
     <!-- VIDEO HƯỚNG DẪN -->
-    <p style="font-size: 13px; color: #aaaaaa; text-align: left; margin-top: 15px;">🎬 Video hướng dẫn vượt link:</p>
+    <p style="font-size: 13px; color: #aaaaaa; text-align: left; margin-top: 20px;">🎬 Video hướng dẫn vượt link:</p>
     <div class="video-box">
       <video controls>
         <source src="lv_0_20261020044711.mp4" type="video/mp4">
@@ -157,21 +161,17 @@
       </video>
     </div>
 
-    <!-- NÚT DẪN SANG LINK4M -->
-    <a href="https://link4m.net/zmCd8grg" class="btn btn-link4m" id="link4mBtn">⚡ Bấm Vào Đây Để Vượt Link Lấy Key</a>
-
     <a href="index.html" class="btn-back">← Quay lại trang chủ dán Key</a>
 
     <div id="msg"></div>
   </div>
 
   <script>
-    // Link Web App Google Apps Script của Lâm
+    // Link Web App Google Apps Script của tlzproject
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
 
     let currentKey = "";
 
-    // Kiểm tra tham số ?verified=true từ trang Link4M gửi về
     const urlParams = new URLSearchParams(window.location.search);
     const isVerified = urlParams.get('verified') === 'true';
 
