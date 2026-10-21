@@ -1,182 +1,199 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BuffLikeFF.site - Hệ Thống Tương Tác Game</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #121212; color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .card { background: #1e1e1e; padding: 25px; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.6); width: 100%; max-width: 420px; text-align: center; border: 1px solid #333; }
-        
-        h2 { color: #22c55e; margin-bottom: 5px; font-size: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .sub-owner { font-size: 13px; color: #4ade80; margin-bottom: 20px; }
-
-        .input-group { margin-bottom: 12px; text-align: left; }
-        input { width: 100%; padding: 12px; border: 1px solid #333; background: #2a2a2a; color: #fff; border-radius: 8px; font-size: 15px; outline: none; }
-        input:focus { border-color: #22c55e; }
-
-        .key-link { display: inline-block; margin: 8px 0 15px 0; color: #4dabf7; text-decoration: none; font-size: 14px; font-weight: 600; cursor: pointer; }
-        .key-link:hover { text-decoration: underline; }
-
-        .btn-submit { width: 100%; padding: 12px; background: #22c55e; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: background 0.2s; }
-        .btn-submit:hover { background: #16a34a; }
-
-        .notice-box {
-            background: #222;
-            border: 1px solid #eab308;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
-            text-align: left;
-            font-size: 12.5px;
-            color: #cbd5e1;
-            line-height: 1.6;
-        }
-        .notice-title { color: #ef4444; font-weight: bold; margin-bottom: 8px; font-size: 13px; }
-        .notice-box ul { padding-left: 16px; margin-top: 5px; }
-        .notice-box li { margin-bottom: 6px; }
-        .notice-box a { color: #38bdf8; text-decoration: none; word-break: break-all; }
-        .notice-box a:hover { text-decoration: underline; }
-
-        #status { margin-top: 15px; font-size: 14px; line-height: 1.4; word-break: break-word; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BUFF LIKE FREE FIRE - TỐC ĐỘ CAO</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background-color: #0d0d0d;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      background-color: #1a1a1a;
+      border: 1px solid #333333;
+      border-radius: 12px;
+      padding: 30px 25px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 8px 24px rgba(255, 255, 255, 0.05);
+    }
+    h2 {
+      text-align: center;
+      color: #ffffff;
+      margin-bottom: 20px;
+      font-size: 22px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-bottom: 2px solid #333;
+      padding-bottom: 10px;
+    }
+    .form-group {
+      margin-bottom: 18px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #cccccc;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    input {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 8px;
+      border: 1px solid #444444;
+      background-color: #262626;
+      color: #ffffff;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+    input:focus {
+      border-color: #ffffff;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+    }
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 25px;
+    }
+    button, .btn-link {
+      width: 100%;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: bold;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+    }
+    .btn-submit {
+      background-color: #ffffff;
+      color: #000000;
+      border: none;
+    }
+    .btn-submit:hover {
+      background-color: #e6e6e6;
+    }
+    .btn-link {
+      background-color: transparent;
+      color: #ffffff;
+      border: 1px solid #666666;
+      display: block;
+    }
+    .btn-link:hover {
+      background-color: #333333;
+      border-color: #ffffff;
+    }
+    #statusMsg {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 14px;
+      display: none;
+    }
+    .msg-success {
+      background-color: #1e3a1e;
+      color: #4ade80;
+      border: 1px solid #22c55e;
+    }
+    .msg-error {
+      background-color: #3a1e1e;
+      color: #f87171;
+      border: 1px solid #ef4444;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="card">
-        <h2>BUFF LIKE FI FAI MIEN PHI</h2>
-        <div class="sub-owner">Được phát triển bởi hệ thống @tlzproject</div>
-
-        <div class="input-group">
-            <input type="number" id="uid-input" placeholder="Nhập ID Game của bạn...">
-        </div>
-        
-        <div class="input-group">
-            <input type="text" id="key-input" placeholder="Nhập Key xác minh...">
-        </div>
-        
-        <a href="getkey.html" class="key-link" id="key-link-elem">👉 Nhấp vào đây để lấy Key miễn phí</a>
-        
-        <button class="btn-submit" id="btn-run" onclick="thucHienBuff()">Chạy</button>
-        
-        <div id="status"></div>
-
-        <div class="notice-box">
-            <div class="notice-title">📌 LƯU Ý QUAN TRỌNG:</div>
-            <ul>
-                <li>⏰ <strong>09:00 - 23:00</strong> Hoạt Động.</li>
-                <li>⚠️ Buff Muộn Thì Có Thể Bị Thiếu Like.</li>
-                <li>🎯 1 UID Chỉ Buff Tối Đa 200 Like 1 Ngày.</li>
-                <li>🚫 Phát Hiện Cố Tình 1 Địa Chỉ IP Buff 3-5 Lần Trong 1 Ngày Sẽ Đưa Vào Blacklist (Ban).</li>
-                <li>🌐 Không Sử Dụng Proxy-VPN 1.1.1.1 Để Vượt Link.</li>
-                <li>⌛ Chỉ Tính Các Lệnh Từ 9H.</li>
-                <li>🛒 Mua Gói Like Liên Hệ:
-                    <br>• TikTok: <a href="https://www.tiktok.com/@hvpcutis1tg" target="_blank">https://www.tiktok.com/@hvpcutis1tg</a>
-                    <br>• Telegram: <a href="https://t.me/tlzproject" target="_blank">t.me/tlzproject</a>
-                </li>
-            </ul>
-        </div>
+  <div class="container">
+    <h2>BUFF LIKE FREE FIRE</h2>
+    
+    <div class="form-group">
+      <label for="uid">ID GAME (UID FREE FIRE):</label>
+      <input type="text" id="uid" placeholder="Nhập UID (8-11 chữ số)...">
     </div>
 
-    <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
-        const COOLDOWN_TIME = 20 * 60 * 1000; // 20 phút
-        let currentUserIp = "";
+    <div class="form-group">
+      <label for="key">MÃ KEY BẮT BUỘC:</label>
+      <input type="text" id="key" placeholder="Nhập Key đã lấy...">
+    </div>
 
-        window.onload = async function() {
-            try {
-                let res = await fetch("https://api.ipify.org?format=json");
-                let data = await res.json();
-                currentUserIp = data.ip || "";
-            } catch(e){}
+    <div class="btn-group">
+      <button class="btn-submit" onclick="submitBuff()">XÁC NHẬN BUFF LIKE</button>
+      <a href="getkey.html" class="btn-link">LẤY KEY NGAY (MIỄN PHÍ)</a>
+    </div>
 
-            kiemTraKhoaTrang();
-        };
+    <div id="statusMsg"></div>
+  </div>
 
-        function kiemTraKhoaTrang() {
-            let lastBuffTime = localStorage.getItem("last_buff_time");
-            if (lastBuffTime) {
-                let timeLeft = COOLDOWN_TIME - (new Date().getTime() - parseInt(lastBuffTime));
-                if (timeLeft > 0) {
-                    khoaGiaoDien(timeLeft);
-                } else {
-                    localStorage.removeItem("last_buff_time");
-                    localStorage.removeItem("saved_user_key");
-                }
-            }
+  <script>
+    const SCRIPT_URL = "DÁN_LINK_WEB_APP_GOOGLE_CỦA_LÂM_VÀO_ĐÂY";
+
+    let userIp = "";
+
+    fetch('https://api.ipify.org?format=json')
+      .then(res => res.json())
+      .then(data => { userIp = data.ip; })
+      .catch(() => { userIp = "UNKNOWN"; });
+
+    function showMessage(text, isError = false) {
+      const msgDiv = document.getElementById("statusMsg");
+      msgDiv.innerText = text;
+      msgDiv.className = isError ? "msg-error" : "msg-success";
+      msgDiv.style.display = "block";
+    }
+
+    function submitBuff() {
+      const uid = document.getElementById("uid").value.trim();
+      const key = document.getElementById("key").value.trim();
+
+      if (!uid || !key) {
+        showMessage("Vui lòng nhập đầy đủ UID và Key!", true);
+        return;
+      }
+
+      showMessage("Đang xử lý dữ liệu, vui lòng chờ...");
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          uid: uid,
+          key: key,
+          ip: userIp
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          showMessage(data.message, false);
+          document.getElementById("uid").value = "";
+          document.getElementById("key").value = "";
+        } else {
+          showMessage(data.message, true);
         }
-
-        function khoaGiaoDien(timeLeft) {
-            let btnRun = document.getElementById("btn-run");
-            let statusDiv = document.getElementById("status");
-            
-            btnRun.disabled = true;
-            btnRun.style.background = "#555";
-            btnRun.style.cursor = "not-allowed";
-
-            let interval = setInterval(function() {
-                let currentLeft = COOLDOWN_TIME - (new Date().getTime() - parseInt(localStorage.getItem("last_buff_time")));
-                if (currentLeft <= 0) {
-                    clearInterval(interval);
-                    location.reload();
-                    return;
-                }
-                let minutes = Math.floor((currentLeft % (1000 * 60 * 60)) / (1000 * 60));
-                let seconds = Math.floor((currentLeft % (1000 * 60)) / 1000);
-
-                statusDiv.style.color = "#eab308";
-                statusDiv.innerText = `⏳ Bạn đã buff thành công! Vui lòng chờ ${minutes} phút ${seconds} giây nữa mới được buff tiếp.`;
-            }, 1000);
-        }
-
-        async function thucHienBuff() {
-            let uid = document.getElementById("uid-input").value.trim();
-            let key = document.getElementById("key-input").value.trim();
-            let statusDiv = document.getElementById("status");
-
-            if (!uid || !key) {
-                statusDiv.style.color = "#ef4444";
-                statusDiv.innerText = "❌ Vui lòng điền đầy đủ ID và Key!";
-                return;
-            }
-
-            statusDiv.style.color = "#eab308";
-            statusDiv.innerText = "⏳ Đang gửi yêu cầu buff...";
-
-            try {
-                let response = await fetch(WEB_APP_URL, {
-                    method: "POST",
-                    body: JSON.stringify({ 
-                        uid: uid, 
-                        key: key,
-                        ip: currentUserIp,
-                        deviceId: localStorage.getItem("device_id") || "UNKNOWN"
-                    })
-                });
-                let result = await response.json();
-
-                if (result.status === "success") {
-                    statusDiv.style.color = "#22c55e";
-                    statusDiv.innerText = "✅ " + result.message;
-
-                    localStorage.setItem("last_buff_time", new Date().getTime().toString());
-                    localStorage.removeItem("saved_user_key");
-                    document.getElementById("key-input").value = "";
-                    
-                    setTimeout(function() {
-                        kiemTraKhoaTrang();
-                    }, 1000);
-
-                } else {
-                    statusDiv.style.color = "#ef4444";
-                    statusDiv.innerText = "❌ " + result.message;
-                }
-            } catch (err) {
-                statusDiv.style.color = "#ef4444";
-                statusDiv.innerText = "❌ Không thể kết nối máy chủ!";
-            }
-        }
-    </script>
+      })
+      .catch(() => {
+        showMessage("Lỗi kết nối Server! Vui lòng thử lại.", true);
+      });
+    }
+  </script>
 </body>
 </html>
