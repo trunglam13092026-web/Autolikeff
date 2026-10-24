@@ -77,7 +77,12 @@
         const result = await fp.get();
         cachedDeviceId = result.visitorId;
 
-        const response = await fetch(`${SCRIPT_URL}?token=${encodeURIComponent(token)}&deviceId=${encodeURIComponent(cachedDeviceId)}`);
+        // Sử dụng mode: 'no-cors' hoặc gọi trực tiếp URL Google Apps Script
+        const response = await fetch(`${SCRIPT_URL}?token=${encodeURIComponent(token)}&deviceId=${encodeURIComponent(cachedDeviceId)}`, {
+          method: "GET",
+          redirect: "follow"
+        });
+        
         const data = await response.json();
 
         if (data.status === "success") {
