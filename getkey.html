@@ -32,7 +32,6 @@
 
     <button class="btn" onclick="copyKey()">SAO CHÉP KEY</button>
 
-    <!-- Nút vượt link Link4M kiếm doanh thu cho bạn -->
     <a href="https://link4m.net/NThHxnn" class="btn btn-link4m" id="link4mBtn">⚡ Bấm Vào Đây Để Vượt Link Lấy Key</a>
 
     <p style="font-size: 13px; color: #aaaaaa; text-align: left; margin-top: 20px;">🎬 Video hướng dẫn vượt link:</p>
@@ -56,21 +55,12 @@
     const token = urlParams.get('token') || '';
     const userUid = urlParams.get('uid') || localStorage.getItem('tiz_current_uid') || '';
 
-    function getBrowserDeviceId() {
-      let deviceId = localStorage.getItem("tiz_device_id");
-      if (!deviceId) {
-        deviceId = "DEV-" + Math.random().toString(36).substring(2, 10).toUpperCase() + "-" + Date.now().toString(36);
-        localStorage.setItem("tiz_device_id", deviceId);
-      }
-      return deviceId;
-    }
-
     window.addEventListener('DOMContentLoaded', async () => {
       const linkBtn = document.getElementById("link4mBtn");
       const keyBox = document.getElementById("keyDisplay");
       const msgDiv = document.getElementById("msg");
 
-      // Bắt buộc kiểm tra UID
+      // Bắt buộc phải có UID mới cho lấy Key
       if (!userUid) {
         keyBox.innerText = "THIẾU UID";
         msgDiv.style.color = "#f87171";
@@ -79,41 +69,41 @@
         return;
       }
 
-      // Nếu CHƯA CÓ TOKEN (Chưa vượt link Link4M)
+      // Chưa vượt link Link4M
       if (!token) {
         keyBox.innerText = "CHƯA VƯỢT LINK";
         msgDiv.style.color = "#eab308";
         msgDiv.innerText = "👉 Vui lòng bấm nút màu vàng bên dưới để vượt link lấy Key!";
-        linkBtn.style.display = "block"; // HIỆN NÚT VƯỢT LINK LINK4M
+        linkBtn.style.display = "block";
         return;
       }
 
-      // NẾU ĐÃ CÓ TOKEN (Đã vượt link thành công quay về)
-      linkBtn.style.display = "none"; // Ẩn nút vượt link đi
+      // Đã vượt link Link4M xong quay về
+      linkBtn.style.display = "none";
       keyBox.innerText = "ĐANG TẠO KEY...";
       msgDiv.style.color = "#aaaaaa";
-      msgDiv.innerText = "Đang xác thực và tạo Key tự động...";
+      msgDiv.innerText = "Đang kiểm tra địa chỉ IP và tạo Key...";
 
       try {
-        const deviceId = getBrowserDeviceId();
-        const targetUrl = `${SCRIPT_URL}?action=generate_key&token=${encodeURIComponent(token)}&deviceId=${encodeURIComponent(deviceId)}&uid=${encodeURIComponent(userUid)}`;
+        // Lấy IP thật của khách để gửi lên Server khóa cứng
+        let userIp = "UNKNOWN_IP";
+        try {
+          const ipRes = await fetch('https://api.ipify.org?format=json');
+          const ipData = await ipRes.json();
+          userIp = ipData.ip || 'UNKNOWN_IP';
+        } catch (e) {}
+
+        const targetUrl = `${SCRIPT_URL}?action=generate_key&token=${encodeURIComponent(token)}&userIp=${encodeURIComponent(userIp)}&uid=${encodeURIComponent(userUid)}`;
         
         const response = await fetch(targetUrl);
-        const textData = await response.text();
-        
-        let data;
-        try {
-          data = JSON.parse(textData);
-        } catch (e) {
-          throw new Error("Lỗi kết nối Server!");
-        }
+        const data = await response.json();
 
         if (data.status === "success") {
           currentKey = data.key;
           keyBox.innerText = data.key;
           localStorage.setItem("tiz_last_key", currentKey);
           msgDiv.style.color = "#4ade80";
-          msgDiv.innerText = "✅ Lấy Key thành công! Hãy bấm Sao chép Key.";
+          msgDiv.innerText = data.message || "✅ Lấy Key thành công! Hãy bấm Sao chép Key.";
         } else {
           keyBox.innerText = "LỖI";
           msgDiv.style.color = "#f87171";
@@ -122,7 +112,7 @@
       } catch (err) {
         keyBox.innerText = "LỖI KẾT NỐI";
         msgDiv.style.color = "#f87171";
-        msgDiv.innerText = err.message || "Không thể kết nối đến Server!";
+        msgDiv.innerText = "Không thể kết nối đến Server!";
       }
     });
 
