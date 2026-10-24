@@ -53,8 +53,8 @@
 
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token') || '';
+    const userUid = urlParams.get('uid') || localStorage.getItem('tiz_current_uid') || 'Chưa nhập UID';
 
-    // Hàm tạo hoặc lấy Device ID ổn định trên trình duyệt
     function getBrowserDeviceId() {
       let deviceId = localStorage.getItem("tiz_device_id");
       if (!deviceId) {
@@ -82,7 +82,7 @@
 
       try {
         const deviceId = getBrowserDeviceId();
-        const targetUrl = `${SCRIPT_URL}?token=${encodeURIComponent(token)}&deviceId=${encodeURIComponent(deviceId)}`;
+        const targetUrl = `${SCRIPT_URL}?action=generate_key&token=${encodeURIComponent(token)}&deviceId=${encodeURIComponent(deviceId)}&uid=${encodeURIComponent(userUid)}`;
         
         const response = await fetch(targetUrl);
         const textData = await response.text();
@@ -91,14 +91,14 @@
         try {
           data = JSON.parse(textData);
         } catch (e) {
-          throw new Error("Server trả về mã HTML (Hãy kiểm tra lại quyền 'Bất kỳ ai' trên Google Apps Script)");
+          throw new Error("Lỗi kết nối Server! Lần sau hãy chọn quyền 'Bất kỳ ai' trên Apps Script.");
         }
 
         if (data.status === "success") {
           currentKey = data.key;
           keyBox.innerText = data.key;
           msgDiv.style.color = "#4ade80";
-          msgDiv.innerText = "✅ Lấy Key thành công! Hãy bấm Sao chép Key.";
+          msgDiv.innerText = data.message || "✅ Lấy Key thành công! Hãy bấm Sao chép Key.";
         } else {
           keyBox.innerText = "LỖI";
           msgDiv.style.color = "#f87171";
