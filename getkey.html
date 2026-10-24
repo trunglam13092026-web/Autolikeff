@@ -51,29 +51,6 @@
       border-bottom: 1px solid #333;
       padding-bottom: 10px;
     }
-    .input-group {
-      margin-bottom: 15px;
-      text-align: left;
-    }
-    .input-group label {
-      display: block;
-      font-size: 13px;
-      color: #aaaaaa;
-      margin-bottom: 6px;
-    }
-    .input-group input {
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      background-color: #262626;
-      border: 1px solid #444;
-      color: #fff;
-      font-size: 15px;
-      outline: none;
-    }
-    .input-group input:focus {
-      border-color: #22c55e;
-    }
     .key-box {
       background-color: #262626;
       border: 2px dashed #666666;
@@ -83,7 +60,7 @@
       font-size: 20px;
       font-weight: bold;
       letter-spacing: 2px;
-      color: #ffffff;
+      color: #22c55e;
       word-break: break-all;
     }
     .btn {
@@ -152,19 +129,13 @@
     <span class="badge">✨ Vượt Link Lấy Key</span>
     <h2>LẤY KEY BẢN QUYỀN</h2>
 
-    <!-- Ô NHẬP UID GAME -->
-    <div class="input-group">
-      <label for="uidInput">Nhập ID Game (UID FF):</label>
-      <input type="number" id="uidInput" placeholder="Ví dụ: 123456789">
-    </div>
-
-    <!-- NÚT YÊU CẦU LẤY KEY -->
+    <!-- NÚT YÊU CẦU LẤY KEY TRỰC TIẾP -->
     <button class="btn" id="getKeyBtn" onclick="requestKey()">LẤY MÃ KEY</button>
 
     <!-- Ô HIỂN THỊ KEY -->
     <div class="key-box" id="keyDisplay">CHƯA LẤY</div>
 
-    <!-- NÚT DẪN SANG LINK4M -->
+    <!-- NÚT DẪN SANG LINK4M (Hiển thị khi chưa vượt link) -->
     <a href="https://link4m.net/NThHxnn" class="btn btn-link4m" id="link4mBtn">⚡ Bấm Vào Đây Để Vượt Link Lấy Key</a>
 
     <!-- NÚT SAO CHÉP KEY -->
@@ -193,8 +164,13 @@
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token') || '';
 
-    // Khởi tạo lấy Device ID ngầm ngay khi vào trang
+    // Tự động kiểm tra: Nếu đã có token xác thực trên URL thì ẩn nút Link4M đi cho gọn
     window.addEventListener('DOMContentLoaded', async () => {
+      if (token) {
+        const linkBtn = document.getElementById("link4mBtn");
+        if (linkBtn) linkBtn.style.display = "none";
+      }
+
       try {
         const fp = await FingerprintJS.load();
         const result = await fp.get();
@@ -206,29 +182,21 @@
 
     // Hàm gọi khi người dùng bấm nút Lấy Mã Key
     async function requestKey() {
-      const uid = document.getElementById("uidInput").value.trim();
       const msgDiv = document.getElementById("msg");
       const keyBox = document.getElementById("keyDisplay");
 
-      if (!uid) {
-        alert("Vui lòng nhập UID Free Fire của bạn!");
+      if (!token) {
+        alert("Bạn chưa vượt link! Vui lòng bấm nút 'Bấm Vào Đây Để Vượt Link Lấy Key' bên dưới trước.");
         return;
       }
 
       keyBox.innerText = "ĐANG TẢI...";
       msgDiv.style.color = "#aaaaaa";
-      msgDiv.innerText = "Đang xử lý yêu cầu...";
+      msgDiv.innerText = "Đang tạo mã Key của bạn...";
 
       try {
-        const response = await fetch(SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify({
-            token: token,
-            uid: uid,
-            deviceId: cachedDeviceId
-          })
-        });
-
+        // Gửi request lấy key tới Web App
+        const response = await fetch(`${SCRIPT_URL}?token=${encodeURIComponent(token)}&deviceId=${encodeURIComponent(cachedDeviceId)}`);
         const data = await response.json();
 
         if (data.status === "success") {
@@ -239,7 +207,7 @@
         } else {
           keyBox.innerText = "LỖI";
           msgDiv.style.color = "#f87171";
-          msgDiv.innerText = data.message || "Có lỗi xảy ra!";
+          msgDiv.innerText = data.message || "Không thể lấy key!";
         }
       } catch (err) {
         keyBox.innerText = "LỖI KẾT NỐI";
@@ -249,12 +217,12 @@
     }
 
     function copyKey() {
-      if (!currentKey) {
-        alert("Chưa có Key để sao chép!");
+      if (!currentKey || currentKey === "CHƯA LẤY" || currentKey.includes("LỖI")) {
+        alert("Chưa có Key hợp lệ để sao chép!");
         return;
       }
       navigator.clipboard.writeText(currentKey).then(() => {
-        alert("Đã sao chép Mã Key vào bộ nhớ tạm!");
+        alert("Đã sao chép Mã Key vào bộ nhớ tạm: " + currentKey);
       });
     }
   </script>
