@@ -20,7 +20,7 @@
     .btn-back:hover { color: #ffffff; border-color: #ffffff; background-color: #222; }
     .video-box { margin: 15px 0 5px 0; border-radius: 8px; overflow: hidden; border: 1px solid #333; }
     video { width: 100%; display: block; }
-    #msg { margin-top: 15px; font-size: 14px; color: #f87171; }
+    #msg { margin-top: 15px; font-size: 14px; color: #f87171; word-break: break-all; }
   </style>
 </head>
 <body>
@@ -77,13 +77,17 @@
         const result = await fp.get();
         cachedDeviceId = result.visitorId;
 
-        // Sử dụng mode: 'no-cors' hoặc gọi trực tiếp URL Google Apps Script
-        const response = await fetch(`${SCRIPT_URL}?token=${encodeURIComponent(token)}&deviceId=${encodeURIComponent(cachedDeviceId)}`, {
-          method: "GET",
-          redirect: "follow"
-        });
+        const targetUrl = `${SCRIPT_URL}?token=${encodeURIComponent(token)}&deviceId=${encodeURIComponent(cachedDeviceId)}`;
+        const response = await fetch(targetUrl);
+        const textData = await response.text();
         
-        const data = await response.json();
+        let data;
+        try {
+          data = JSON.parse(textData);
+        } catch (e) {
+          console.error("Phản hồi không phải JSON:", textData);
+          throw new Error("Server trả về mã HTML (Chưa chọn quyền 'Bất kỳ ai' trên GAS)");
+        }
 
         if (data.status === "success") {
           currentKey = data.key;
@@ -98,7 +102,7 @@
       } catch (err) {
         keyBox.innerText = "LỖI KẾT NỐI";
         msgDiv.style.color = "#f87171";
-        msgDiv.innerText = "Không thể kết nối đến Server!";
+        msgDiv.innerText = err.message || "Không thể kết nối đến Server!";
       }
     });
 
