@@ -47,6 +47,19 @@
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
 
+    // Tự động điền lại UID và Key nếu đã lưu trong máy
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedUid = localStorage.getItem("tiz_current_uid");
+      const savedKey = localStorage.getItem("tiz_last_key");
+
+      if (savedUid) {
+        document.getElementById("uidInput").value = savedUid;
+      }
+      if (savedKey) {
+        document.getElementById("keyInput").value = savedKey;
+      }
+    });
+
     function goToGetKey() {
       const uid = document.getElementById("uidInput").value.trim();
       if (!uid) {
@@ -54,7 +67,7 @@
         return;
       }
       localStorage.setItem("tiz_current_uid", uid);
-      window.location.href = "getkey.html?uid=" + encodeURIComponent(uid);
+      window.location.href = "getkey.html?token=123&uid=" + encodeURIComponent(uid);
     }
 
     async function submitBuff() {
@@ -79,6 +92,8 @@
         if (data.status === "success") {
           msgDiv.style.color = "#4ade80";
           msgDiv.innerText = data.message;
+          // Xóa key đã dùng để tránh bấm nhầm lần 2
+          localStorage.removeItem("tiz_last_key");
         } else {
           msgDiv.style.color = "#f87171";
           msgDiv.innerText = data.message;
