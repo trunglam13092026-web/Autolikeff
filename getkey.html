@@ -28,11 +28,12 @@
     <span class="badge">✨ Vượt Link Lấy Key</span>
     <h2>LẤY KEY BẢN QUYỀN</h2>
 
-    <div class="key-box" id="keyDisplay">ĐANG CHỜ XÁC THỰC...</div>
+    <div class="key-box" id="keyDisplay">CHƯA VƯỢT LINK</div>
 
     <button class="btn" onclick="copyKey()">SAO CHÉP KEY</button>
 
-    <a href="https://link4m.net/NThHxnn" class="btn btn-link4m" id="link4mBtn" style="display: none;">⚡ Bấm Vào Đây Để Vượt Link Lấy Key</a>
+    <!-- Nút vượt link Link4M kiếm doanh thu cho bạn -->
+    <a href="https://link4m.net/NThHxnn" class="btn btn-link4m" id="link4mBtn">⚡ Bấm Vào Đây Để Vượt Link Lấy Key</a>
 
     <p style="font-size: 13px; color: #aaaaaa; text-align: left; margin-top: 20px;">🎬 Video hướng dẫn vượt link:</p>
     <div class="video-box">
@@ -53,7 +54,7 @@
 
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token') || '';
-    const userUid = urlParams.get('uid') || '';
+    const userUid = urlParams.get('uid') || localStorage.getItem('tiz_current_uid') || '';
 
     function getBrowserDeviceId() {
       let deviceId = localStorage.getItem("tiz_device_id");
@@ -69,22 +70,27 @@
       const keyBox = document.getElementById("keyDisplay");
       const msgDiv = document.getElementById("msg");
 
-      // BẮT BUỘC PHẢI CÓ UID: Nếu không có UID, chặn lại ngay lập tức
+      // Bắt buộc kiểm tra UID
       if (!userUid) {
         keyBox.innerText = "THIẾU UID";
         msgDiv.style.color = "#f87171";
-        msgDiv.innerText = "❌ Bạn chưa nhập ID Game (UID)! Vui lòng quay lại trang chủ nhập UID trước khi lấy key.";
+        msgDiv.innerText = "❌ Bạn chưa nhập ID Game (UID)! Vui lòng quay lại trang chủ nhập UID.";
+        linkBtn.style.display = "none";
         return;
       }
 
+      // Nếu CHƯA CÓ TOKEN (Chưa vượt link Link4M)
       if (!token) {
         keyBox.innerText = "CHƯA VƯỢT LINK";
-        msgDiv.style.color = "#f87171";
-        msgDiv.innerText = "Vui lòng bấm nút vượt link để lấy key.";
-        linkBtn.style.display = "block";
+        msgDiv.style.color = "#eab308";
+        msgDiv.innerText = "👉 Vui lòng bấm nút màu vàng bên dưới để vượt link lấy Key!";
+        linkBtn.style.display = "block"; // HIỆN NÚT VƯỢT LINK LINK4M
         return;
       }
 
+      // NẾU ĐÃ CÓ TOKEN (Đã vượt link thành công quay về)
+      linkBtn.style.display = "none"; // Ẩn nút vượt link đi
+      keyBox.innerText = "ĐANG TẠO KEY...";
       msgDiv.style.color = "#aaaaaa";
       msgDiv.innerText = "Đang xác thực và tạo Key tự động...";
 
