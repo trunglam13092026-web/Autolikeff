@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LẤY KEY BẢN QUYỀN</title>
+  <!-- Thư viện FingerprintJS để nhận diện thiết bị -->
+  <script src="https://openfpcdn.io/fingerprintjs/v3"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -48,6 +50,29 @@
       letter-spacing: 1px;
       border-bottom: 1px solid #333;
       padding-bottom: 10px;
+    }
+    .input-group {
+      margin-bottom: 15px;
+      text-align: left;
+    }
+    .input-group label {
+      display: block;
+      font-size: 13px;
+      color: #aaaaaa;
+      margin-bottom: 6px;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      background-color: #262626;
+      border: 1px solid #444;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+    }
+    .input-group input:focus {
+      border-color: #22c55e;
     }
     .key-box {
       background-color: #262626;
@@ -119,16 +144,6 @@
       font-size: 14px;
       color: #f87171;
     }
-    .msg-box {
-      background-color: #3a1e1e;
-      border: 1px solid #ef4444;
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 15px;
-      text-align: left;
-      font-size: 13px;
-      line-height: 1.5;
-    }
   </style>
 </head>
 <body>
@@ -137,17 +152,20 @@
     <span class="badge">✨ Vượt Link Lấy Key</span>
     <h2>LẤY KEY BẢN QUYỀN</h2>
 
-    <!-- THÔNG BÁO LỖI NẾU CHƯA VƯỢT LINK HOẶC ĐÃ BỊ KHÓA -->
-    <div id="errorArea" class="msg-box" style="display: none;">
-      <strong style="color: #ef4444;">❌ LỖI XÁC MINH HOẶC BẠN CHƯA VƯỢT LINK!</strong><br><br>
-      Vui lòng bấm vào nút <span style="color: #eab308; font-weight: bold;">Bấm Vào Đây Để Vượt Link Lấy Key</span> màu vàng bên dưới để thực hiện đúng quy trình!
+    <!-- Ô NHẬP UID GAME -->
+    <div class="input-group">
+      <label for="uidInput">Nhập ID Game (UID Free Fire):</label>
+      <input type="number" id="uidInput" placeholder="Ví dụ: 123456789">
     </div>
 
+    <!-- NÚT YÊU CẦU LẤY KEY -->
+    <button class="btn" id="getKeyBtn" onclick="requestKey()">LẤY MÃ KEY</button>
+
     <!-- Ô HIỂN THỊ KEY -->
-    <div class="key-box" id="keyDisplay">ĐANG TẢI...</div>
+    <div class="key-box" id="keyDisplay">CHƯA LẤY</div>
 
     <!-- NÚT DẪN SANG LINK4M -->
-    <a href="https://link4m.org/z1IPQ" class="btn btn-link4m" id="link4mBtn">⚡ Bấm Vào Đây Để Vượt Link Lấy Key</a>
+    <a href="https://link4m.org/SCAAQ" class="btn btn-link4m" id="link4mBtn">⚡ Bấm Vào Đây Để Vượt Link Lấy Key</a>
 
     <!-- NÚT SAO CHÉP KEY -->
     <button class="btn" onclick="copyKey()">SAO CHÉP KEY</button>
@@ -167,73 +185,72 @@
   </div>
 
   <script>
-    // Link Web App Google Apps Script của bạn
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
-
     let currentKey = "";
+    let cachedDeviceId = "UNKNOWN_DEVICE";
 
-    // Đọc tham số token từ URL (ví dụ: ?token=MY_SECRET_PASS_123)
+    // Đọc token từ URL
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token') || '';
 
-    // Gửi yêu cầu POST trực tiếp lên Google Apps Script không bị kẹt thư viện ngoài
-    fetch(SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        deviceId: "WEB_USER_DEVICE",
-        token: token
-      })
-    })
-    .then(res => res.json())
-    .then(data => {
-      // TRƯỜNG HỢP 1: THIẾT BỊ NÀY HÔM NAY ĐÃ NHẬN KEY RỒI (ĐÃ BỊ KHÓA)
-      if (data.status === "locked") {
-        document.getElementById("keyDisplay").innerText = "ĐÃ KHÓA";
-        document.getElementById("errorArea").style.display = "block";
-        document.getElementById("errorArea").innerHTML = `<strong style="color: #ef4444;">🔒 THIẾT BỊ NÀY ĐÃ DÙNG HẾT LƯỢT HÔM NAY!</strong><br><br>${data.message}`;
-        document.getElementById("msg").innerText = "";
+    // Khởi tạo lấy Device ID ngầm ngay khi vào trang
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const fp = await FingerprintJS.load();
+        const result = await fp.get();
+        cachedDeviceId = result.visitorId;
+      } catch (err) {
+        console.error("Lỗi lấy Device ID:", err);
+      }
+    });
 
-        // Vô hiệu hóa nút Vượt Link4M
-        const btnLink = document.getElementById("link4mBtn");
-        if (btnLink) {
-          btnLink.href = "javascript:void(0)";
-          btnLink.style.backgroundColor = "#444444";
-          btnLink.style.color = "#888888";
-          btnLink.style.cursor = "not-allowed";
-          btnLink.innerText = "🔒 ĐÃ HẾT LƯỢT HÔM NAY";
-        }
+    // Hàm gọi khi người dùng bấm nút Lấy Mã Key
+    async function requestKey() {
+      const uid = document.getElementById("uidInput").value.trim();
+      const msgDiv = document.getElementById("msg");
+      const keyBox = document.getElementById("keyDisplay");
+
+      if (!uid) {
+        alert("Vui lòng nhập UID Free Fire của bạn!");
         return;
       }
 
-      // TRƯỜNG HỢP 2: CHƯA VƯỢT LINK (Sai hoặc thiếu Token)
-      if (data.status === "unverified") {
-        document.getElementById("errorArea").style.display = "block";
-        document.getElementById("keyDisplay").innerText = "CHƯA XÁC MINH";
-        document.getElementById("msg").innerText = "";
-      } 
-      // TRƯỜNG HỢP 3: ĐÃ VƯỢT LINK THÀNH CÔNG & ĐƯỢC CẤP KEY
-      else if (data.status === "success") {
-        document.getElementById("errorArea").style.display = "none";
-        currentKey = data.key;
-        document.getElementById("keyDisplay").innerText = data.key;
-        document.getElementById("msg").style.color = "#4ade80";
-        document.getElementById("msg").innerText = "✅ Lấy Key thành công! Hãy bấm Sao chép Key.";
-      } 
-      else {
-        document.getElementById("keyDisplay").innerText = "LỖI";
-        document.getElementById("msg").style.color = "#f87171";
-        document.getElementById("msg").innerText = data.message || "Lỗi hệ thống!";
+      keyBox.innerText = "ĐANG TẢI...";
+      msgDiv.style.color = "#aaaaaa";
+      msgDiv.innerText = "Đang xử lý yêu cầu...";
+
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            token: token,
+            uid: uid,
+            deviceId: cachedDeviceId
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.status === "success") {
+          currentKey = data.key;
+          keyBox.innerText = data.key;
+          msgDiv.style.color = "#4ade80";
+          msgDiv.innerText = "✅ Lấy Key thành công! Hãy bấm Sao chép Key.";
+        } else {
+          keyBox.innerText = "LỖI";
+          msgDiv.style.color = "#f87171";
+          msgDiv.innerText = data.message || "Có lỗi xảy ra!";
+        }
+      } catch (err) {
+        keyBox.innerText = "LỖI KẾT NỐI";
+        msgDiv.style.color = "#f87171";
+        msgDiv.innerText = "Không thể kết nối đến Server!";
       }
-    })
-    .catch(() => {
-      document.getElementById("keyDisplay").innerText = "LỖI KẾT NỐI";
-      document.getElementById("msg").style.color = "#f87171";
-      document.getElementById("msg").innerText = "Lỗi kết nối tới Server!";
-    });
+    }
 
     function copyKey() {
       if (!currentKey) {
-        alert("Chưa có Key để sao chép hoặc bạn chưa vượt link!");
+        alert("Chưa có Key để sao chép!");
         return;
       }
       navigator.clipboard.writeText(currentKey).then(() => {
