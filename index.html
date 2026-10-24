@@ -47,7 +47,7 @@
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
 
-    // Tự động điền UID & Key cũ nếu có
+    // Tự động điền UID & Key nếu đã từng lưu
     window.addEventListener('DOMContentLoaded', () => {
       const savedUid = localStorage.getItem("tiz_current_uid");
       const savedKey = localStorage.getItem("tiz_last_key");
@@ -63,11 +63,11 @@
         return;
       }
       
-      // Lưu UID vào bộ nhớ trình duyệt
+      // Lưu UID
       localStorage.setItem("tiz_current_uid", uid);
       
-      // CHUYỂN HƯỚNG BẮT BUỘC SANG LINK4M ĐỂ TẠO DOANH THU
-      window.location.href = "https://link4m.net/NThHxnn";
+      // Chuyển sang trang lấy Key
+      window.location.href = "getkey.html?uid=" + encodeURIComponent(uid);
     }
 
     async function submitBuff() {
