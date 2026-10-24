@@ -19,6 +19,15 @@
     .btn-submit { width: 100%; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; background-color: #22c55e; color: #000; border: none; cursor: pointer; transition: all 0.3s ease; }
     .btn-submit:hover { background-color: #16a34a; }
     #statusMsg { margin-top: 15px; font-size: 14px; word-break: break-all; }
+
+    /* Khung Lưu Ý Quan Trọng */
+    .notice-box { margin-top: 20px; background-color: #221a0a; border: 1px solid #eab308; border-radius: 8px; padding: 15px; text-align: left; font-size: 13px; color: #e5e7eb; line-height: 1.5; }
+    .notice-box h3 { color: #eab308; font-size: 14px; margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center; gap: 5px; }
+    .notice-box ul { padding-left: 18px; }
+    .notice-box li { margin-bottom: 6px; }
+    .notice-box .contact { margin-top: 10px; border-top: 1px dashed #443b1a; padding-top: 8px; color: #facc15; }
+    .notice-box a { color: #38bdf8; text-decoration: none; }
+    .notice-box a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -42,12 +51,31 @@
     <button class="btn-submit" onclick="submitBuff()">XÁC NHẬN BUFF LIKE</button>
 
     <div id="statusMsg"></div>
+
+    <!-- Khung Lưu Ý Quan Trọng -->
+    <div class="notice-box">
+      <h3>📌 LƯU Ý QUAN TRỌNG:</h3>
+      <ul>
+        <li>⏰ <b>09:00 - 23:00</b> Hoạt Động.</li>
+        <li>⚠️ Buff Muộn Thì Có Thể Bị Thiếu Like.</li>
+        <li>🛡️ 1 UID Chỉ Buff Tối Đa 200 Like 1 Ngày.</li>
+        <li>🚫 Phát Hiện Cố Tình 1 Địa Chỉ IP Buff Nhiều Lần Trong 1 Ngày Sẽ Đưa Vào Blacklist (Ban).</li>
+        <li>❌ Không Sử Dụng Proxy - VPN 1.1.1.1 Để Vượt Link.</li>
+        <li>⏱️ Chỉ Tính Các Lệnh Từ 9h.</li>
+      </ul>
+      <div class="contact">
+        <b>Mua Gói Like Liên Hệ:</b><br>
+        • Nhóm Telegram: <a href="https://t.me/tlzchat" target="_blank">@tlzchat</a><br>
+        • TikTok: <a href="https://www.tiktok.com/@hvpcutis1" target="_blank">@hvpcutis1</a>
+      </div>
+    </div>
+
   </div>
 
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
 
-    // Tự động điền UID & Key nếu đã từng lưu
+    // Tự động điền UID & Key nếu đã lưu
     window.addEventListener('DOMContentLoaded', () => {
       const savedUid = localStorage.getItem("tiz_current_uid");
       const savedKey = localStorage.getItem("tiz_last_key");
@@ -63,11 +91,8 @@
         return;
       }
       
-      // Lưu UID
       localStorage.setItem("tiz_current_uid", uid);
-      
-      // Chuyển sang trang lấy Key
-      window.location.href = "getkey.html?uid=" + encodeURIComponent(uid);
+      window.location.href = "https://link4m.net/NThHxnn";
     }
 
     async function submitBuff() {
