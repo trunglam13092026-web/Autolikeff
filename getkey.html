@@ -32,6 +32,7 @@
 
     <button class="btn" onclick="copyKey()">SAO CHÉP KEY</button>
 
+    <!-- Nút dẫn sang Link4M để vượt link -->
     <a href="https://link4m.net/NThHxnn" class="btn btn-link4m" id="link4mBtn">⚡ Bấm Vào Đây Để Vượt Link Lấy Key</a>
 
     <p style="font-size: 13px; color: #aaaaaa; text-align: left; margin-top: 20px;">🎬 Video hướng dẫn vượt link:</p>
@@ -60,7 +61,6 @@
       const keyBox = document.getElementById("keyDisplay");
       const msgDiv = document.getElementById("msg");
 
-      // Bắt buộc phải có UID mới cho lấy Key
       if (!userUid) {
         keyBox.innerText = "THIẾU UID";
         msgDiv.style.color = "#f87171";
@@ -69,23 +69,22 @@
         return;
       }
 
-      // Chưa vượt link Link4M
+      // Chưa có token (Chưa vượt link Link4M) -> Hiện nút vàng để khách bấm vượt link
       if (!token) {
         keyBox.innerText = "CHƯA VƯỢT LINK";
         msgDiv.style.color = "#eab308";
-        msgDiv.innerText = "👉 Vui lòng bấm nút màu vàng bên dưới để vượt link lấy Key!";
+        msgDiv.innerText = "👉 Xem video hướng dẫn bên dưới và bấm nút vàng để vượt link lấy Key!";
         linkBtn.style.display = "block";
         return;
       }
 
-      // Đã vượt link Link4M xong quay về
+      // Đã vượt link xong quay về -> Ẩn nút vượt link, tiến hành gọi server tạo Key
       linkBtn.style.display = "none";
       keyBox.innerText = "ĐANG TẠO KEY...";
       msgDiv.style.color = "#aaaaaa";
       msgDiv.innerText = "Đang kiểm tra địa chỉ IP và tạo Key...";
 
       try {
-        // Lấy IP thật của khách để gửi lên Server khóa cứng
         let userIp = "UNKNOWN_IP";
         try {
           const ipRes = await fetch('https://api.ipify.org?format=json');
