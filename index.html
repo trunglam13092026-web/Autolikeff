@@ -14,7 +14,7 @@
     .input-group label { display: block; font-size: 13px; color: #aaa; margin-bottom: 5px; }
     .input-group input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background-color: #262626; color: #fff; font-size: 15px; outline: none; }
     .input-group input:focus { border-color: #22c55e; }
-    .get-key-link { display: inline-block; color: #eab308; font-size: 14px; text-decoration: none; margin-bottom: 15px; font-weight: bold; }
+    .get-key-link { display: inline-block; color: #eab308; font-size: 14px; text-decoration: none; margin-bottom: 15px; font-weight: bold; cursor: pointer; }
     .get-key-link:hover { text-decoration: underline; }
     .btn-submit { width: 100%; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; background-color: #22c55e; color: #000; border: none; cursor: pointer; transition: all 0.3s ease; }
     .btn-submit:hover { background-color: #16a34a; }
@@ -47,17 +47,13 @@
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
 
-    // Tự động điền lại UID và Key nếu đã lưu trong máy
+    // Tự động điền UID & Key cũ nếu có
     window.addEventListener('DOMContentLoaded', () => {
       const savedUid = localStorage.getItem("tiz_current_uid");
       const savedKey = localStorage.getItem("tiz_last_key");
 
-      if (savedUid) {
-        document.getElementById("uidInput").value = savedUid;
-      }
-      if (savedKey) {
-        document.getElementById("keyInput").value = savedKey;
-      }
+      if (savedUid) document.getElementById("uidInput").value = savedUid;
+      if (savedKey) document.getElementById("keyInput").value = savedKey;
     });
 
     function goToGetKey() {
@@ -66,8 +62,12 @@
         alert("Vui lòng nhập ID Game (UID) của bạn trước khi đi lấy Key!");
         return;
       }
+      
+      // Lưu UID vào bộ nhớ trình duyệt
       localStorage.setItem("tiz_current_uid", uid);
-      window.location.href = "getkey.html?token=123&uid=" + encodeURIComponent(uid);
+      
+      // CHUYỂN HƯỚNG BẮT BUỘC SANG LINK4M ĐỂ TẠO DOANH THU
+      window.location.href = "https://link4m.net/NThHxnn";
     }
 
     async function submitBuff() {
@@ -92,7 +92,6 @@
         if (data.status === "success") {
           msgDiv.style.color = "#4ade80";
           msgDiv.innerText = data.message;
-          // Xóa key đã dùng để tránh bấm nhầm lần 2
           localStorage.removeItem("tiz_last_key");
         } else {
           msgDiv.style.color = "#f87171";
