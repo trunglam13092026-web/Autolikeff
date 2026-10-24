@@ -28,11 +28,11 @@
     <span class="badge">✨ Vượt Link Lấy Key</span>
     <h2>LẤY KEY BẢN QUYỀN</h2>
 
-    <div class="key-box" id="keyDisplay">ĐANG TẠO KEY...</div>
+    <div class="key-box" id="keyDisplay">ĐANG CHỜ XÁC THỰC...</div>
 
     <button class="btn" onclick="copyKey()">SAO CHÉP KEY</button>
 
-    <a href="https://link4m.net/NThHxnn" class="btn btn-link4m" id="link4mBtn">⚡ Bấm Vào Đây Để Vượt Link Lấy Key</a>
+    <a href="https://link4m.net/NThHxnn" class="btn btn-link4m" id="link4mBtn" style="display: none;">⚡ Bấm Vào Đây Để Vượt Link Lấy Key</a>
 
     <p style="font-size: 13px; color: #aaaaaa; text-align: left; margin-top: 20px;">🎬 Video hướng dẫn vượt link:</p>
     <div class="video-box">
@@ -53,7 +53,7 @@
 
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token') || '';
-    const userUid = urlParams.get('uid') || localStorage.getItem('tiz_current_uid') || 'Chưa nhập UID';
+    const userUid = urlParams.get('uid') || '';
 
     function getBrowserDeviceId() {
       let deviceId = localStorage.getItem("tiz_device_id");
@@ -69,14 +69,22 @@
       const keyBox = document.getElementById("keyDisplay");
       const msgDiv = document.getElementById("msg");
 
-      if (!token) {
-        keyBox.innerText = "CHƯA VƯỢT LINK";
+      // BẮT BUỘC PHẢI CÓ UID: Nếu không có UID, chặn lại ngay lập tức
+      if (!userUid) {
+        keyBox.innerText = "THIẾU UID";
         msgDiv.style.color = "#f87171";
-        msgDiv.innerText = "Vui lòng bấm nút 'Bấm Vào Đây Để Vượt Link Lấy Key' bên dưới.";
+        msgDiv.innerText = "❌ Bạn chưa nhập ID Game (UID)! Vui lòng quay lại trang chủ nhập UID trước khi lấy key.";
         return;
       }
 
-      if (linkBtn) linkBtn.style.display = "none";
+      if (!token) {
+        keyBox.innerText = "CHƯA VƯỢT LINK";
+        msgDiv.style.color = "#f87171";
+        msgDiv.innerText = "Vui lòng bấm nút vượt link để lấy key.";
+        linkBtn.style.display = "block";
+        return;
+      }
+
       msgDiv.style.color = "#aaaaaa";
       msgDiv.innerText = "Đang xác thực và tạo Key tự động...";
 
@@ -91,14 +99,15 @@
         try {
           data = JSON.parse(textData);
         } catch (e) {
-          throw new Error("Lỗi kết nối Server! Lần sau hãy chọn quyền 'Bất kỳ ai' trên Apps Script.");
+          throw new Error("Lỗi kết nối Server!");
         }
 
         if (data.status === "success") {
           currentKey = data.key;
           keyBox.innerText = data.key;
+          localStorage.setItem("tiz_last_key", currentKey);
           msgDiv.style.color = "#4ade80";
-          msgDiv.innerText = data.message || "✅ Lấy Key thành công! Hãy bấm Sao chép Key.";
+          msgDiv.innerText = "✅ Lấy Key thành công! Hãy bấm Sao chép Key.";
         } else {
           keyBox.innerText = "LỖI";
           msgDiv.style.color = "#f87171";
@@ -112,7 +121,7 @@
     });
 
     function copyKey() {
-      if (!currentKey || currentKey.includes("ĐANG") || currentKey.includes("CHƯA") || currentKey.includes("LỖI")) {
+      if (!currentKey || currentKey.includes("ĐANG") || currentKey.includes("CHƯA") || currentKey.includes("LỖI") || currentKey.includes("THIẾU")) {
         alert("Chưa có Key hợp lệ để chép!");
         return;
       }
