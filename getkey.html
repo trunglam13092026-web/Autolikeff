@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LẤY KEY BẢN QUYỀN</title>
-  <!-- Tải thư viện FingerprintJS để nhận diện phần cứng thiết bị -->
-  <script src="https://openfpcdn.io/fingerprintjs/v3"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -178,20 +176,13 @@
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token') || '';
 
-    // Khởi tạo FingerprintJS để lấy vân tay phần cứng thiết bị
-    let fpPromise = FingerprintJS.load();
-
-    fpPromise.then(detector => detector.get()).then(result => {
-      let deviceId = result.visitorId;
-
-      // Gửi yêu cầu kiểm tra và lấy key sang Google Apps Script bằng phương thức POST
-      return fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify({
-          deviceId: deviceId,
-          token: token
-        })
-      });
+    // Gửi yêu cầu POST trực tiếp lên Google Apps Script không bị kẹt thư viện ngoài
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        deviceId: "WEB_USER_DEVICE",
+        token: token
+      })
     })
     .then(res => res.json())
     .then(data => {
