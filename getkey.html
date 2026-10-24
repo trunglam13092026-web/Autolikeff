@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LẤY KEY BẢN QUYỀN</title>
+  <!-- Tải thư viện FingerprintJS để nhận diện phần cứng thiết bị -->
+  <script src="https://openfpcdn.io/fingerprintjs/v3"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -144,9 +146,9 @@
     </div>
 
     <!-- Ô HIỂN THỊ KEY -->
-    <div class="key-box" id="keyDisplay">ĐANG KIỂM TRA...</div>
+    <div class="key-box" id="keyDisplay">ĐANG TẢI...</div>
 
-    <!-- NÚT DẪN SANG LINK4M (ĐÃ CHUYỂN LÊN TRÊN) -->
+    <!-- NÚT DẪN SANG LINK4M -->
     <a href="https://link4m.org/SCAAQ" class="btn btn-link4m" id="link4mBtn">⚡ Bấm Vào Đây Để Vượt Link Lấy Key</a>
 
     <!-- NÚT SAO CHÉP KEY -->
@@ -167,64 +169,76 @@
   </div>
 
   <script>
-    // Link Web App Google Apps Script của tlzproject
+    // Link Web App Google Apps Script của bạn
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
 
     let currentKey = "";
 
+    // Đọc tham số token từ URL (ví dụ: ?token=MY_SECRET_PASS_123)
     const urlParams = new URLSearchParams(window.location.search);
-    const isVerified = urlParams.get('verified') === 'true';
+    const token = urlParams.get('token') || '';
 
-    // Lấy IP khách để kiểm tra ngay khi vừa mở trang
-    fetch('https://api.ipify.org?format=json')
-      .then(res => res.json())
-      .then(data => {
-        return fetch(`${SCRIPT_URL}?ip=${data.ip}`);
-      })
-      .then(res => res.json())
-      .then(data => {
-        // TRƯỜNG HỢP 1: IP ĐÃ BUFF RỒI (ĐÃ BỊ KHÓA TRONG NGÀY)
-        if (data.status === "locked") {
-          document.getElementById("keyDisplay").innerText = "ĐÃ KHÓA";
-          document.getElementById("errorArea").style.display = "block";
-          document.getElementById("errorArea").innerHTML = `<strong style="color: #ef4444;">🔒 BẠN ĐÃ DÙNG HẾT LƯỢT HÔM NAY!</strong><br><br>${data.message}`;
-          document.getElementById("msg").innerText = "";
+    // Khởi tạo FingerprintJS để lấy vân tay phần cứng thiết bị
+    let fpPromise = FingerprintJS.load();
 
-          // Vô hiệu hóa nút Vượt Link4M
-          const btnLink = document.getElementById("link4mBtn");
-          if (btnLink) {
-            btnLink.href = "javascript:void(0)";
-            btnLink.style.backgroundColor = "#444444";
-            btnLink.style.color = "#888888";
-            btnLink.style.cursor = "not-allowed";
-            btnLink.innerText = "🔒 ĐÃ HẾT LƯỢT BUFF HÔM NAY";
-          }
-          return;
-        }
+    fpPromise.then(detector => detector.get()).then(result => {
+      let deviceId = result.visitorId;
 
-        // TRƯỜNG HỢP 2: CHƯA VƯỢT LINK
-        if (!isVerified) {
-          document.getElementById("errorArea").style.display = "block";
-          document.getElementById("keyDisplay").innerText = "CHƯA XÁC MINH";
-          document.getElementById("msg").innerText = "";
-        } else if (data.status === "success") {
-          // TRƯỜNG HỢP 3: ĐÃ VƯỢT LINK THÀNH CÔNG & ĐƯỢC CẤP KEY
-          document.getElementById("errorArea").style.display = "none";
-          currentKey = data.key;
-          document.getElementById("keyDisplay").innerText = data.key;
-          document.getElementById("msg").style.color = "#4ade80";
-          document.getElementById("msg").innerText = "✅ Lấy Key thành công! Hãy bấm Sao chép Key.";
-        } else {
-          document.getElementById("keyDisplay").innerText = "LỖI";
-          document.getElementById("msg").style.color = "#f87171";
-          document.getElementById("msg").innerText = data.message || "Lỗi hệ thống!";
-        }
-      })
-      .catch(() => {
-        document.getElementById("keyDisplay").innerText = "LỖI KẾT NỐI";
-        document.getElementById("msg").style.color = "#f87171";
-        document.getElementById("msg").innerText = "Lỗi kết nối tới Server!";
+      // Gửi yêu cầu kiểm tra và lấy key sang Google Apps Script bằng phương thức POST
+      return fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          deviceId: deviceId,
+          token: token
+        })
       });
+    })
+    .then(res => res.json())
+    .then(data => {
+      // TRƯỜNG HỢP 1: THIẾT BỊ NÀY HÔM NAY ĐÃ NHẬN KEY RỒI (ĐÃ BỊ KHÓA)
+      if (data.status === "locked") {
+        document.getElementById("keyDisplay").innerText = "ĐÃ KHÓA";
+        document.getElementById("errorArea").style.display = "block";
+        document.getElementById("errorArea").innerHTML = `<strong style="color: #ef4444;">🔒 THIẾT BỊ NÀY ĐÃ DÙNG HẾT LƯỢT HÔM NAY!</strong><br><br>${data.message}`;
+        document.getElementById("msg").innerText = "";
+
+        // Vô hiệu hóa nút Vượt Link4M
+        const btnLink = document.getElementById("link4mBtn");
+        if (btnLink) {
+          btnLink.href = "javascript:void(0)";
+          btnLink.style.backgroundColor = "#444444";
+          btnLink.style.color = "#888888";
+          btnLink.style.cursor = "not-allowed";
+          btnLink.innerText = "🔒 ĐÃ HẾT LƯỢT HÔM NAY";
+        }
+        return;
+      }
+
+      // TRƯỜNG HỢP 2: CHƯA VƯỢT LINK (Sai hoặc thiếu Token)
+      if (data.status === "unverified") {
+        document.getElementById("errorArea").style.display = "block";
+        document.getElementById("keyDisplay").innerText = "CHƯA XÁC MINH";
+        document.getElementById("msg").innerText = "";
+      } 
+      // TRƯỜNG HỢP 3: ĐÃ VƯỢT LINK THÀNH CÔNG & ĐƯỢC CẤP KEY
+      else if (data.status === "success") {
+        document.getElementById("errorArea").style.display = "none";
+        currentKey = data.key;
+        document.getElementById("keyDisplay").innerText = data.key;
+        document.getElementById("msg").style.color = "#4ade80";
+        document.getElementById("msg").innerText = "✅ Lấy Key thành công! Hãy bấm Sao chép Key.";
+      } 
+      else {
+        document.getElementById("keyDisplay").innerText = "LỖI";
+        document.getElementById("msg").style.color = "#f87171";
+        document.getElementById("msg").innerText = data.message || "Lỗi hệ thống!";
+      }
+    })
+    .catch(() => {
+      document.getElementById("keyDisplay").innerText = "LỖI KẾT NỐI";
+      document.getElementById("msg").style.color = "#f87171";
+      document.getElementById("msg").innerText = "Lỗi kết nối tới Server!";
+    });
 
     function copyKey() {
       if (!currentKey) {
