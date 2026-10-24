@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LẤY KEY BẢN QUYỀN</title>
-  <script src="https://openfpcdn.io/fingerprintjs/v3"></script>
+  <!-- Thư viện FingerprintJS chuẩn được tải trực tiếp qua CDN -->
+  <script src="https://openfpcdn.io/fingerprintjs/v3/npm.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: #0d0d0d; color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
@@ -73,6 +74,7 @@
       msgDiv.innerText = "Đang xác thực và tạo Key tự động...";
 
       try {
+        // Khởi tạo FingerprintJS an toàn
         const fp = await FingerprintJS.load();
         const result = await fp.get();
         cachedDeviceId = result.visitorId;
@@ -85,8 +87,7 @@
         try {
           data = JSON.parse(textData);
         } catch (e) {
-          console.error("Phản hồi không phải JSON:", textData);
-          throw new Error("Server trả về mã HTML (Chưa chọn quyền 'Bất kỳ ai' trên GAS)");
+          throw new Error("Server trả về mã HTML (Hãy kiểm tra lại quyền 'Bất kỳ ai' trên Google Apps Script)");
         }
 
         if (data.status === "success") {
