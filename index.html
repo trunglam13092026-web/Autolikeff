@@ -3,232 +3,90 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BUFF LIKE FREE FIRE - TỐC ĐỘ CAO</title>
+  <title>BUFF LIKE FREE FIRE MIỄN PHÍ</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    body {
-      background-color: #0d0d0d;
-      color: #ffffff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
-    .container {
-      background-color: #1a1a1a;
-      border: 1px solid #333333;
-      border-radius: 12px;
-      padding: 25px 20px;
-      width: 100%;
-      max-width: 420px;
-      box-shadow: 0 8px 24px rgba(255, 255, 255, 0.05);
-    }
-    h2 {
-      text-align: center;
-      color: #ffffff;
-      margin-bottom: 20px;
-      font-size: 20px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      border-bottom: 2px solid #333;
-      padding-bottom: 10px;
-    }
-    .form-group {
-      margin-bottom: 15px;
-    }
-    label {
-      display: block;
-      margin-bottom: 6px;
-      color: #cccccc;
-      font-size: 13px;
-      font-weight: 600;
-    }
-    input {
-      width: 100%;
-      padding: 12px 15px;
-      border-radius: 8px;
-      border: 1px solid #444444;
-      background-color: #262626;
-      color: #ffffff;
-      font-size: 15px;
-      outline: none;
-      transition: all 0.3s ease;
-    }
-    input:focus {
-      border-color: #ffffff;
-      box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
-    }
-    .btn-group {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 20px;
-    }
-    button, .btn-link {
-      width: 100%;
-      padding: 14px;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: bold;
-      text-align: center;
-      text-decoration: none;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-sizing: border-box;
-    }
-    .btn-submit {
-      background-color: #ffffff;
-      color: #000000;
-      border: none;
-    }
-    .btn-submit:hover {
-      background-color: #e6e6e6;
-    }
-    .btn-link {
-      background-color: transparent;
-      color: #ffffff;
-      border: 1px solid #666666;
-      display: block;
-    }
-    .btn-link:hover {
-      background-color: #333333;
-      border-color: #ffffff;
-    }
-    #statusMsg {
-      margin-top: 15px;
-      padding: 12px;
-      border-radius: 8px;
-      text-align: center;
-      font-size: 14px;
-      display: none;
-    }
-    .msg-success {
-      background-color: #1e3a1e;
-      color: #4ade80;
-      border: 1px solid #22c55e;
-    }
-    .msg-error {
-      background-color: #3a1e1e;
-      color: #f87171;
-      border: 1px solid #ef4444;
-    }
-    /* Khung lưu ý & liên hệ */
-    .notice-box {
-      margin-top: 20px;
-      background-color: #222222;
-      border: 1px dashed #555555;
-      border-radius: 8px;
-      padding: 12px;
-      font-size: 12px;
-      color: #cccccc;
-      line-height: 1.6;
-    }
-    .notice-box strong {
-      color: #facc15;
-    }
-    .notice-box a {
-      color: #60a5fa;
-      text-decoration: none;
-    }
-    .notice-box a:hover {
-      text-decoration: underline;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #0d0d0d; color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+    .container { background-color: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 25px 20px; width: 100%; max-width: 420px; box-shadow: 0 8px 24px rgba(255, 255, 255, 0.05); text-align: center; }
+    h2 { color: #22c55e; margin-bottom: 5px; font-size: 20px; text-transform: uppercase; letter-spacing: 1px; }
+    p.sub { color: #888; font-size: 13px; margin-bottom: 20px; }
+    .input-group { margin-bottom: 15px; text-align: left; }
+    .input-group label { display: block; font-size: 13px; color: #aaa; margin-bottom: 5px; }
+    .input-group input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background-color: #262626; color: #fff; font-size: 15px; outline: none; }
+    .input-group input:focus { border-color: #22c55e; }
+    .get-key-link { display: inline-block; color: #eab308; font-size: 14px; text-decoration: none; margin-bottom: 15px; font-weight: bold; }
+    .get-key-link:hover { text-decoration: underline; }
+    .btn-submit { width: 100%; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; background-color: #22c55e; color: #000; border: none; cursor: pointer; transition: all 0.3s ease; }
+    .btn-submit:hover { background-color: #16a34a; }
+    #statusMsg { margin-top: 15px; font-size: 14px; word-break: break-all; }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h2>BUFF LIKE Phai Phai</h2>
-    
-    <div class="form-group">
-      <label for="uid">ID GAME (UID Phai Phai):</label>
-      <input type="text" id="uid" placeholder="Nhập UID (8-11 chữ số)...">
+    <h2>BUFF LIKE FI FAI MIỄN PHÍ</h2>
+    <p class="sub">Được phát triển bởi hệ thống @tlzproject</p>
+
+    <div class="input-group">
+      <label>ID Game (UID):</label>
+      <input type="text" id="uidInput" placeholder="Nhập ID Game của bạn...">
     </div>
 
-    <div class="form-group">
-      <label for="key">MÃ KEY BẮT BUỘC:</label>
-      <input type="text" id="key" placeholder="Nhập Key đã lấy...">
+    <div class="input-group">
+      <label>Mã Key xác minh:</label>
+      <input type="text" id="keyInput" placeholder="Nhập Key xác minh...">
     </div>
 
-    <div class="btn-group">
-      <button class="btn-submit" onclick="submitBuff()">XÁC NHẬN BUFF LIKE</button>
-      <a href="getkey.html" class="btn-link">LẤY KEY NGAY (MIỄN PHÍ)</a>
-    </div>
+    <a href="javascript:void(0)" onclick="goToGetKey()" class="get-key-link">👉 Nhấp vào đây để lấy Key miễn phí</a>
 
-    <!-- KHUNG THÔNG BÁO KHI BẤM XÁC NHẬN -->
+    <button class="btn-submit" onclick="submitBuff()">XÁC NHẬN BUFF LIKE</button>
+
     <div id="statusMsg"></div>
-
-    <!-- MỤC LƯU Ý & LIÊN HỆ -->
-    <div class="notice-box">
-      <strong>📌 LƯU Ý QUAN TRỌNG:</strong><br>
-      • Like tăng 1-2 giờ chờ xử lý.<br>
-      • Chỉ tính các lệnh từ 9h - 23h (Trước 9h Admin không nhận buff nữa)*Buff sau 20h có thể bị thiếu like nhé.<br>
-      • Mỗi UID chỉ được buff tối đa 1 lần/ngày.<br>
-      • Hệ thống tự động kiểm tra IP: Nếu ngày hôm đó cố tình buff 2 lần sẽ bị BAN khỏi hệ thống và không thể vào web được nữa.<br>
-      • Hệ thống tự động chặn IP ảo / VPN / Proxy.<br><br>
-      <strong>🌐 KÊNH & LIÊN HỆ:</strong><br>
-      • Link nhóm: <a href="https://t.me/tlzchat" target="_blank">t.me/tlzchat</a><br>
-      • Admin: <a href="https://t.me/tlzproject" target="_blank">t.me/tlzproject</a><br>
-      • TikTok: <a href="https://www.tiktok.com/@hvpcutis1tg" target="_blank">@hvpcutis1tg</a>
-    </div>
   </div>
 
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
 
-    let userIp = "";
-
-    fetch('https://api.ipify.org?format=json')
-      .then(res => res.json())
-      .then(data => { userIp = data.ip; })
-      .catch(() => { userIp = "UNKNOWN"; });
-
-    function showMessage(text, isError = false) {
-      const msgDiv = document.getElementById("statusMsg");
-      msgDiv.innerText = text;
-      msgDiv.className = isError ? "msg-error" : "msg-success";
-      msgDiv.style.display = "block";
+    function goToGetKey() {
+      const uid = document.getElementById("uidInput").value.trim();
+      if (!uid) {
+        alert("Vui lòng nhập ID Game (UID) của bạn trước khi đi lấy Key!");
+        return;
+      }
+      localStorage.setItem("tiz_current_uid", uid);
+      window.location.href = "getkey.html?uid=" + encodeURIComponent(uid);
     }
 
-    function submitBuff() {
-      const uid = document.getElementById("uid").value.trim();
-      const key = document.getElementById("key").value.trim();
+    async function submitBuff() {
+      const uid = document.getElementById("uidInput").value.trim();
+      const key = document.getElementById("keyInput").value.trim();
+      const msgDiv = document.getElementById("statusMsg");
 
       if (!uid || !key) {
-        showMessage("Vui lòng nhập đầy đủ UID và Key!", true);
+        msgDiv.style.color = "#f87171";
+        msgDiv.innerText = "Vui lòng nhập đầy đủ UID và Key!";
         return;
       }
 
-      showMessage("Đang xử lý dữ liệu, vui lòng chờ...");
+      msgDiv.style.color = "#aaaaaa";
+      msgDiv.innerText = "Đang kiểm tra Key và tiến hành Buff...";
 
-      fetch(SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-          uid: uid,
-          key: key,
-          ip: userIp
-        })
-      })
-      .then(res => res.json())
-      .then(data => {
+      try {
+        const targetUrl = `${SCRIPT_URL}?action=verify_and_buff&uid=${encodeURIComponent(uid)}&key=${encodeURIComponent(key)}`;
+        const response = await fetch(targetUrl);
+        const data = await response.json();
+
         if (data.status === "success") {
-          showMessage(data.message, false);
-          document.getElementById("uid").value = "";
-          document.getElementById("key").value = "";
+          msgDiv.style.color = "#4ade80";
+          msgDiv.innerText = data.message;
         } else {
-          showMessage(data.message, true);
+          msgDiv.style.color = "#f87171";
+          msgDiv.innerText = data.message;
         }
-      })
-      .catch(() => {
-        showMessage("Lỗi kết nối Server! Vui lòng thử lại.", true);
-      });
+      } catch (err) {
+        msgDiv.style.color = "#f87171";
+        msgDiv.innerText = "Lỗi kết nối đến Server!";
+      }
     }
   </script>
 </body>
