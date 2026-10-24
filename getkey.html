@@ -129,17 +129,14 @@
     <span class="badge">✨ Vượt Link Lấy Key</span>
     <h2>LẤY KEY BẢN QUYỀN</h2>
 
-    <!-- NÚT YÊU CẦU LẤY KEY TRỰC TIẾP -->
-    <button class="btn" id="getKeyBtn" onclick="requestKey()">LẤY MÃ KEY</button>
-
     <!-- Ô HIỂN THỊ KEY -->
-    <div class="key-box" id="keyDisplay">CHƯA LẤY</div>
-
-    <!-- NÚT DẪN SANG LINK4M (Hiển thị khi chưa vượt link) -->
-    <a href="https://link4m.net/NThHxnn" class="btn btn-link4m" id="link4mBtn">⚡ Bấm Vào Đây Để Vượt Link Lấy Key</a>
+    <div class="key-box" id="keyDisplay">ĐANG TẠO KEY...</div>
 
     <!-- NÚT SAO CHÉP KEY -->
     <button class="btn" onclick="copyKey()">SAO CHÉP KEY</button>
+
+    <!-- NÚT DẪN SANG LINK4M (Chỉ hiện khi chưa vượt link) -->
+    <a href="https://link4m.net/NThHxnn" class="btn btn-link4m" id="link4mBtn">⚡ Bấm Vào Đây Để Vượt Link Lấy Key</a>
 
     <!-- VIDEO HƯỚNG DẪN -->
     <p style="font-size: 13px; color: #aaaaaa; text-align: left; margin-top: 20px;">🎬 Video hướng dẫn vượt link:</p>
@@ -164,38 +161,32 @@
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token') || '';
 
-    // Tự động kiểm tra: Nếu đã có token xác thực trên URL thì ẩn nút Link4M đi cho gọn
+    // TỰ ĐỘNG CHẠY NGAY KHI VỪA MỞ TRANG WEB
     window.addEventListener('DOMContentLoaded', async () => {
-      if (token) {
-        const linkBtn = document.getElementById("link4mBtn");
-        if (linkBtn) linkBtn.style.display = "none";
-      }
-
-      try {
-        const fp = await FingerprintJS.load();
-        const result = await fp.get();
-        cachedDeviceId = result.visitorId;
-      } catch (err) {
-        console.error("Lỗi lấy Device ID:", err);
-      }
-    });
-
-    // Hàm gọi khi người dùng bấm nút Lấy Mã Key
-    async function requestKey() {
-      const msgDiv = document.getElementById("msg");
+      const linkBtn = document.getElementById("link4mBtn");
       const keyBox = document.getElementById("keyDisplay");
+      const msgDiv = document.getElementById("msg");
 
+      // 1. Nếu CHƯA VƯỢT LINK (không có ?token=123)
       if (!token) {
-        alert("Bạn chưa vượt link! Vui lòng bấm nút 'Bấm Vào Đây Để Vượt Link Lấy Key' bên dưới trước.");
+        keyBox.innerText = "CHƯA VƯỢT LINK";
+        msgDiv.style.color = "#f87171";
+        msgDiv.innerText = "Vui lòng bấm nút 'Bấm Vào Đây Để Vượt Link Lấy Key' bên dưới.";
         return;
       }
 
-      keyBox.innerText = "ĐANG TẢI...";
+      // 2. Nếu ĐÃ VƯỢT LINK (có ?token=123) -> Ẩn nút vượt link & Tự động sinh Key ngay!
+      if (linkBtn) linkBtn.style.display = "none";
       msgDiv.style.color = "#aaaaaa";
-      msgDiv.innerText = "Đang tạo mã Key của bạn...";
+      msgDiv.innerText = "Đang xác thực và tạo Key tự động...";
 
       try {
-        // Gửi request lấy key tới Web App
+        // Lấy Fingerprint Device ID
+        const fp = await FingerprintJS.load();
+        const result = await fp.get();
+        cachedDeviceId = result.visitorId;
+
+        // Gọi Server lấy Key tự động
         const response = await fetch(`${SCRIPT_URL}?token=${encodeURIComponent(token)}&deviceId=${encodeURIComponent(cachedDeviceId)}`);
         const data = await response.json();
 
@@ -214,11 +205,11 @@
         msgDiv.style.color = "#f87171";
         msgDiv.innerText = "Không thể kết nối đến Server!";
       }
-    }
+    });
 
     function copyKey() {
-      if (!currentKey || currentKey === "CHƯA LẤY" || currentKey.includes("LỖI")) {
-        alert("Chưa có Key hợp lệ để sao chép!");
+      if (!currentKey || currentKey.includes("ĐANG") || currentKey.includes("CHƯA") || currentKey.includes("LỖI")) {
+        alert("Chưa có Key hợp lệ để chép!");
         return;
       }
       navigator.clipboard.writeText(currentKey).then(() => {
