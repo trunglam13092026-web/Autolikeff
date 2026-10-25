@@ -32,8 +32,7 @@
 
     <button class="btn" onclick="copyKey()">SAO CHÉP KEY</button>
 
-    <!-- Nút dẫn sang Link4M để vượt link -->
-    <a href="https://link4m.net/NThHxnn" class="btn btn-link4m" id="link4mBtn">⚡ Bấm Vào Đây Để Vượt Link Lấy Key</a>
+    <a href="#" class="btn btn-link4m" id="link4mBtn" style="display:none;">⚡ Bấm Vào Đây Để Vượt Link Lấy Key</a>
 
     <p style="font-size: 13px; color: #aaaaaa; text-align: left; margin-top: 20px;">🎬 Video hướng dẫn vượt link:</p>
     <div class="video-box">
@@ -50,6 +49,10 @@
 
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
+    
+    const LINK_VIETNAM = "https://link4m.org/DRDP9J";
+    const LINK_OVERSEAS = "https://link2m.com/0odue40O";
+
     let currentKey = "";
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -62,27 +65,44 @@
       const msgDiv = document.getElementById("msg");
 
       if (!userUid) {
-        keyBox.innerText = "THIẾU UID";
+        keyBox.innerText = "TRUY CẬP TRỰC TIẾP";
         msgDiv.style.color = "#f87171";
-        msgDiv.innerText = "❌ Bạn chưa nhập ID Game (UID)! Vui lòng quay lại trang chủ nhập UID.";
+        msgDiv.innerText = "❌ Bạn chưa nhập UID! Đang chuyển hướng về trang chủ...";
         linkBtn.style.display = "none";
+        setTimeout(() => { window.location.href = "index.html"; }, 1500);
         return;
       }
 
-      // Chưa có token (Chưa vượt link Link4M) -> Hiện nút vàng để khách bấm vượt link
       if (!token) {
         keyBox.innerText = "CHƯA VƯỢT LINK";
         msgDiv.style.color = "#eab308";
-        msgDiv.innerText = "👉 Xem video hướng dẫn bên dưới và bấm nút vàng để vượt link lấy Key!";
+        msgDiv.innerText = "👉 Đang chuẩn bị đường link xác minh...";
+        
+        let targetLink = LINK_VIETNAM;
+
+        try {
+          const geoRes = await fetch('https://ipapi.co/json/');
+          const geoData = await geoRes.json();
+          if (geoData && geoData.country_code && geoData.country_code !== 'VN') {
+            targetLink = LINK_OVERSEAS;
+          }
+        } catch (e) {}
+
+        linkBtn.href = targetLink;
         linkBtn.style.display = "block";
+        msgDiv.innerText = "👉 Xem video hướng dẫn bên dưới và bấm nút vàng để vượt link!";
         return;
       }
 
-      // Đã vượt link xong quay về -> Ẩn nút vượt link, tiến hành gọi server tạo Key
+      // 🛑 NẾU CÓ TOKEN KHÁCH TRUY CẬP VÀO: Xóa ngay tham số khỏi URL để chống chia sẻ link
+      if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.pathname);
+      }
+
       linkBtn.style.display = "none";
       keyBox.innerText = "ĐANG TẠO KEY...";
       msgDiv.style.color = "#aaaaaa";
-      msgDiv.innerText = "Đang kiểm tra địa chỉ IP và tạo Key...";
+      msgDiv.innerText = "Đang kiểm tra xác minh và tạo Key...";
 
       try {
         let userIp = "UNKNOWN_IP";
@@ -104,7 +124,7 @@
           msgDiv.style.color = "#4ade80";
           msgDiv.innerText = data.message || "✅ Lấy Key thành công! Hãy bấm Sao chép Key.";
         } else {
-          keyBox.innerText = "LỖI";
+          keyBox.innerText = "LỖI XÁC MINH";
           msgDiv.style.color = "#f87171";
           msgDiv.innerText = data.message || "Không thể lấy key!";
         }
@@ -116,7 +136,7 @@
     });
 
     function copyKey() {
-      if (!currentKey || currentKey.includes("ĐANG") || currentKey.includes("CHƯA") || currentKey.includes("LỖI") || currentKey.includes("THIẾU")) {
+      if (!currentKey || currentKey.includes("ĐANG") || currentKey.includes("CHƯA") || currentKey.includes("LỖI") || currentKey.includes("TRUY CẬP")) {
         alert("Chưa có Key hợp lệ để chép!");
         return;
       }
