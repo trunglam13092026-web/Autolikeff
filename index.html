@@ -83,7 +83,6 @@
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
 
-    // Tự động điền UID/Key nếu đã lưu
     window.addEventListener('DOMContentLoaded', () => {
       const savedUid = localStorage.getItem("tiz_current_uid");
       const savedKey = localStorage.getItem("tiz_last_key");
@@ -106,7 +105,7 @@
       if (event.target === modal) closeGuide();
     }
 
-    // ⚡ HÀM VƯỢT LINK LẤY KEY (Lưu Token chống mất)
+    // ⚡ HÀM VƯỢT LINK LẤY KEY (Gắn thẳng token vào link đích qua tham số của Link4M)
     async function goToGetKey() {
       const uid = document.getElementById("uidInput").value.trim();
       if (!uid) {
@@ -125,7 +124,7 @@
         if (data.status === "success") {
           const uniqueToken = data.token;
           
-          // Lưu UID và Token ngầm vào máy để chống việc Link4M làm mất token trên URL
+          // Lưu UID và Token dự phòng vào bộ nhớ máy
           localStorage.setItem("tiz_current_uid", uid);
           localStorage.setItem("tiz_pending_token", uniqueToken);
 
@@ -138,8 +137,9 @@
             }
           } catch(e) {}
 
-          // Chuyển hướng thẳng sang Link4M
-          window.location.href = baseLink;
+          // 👉 ĐÍNH KÈM TRỰC TIẾP TOKEN VÀO LINK ĐÍCH QUA THAM SỐ API CỦA LINK4M
+          const finalRedirectUrl = baseLink + "?api=0&url=" + encodeURIComponent("https://bufflikeff.site/getkey.html?token=" + uniqueToken);
+          window.location.href = finalRedirectUrl;
         } else {
           alert("Lỗi tạo phiên: " + data.message);
           msgDiv.innerText = "";
