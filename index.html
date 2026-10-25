@@ -19,14 +19,13 @@
     .btn-key { background-color: #eab308; color: #000000; }
     .btn-key:hover { background-color: #ca8a04; }
     
-    /* Nút xem video hướng dẫn */
     .btn-guide { background-color: #3b82f6; color: #ffffff; margin-top: 5px; }
     .btn-guide:hover { background-color: #2563eb; }
 
     .notice { background-color: #262626; border-left: 4px solid #eab308; padding: 10px; font-size: 12px; color: #ccc; text-align: left; border-radius: 4px; margin-top: 15px; }
     #statusMsg { margin-top: 15px; font-size: 14px; color: #f87171; word-break: break-all; }
 
-    /* Modal xem Video */
+    /* Modal xem Video Popup */
     .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); justify-content: center; align-items: center; padding: 15px; }
     .modal-content { background-color: #1a1a1a; padding: 15px; border-radius: 12px; width: 100%; max-width: 450px; border: 1px solid #444; position: relative; }
     .close-btn { position: absolute; top: 10px; right: 15px; color: #fff; font-size: 24px; font-weight: bold; cursor: pointer; }
@@ -48,7 +47,7 @@
     <!-- Nút đi lấy Key -->
     <button class="btn btn-key" onclick="goToGetKey()">🔑 Bấm Vào Đây Để Lấy Key</button>
 
-    <!-- NÚT XEM VIDEO HƯỚNG DẪN -->
+    <!-- Nút xem Video Hướng Dẫn -->
     <button class="btn btn-guide" onclick="openGuide()">🎬 Bấm Vào Đây Để Xem Cách Lấy Key</button>
 
     <!-- Ô nhập Key và Xác nhận Buff -->
@@ -92,27 +91,22 @@
       if (savedKey) document.getElementById("keyInput").value = savedKey;
     });
 
-    // Mở Modal xem Video
     function openGuide() {
       document.getElementById("videoModal").style.display = "flex";
     }
 
-    // Đóng Modal xem Video
     function closeGuide() {
       const video = document.getElementById("guideVideo");
       video.pause();
       document.getElementById("videoModal").style.display = "none";
     }
 
-    // Đóng popup khi bấm ra ngoài
     window.onclick = function(event) {
       const modal = document.getElementById("videoModal");
-      if (event.target === modal) {
-        closeGuide();
-      }
+      if (event.target === modal) closeGuide();
     }
 
-    // ⚡ HÀM GO TO GET KEY (Dùng Token 1 lần)
+    // ⚡ HÀM VƯỢT LINK LẤY KEY (Lưu Token chống mất)
     async function goToGetKey() {
       const uid = document.getElementById("uidInput").value.trim();
       if (!uid) {
@@ -120,7 +114,6 @@
         return;
       }
       
-      localStorage.setItem("tiz_current_uid", uid);
       const msgDiv = document.getElementById("statusMsg");
       msgDiv.style.color = "#aaaaaa";
       msgDiv.innerText = "Đang tạo phiên vượt link bảo mật...";
@@ -132,17 +125,21 @@
         if (data.status === "success") {
           const uniqueToken = data.token;
           
-          let baseLink = "https://link4m.org/DRDP9J"; // Mặc định Link4M cho VN
+          // Lưu UID và Token ngầm vào máy để chống việc Link4M làm mất token trên URL
+          localStorage.setItem("tiz_current_uid", uid);
+          localStorage.setItem("tiz_pending_token", uniqueToken);
+
+          let baseLink = "https://link4m.org/DRDP9J"; // Link4M gốc cho VN
           try {
             const geoRes = await fetch('https://ipapi.co/json/');
             const geoData = await geoRes.json();
             if (geoData && geoData.country_code && geoData.country_code !== 'VN') {
-              baseLink = "https://link2m.com/0odue40O/ĐƯỜNG_LINK_CỦA_BẠN"; // Link2M cho quốc tế
+              baseLink = "https://link2m.com/0odue40O"; // Link2M cho quốc tế
             }
           } catch(e) {}
 
-          const finalRedirectUrl = baseLink + "?api=0&url=" + encodeURIComponent("https://bufflikeff.site/getkey.html?token=" + uniqueToken);
-          window.location.href = finalRedirectUrl;
+          // Chuyển hướng thẳng sang Link4M
+          window.location.href = baseLink;
         } else {
           alert("Lỗi tạo phiên: " + data.message);
           msgDiv.innerText = "";
@@ -153,7 +150,7 @@
       }
     }
 
-    // 🚀 HÀM XÁC MINH VÀ BUFF
+    // 🚀 HÀM XÁC MINH VÀ BUFF LIKE
     async function submitBuff() {
       const uid = document.getElementById("uidInput").value.trim();
       const key = document.getElementById("keyInput").value.trim();
