@@ -3,88 +3,75 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BUFF LIKE FREE FIRE MIỄN PHÍ</title>
+  <title>BUFF LIKE FREE FIRE - TRANG CHỦ</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: #0d0d0d; color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
     .container { background-color: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 25px 20px; width: 100%; max-width: 420px; box-shadow: 0 8px 24px rgba(255, 255, 255, 0.05); text-align: center; }
-    h2 { color: #22c55e; margin-bottom: 5px; font-size: 20px; text-transform: uppercase; letter-spacing: 1px; }
-    p.sub { color: #888; font-size: 13px; margin-bottom: 20px; }
+    .badge { display: inline-block; background-color: #22c55e; color: #000000; font-size: 12px; font-weight: bold; padding: 4px 12px; border-radius: 20px; margin-bottom: 10px; }
+    h2 { color: #ffffff; margin-bottom: 15px; font-size: 20px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #333; padding-bottom: 10px; }
     .input-group { margin-bottom: 15px; text-align: left; }
-    .input-group label { display: block; font-size: 13px; color: #aaa; margin-bottom: 5px; }
+    .input-group label { display: block; font-size: 13px; color: #aaaaaa; margin-bottom: 5px; }
     .input-group input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background-color: #262626; color: #fff; font-size: 15px; outline: none; }
     .input-group input:focus { border-color: #22c55e; }
-    .get-key-link { display: inline-block; color: #eab308; font-size: 14px; text-decoration: none; margin-bottom: 15px; font-weight: bold; cursor: pointer; }
-    .get-key-link:hover { text-decoration: underline; }
-    .btn-submit { width: 100%; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; background-color: #22c55e; color: #000; border: none; cursor: pointer; transition: all 0.3s ease; }
-    .btn-submit:hover { background-color: #16a34a; }
-    #statusMsg { margin-top: 15px; font-size: 14px; word-break: break-all; }
-
-    /* Khung Lưu Ý Quan Trọng */
-    .notice-box { margin-top: 20px; background-color: #221a0a; border: 1px solid #eab308; border-radius: 8px; padding: 15px; text-align: left; font-size: 13px; color: #e5e7eb; line-height: 1.5; }
-    .notice-box h3 { color: #eab308; font-size: 14px; margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center; gap: 5px; }
-    .notice-box ul { padding-left: 18px; }
-    .notice-box li { margin-bottom: 6px; }
-    .notice-box .contact { margin-top: 10px; border-top: 1px dashed #443b1a; padding-top: 8px; color: #facc15; }
-    .notice-box a { color: #38bdf8; text-decoration: none; }
-    .notice-box a:hover { text-decoration: underline; }
+    .btn { width: 100%; padding: 14px; border-radius: 8px; font-size: 15px; font-weight: bold; background-color: #22c55e; color: #000000; border: none; cursor: pointer; transition: all 0.3s ease; margin-bottom: 12px; }
+    .btn:hover { background-color: #16a34a; }
+    .btn-key { background-color: #eab308; color: #000000; }
+    .btn-key:hover { background-color: #ca8a04; }
+    .notice { background-color: #262626; border-left: 4px solid #eab308; padding: 10px; font-size: 12px; color: #ccc; text-align: left; border-radius: 4px; margin-top: 15px; }
+    #statusMsg { margin-top: 15px; font-size: 14px; color: #f87171; word-break: break-all; }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h2>BUFF LIKE FI FAI MIỄN PHÍ</h2>
-    <p class="sub">Được phát triển bởi hệ thống @tlzproject</p>
+    <span class="badge">🔥 HỆ THỐNG BUFF LIKE</span>
+    <h2>FREE FIRE VIP</h2>
 
+    <!-- Ô nhập UID Game -->
     <div class="input-group">
-      <label>ID Game (UID):</label>
-      <input type="text" id="uidInput" placeholder="Nhập ID Game của bạn...">
+      <label for="uidInput">Nhập ID Game (UID) của bạn:</label>
+      <input type="text" id="uidInput" placeholder="Ví dụ: 101177498">
     </div>
 
-    <div class="input-group">
-      <label>Mã Key xác minh:</label>
-      <input type="text" id="keyInput" placeholder="Nhập Key xác minh...">
+    <!-- Nút đi lấy Key (Gắn hàm goToGetKey ở đây) -->
+    <button class="btn btn-key" onclick="goToGetKey()">🔑 Bấm Vào Đây Để Lấy Key</button>
+
+    <!-- Ô nhập Key và Xác nhận Buff -->
+    <div class="input-group" style="margin-top: 15px;">
+      <label for="keyInput">Nhập Mã Key đã lấy:</label>
+      <input type="text" id="keyInput" placeholder="Dán mã Key vào đây...">
     </div>
 
-    <a href="javascript:void(0)" onclick="goToGetKey()" class="get-key-link">👉 Nhấp vào đây để lấy Key miễn phí</a>
+    <button class="btn" onclick="submitBuff()">🚀 Tiến Hành Buff Like</button>
 
-    <button class="btn-submit" onclick="submitBuff()">XÁC NHẬN BUFF LIKE</button>
+    <div class="notice">
+      <b>📌 Lưu ý quan trọng:</b><br>
+      - Mỗi thiết bị / địa chỉ IP chỉ lấy được 1 Key duy nhất trong ngày.<br>
+      - Key chỉ có hiệu lực trong ngày và dùng được 1 lần duy nhất.<br>
+      - Không chia sẻ link vượt qua cho người khác để tránh lỗi token.
+    </div>
 
     <div id="statusMsg"></div>
-
-    <!-- Khung Lưu Ý Quan Trọng -->
-    <div class="notice-box">
-      <h3>📌 LƯU Ý QUAN TRỌNG:</h3>
-      <ul>
-        <li>⏰ <b>09:00 - 23:00</b> Hoạt Động.</li>
-        <li>⏳ Thời gian duyệt lên like là <b>15-30 phút</b>, lâu quá có thể liên hệ Admin hỗ trợ nhé :)</li>
-        <li>⚠️ Buff Muộn Thì Có Thể Bị Thiếu Like.</li>
-        <li>🛡️ 1 UID Chỉ Buff Tối Đa 200 Like 1 Ngày.</li>
-        <li>🚫 Phát Hiện Cố Tình 1 Địa Chỉ IP Buff Nhiều Lần Trong 1 Ngày Sẽ Đưa Vào Blacklist (Ban).</li>
-        <li>❌ Không Sử Dụng Proxy - VPN 1.1.1.1 Để Vượt Link.</li>
-        <li>⏱️ Chỉ Tính Các Lệnh Từ 9h.</li>
-      </ul>
-      <div class="contact">
-        <b>Mua Gói Like Liên Hệ:</b><br>
-        • Nhóm Telegram: <a href="https://t.me/tlzchat" target="_blank">@tlzchat</a><br>
-        • TikTok: <a href="https://www.tiktok.com/@hvpcutis1tg" target="_blank">@hvpcutis1tg</a>
-      </div>
-    </div>
-
   </div>
 
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
 
+    // Tự động điền UID nếu trước đó đã lưu trong máy
     window.addEventListener('DOMContentLoaded', () => {
       const savedUid = localStorage.getItem("tiz_current_uid");
       const savedKey = localStorage.getItem("tiz_last_key");
-
-      if (savedUid) document.getElementById("uidInput").value = savedUid;
-      if (savedKey) document.getElementById("keyInput").value = savedKey;
+      if (savedUid) {
+        document.getElementById("uidInput").value = savedUid;
+      }
+      if (savedKey) {
+        document.getElementById("keyInput").value = savedKey;
+      }
     });
 
-    function goToGetKey() {
+    // ⚡ HÀM GO TO GET KEY (Dùng Token 1 lần)
+    async function goToGetKey() {
       const uid = document.getElementById("uidInput").value.trim();
       if (!uid) {
         alert("Vui lòng nhập ID Game (UID) của bạn trước khi đi lấy Key!");
@@ -92,40 +79,71 @@
       }
       
       localStorage.setItem("tiz_current_uid", uid);
-      // Chuyển sang trang getkey.html trước để khách xem video hướng dẫn
-      window.location.href = "getkey.html?uid=" + encodeURIComponent(uid);
+      const msgDiv = document.getElementById("statusMsg");
+      msgDiv.style.color = "#aaaaaa";
+      msgDiv.innerText = "Đang tạo phiên vượt link bảo mật...";
+
+      try {
+        // Xin server cấp 1 token dùng 1 lần gắn liền với UID này
+        const res = await fetch(`${SCRIPT_URL}?action=create_onetime_token&uid=${encodeURIComponent(uid)}`);
+        const data = await res.json();
+
+        if (data.status === "success") {
+          const uniqueToken = data.token;
+          
+          // Dò xem khách là VN hay Nước ngoài để trỏ link tương ứng
+          let baseLink = "https://link4m.net/NThHxnn"; // Mặc định Link4M cho VN
+          try {
+            const geoRes = await fetch('https://ipapi.co/json/');
+            const geoData = await geoRes.json();
+            if (geoData && geoData.country_code && geoData.country_code !== 'VN') {
+              baseLink = "https://link2m.com/ĐƯỜNG_LINK_CỦA_BẠN"; // Link2M cho quốc tế
+            }
+          } catch(e) {}
+
+          // Ghép token động vào link rút gọn
+          const finalRedirectUrl = baseLink + "?api=0&url=" + encodeURIComponent("https://bufflikeff.site/getkey.html?token=" + uniqueToken);
+          
+          window.location.href = finalRedirectUrl;
+        } else {
+          alert("Lỗi tạo phiên: " + data.message);
+          msgDiv.innerText = "";
+        }
+      } catch (err) {
+        alert("Lỗi kết nối đến máy chủ!");
+        msgDiv.innerText = "";
+      }
     }
 
+    // 🚀 HÀM XÁC MINH VÀ GỬI YÊU CẦU BUFF
     async function submitBuff() {
       const uid = document.getElementById("uidInput").value.trim();
       const key = document.getElementById("keyInput").value.trim();
       const msgDiv = document.getElementById("statusMsg");
 
       if (!uid || !key) {
-        msgDiv.style.color = "#f87171";
-        msgDiv.innerText = "Vui lòng nhập đầy đủ UID và Key!";
+        alert("Vui lòng nhập đầy đủ UID và Mã Key!");
         return;
       }
 
       msgDiv.style.color = "#aaaaaa";
-      msgDiv.innerText = "Đang kiểm tra Key và tiến hành Buff...";
+      msgDiv.innerText = "Đang xác minh mã Key...";
 
       try {
-        const targetUrl = `${SCRIPT_URL}?action=verify_and_buff&uid=${encodeURIComponent(uid)}&key=${encodeURIComponent(key)}`;
-        const response = await fetch(targetUrl);
+        const response = await fetch(`${SCRIPT_URL}?action=verify_and_buff&uid=${encodeURIComponent(uid)}&key=${encodeURIComponent(key)}`);
         const data = await response.json();
 
         if (data.status === "success") {
           msgDiv.style.color = "#4ade80";
           msgDiv.innerText = data.message;
-          localStorage.removeItem("tiz_last_key");
+          alert(data.message);
         } else {
           msgDiv.style.color = "#f87171";
           msgDiv.innerText = data.message;
         }
       } catch (err) {
         msgDiv.style.color = "#f87171";
-        msgDiv.innerText = "Lỗi kết nối đến Server!";
+        msgDiv.innerText = "Không thể kết nối đến Server!";
       }
     }
   </script>
