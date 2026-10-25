@@ -13,8 +13,6 @@
     .key-box { background-color: #262626; border: 2px dashed #666666; border-radius: 8px; padding: 15px; margin: 15px 0; font-size: 20px; font-weight: bold; letter-spacing: 2px; color: #22c55e; word-break: break-all; }
     .btn { width: 100%; padding: 14px; border-radius: 8px; font-size: 15px; font-weight: bold; background-color: #ffffff; color: #000000; border: none; cursor: pointer; transition: all 0.3s ease; margin-bottom: 12px; display: block; text-decoration: none; box-sizing: border-box; }
     .btn:hover { background-color: #e6e6e6; }
-    .btn-link4m { background-color: #eab308; color: #000000; }
-    .btn-link4m:hover { background-color: #ca8a04; }
     .btn-back { display: block; width: 100%; padding: 12px; border-radius: 8px; font-size: 14px; color: #aaaaaa; text-decoration: none; border: 1px solid #444444; box-sizing: border-box; margin-top: 15px; }
     .btn-back:hover { color: #ffffff; border-color: #ffffff; background-color: #222; }
     .video-box { margin: 15px 0 5px 0; border-radius: 8px; overflow: hidden; border: 1px solid #333; }
@@ -25,16 +23,17 @@
 <body>
 
   <div class="container">
-    <span class="badge">✨ Vượt Link Lấy Key</span>
-    <h2>LẤY KEY BẢN QUYỀN</h2>
+    <span class="badge">✨ Thành Công</span>
+    <h2>MÃ KEY CỦA BẠN</h2>
 
-    <div class="key-box" id="keyDisplay">CHƯA VƯỢT LINK</div>
+    <!-- Ô hiển thị Key -->
+    <div class="key-box" id="keyDisplay">ĐANG TẠO KEY...</div>
 
+    <!-- Nút sao chép Key -->
     <button class="btn" onclick="copyKey()">SAO CHÉP KEY</button>
 
-    <a href="#" class="btn btn-link4m" id="link4mBtn" style="display:none;">⚡ Bấm Vào Đây Để Vượt Link Lấy Key</a>
-
-    <p style="font-size: 13px; color: #aaaaaa; text-align: left; margin-top: 20px;">🎬 Video hướng dẫn vượt link:</p>
+    <!-- Video hướng dẫn (giữ lại để khách tham khảo nếu cần) -->
+    <p style="font-size: 13px; color: #aaaaaa; text-align: left; margin-top: 20px;">🎬 Video hướng dẫn:</p>
     <div class="video-box">
       <video controls>
         <source src="lv_0_20261020044711.mp4" type="video/mp4">
@@ -50,59 +49,40 @@
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
     
-    const LINK_VIETNAM = "https://link4m.org/DRDP9J";
-    const LINK_OVERSEAS = "https://link2m.com/0odue40O";
-
     let currentKey = "";
 
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token') || '';
-    const userUid = urlParams.get('uid') || localStorage.getItem('tiz_current_uid') || '';
+    const userUid = localStorage.getItem('tiz_current_uid') || '';
 
     window.addEventListener('DOMContentLoaded', async () => {
-      const linkBtn = document.getElementById("link4mBtn");
       const keyBox = document.getElementById("keyDisplay");
       const msgDiv = document.getElementById("msg");
 
+      // Nếu khách chưa nhập UID ở trang chủ mà bấm mò vào đây
       if (!userUid) {
-        keyBox.innerText = "TRUY CẬP TRỰC TIẾP";
+        keyBox.innerText = "LỖI TRUY CẬP";
         msgDiv.style.color = "#f87171";
-        msgDiv.innerText = "❌ Bạn chưa nhập UID! Đang chuyển hướng về trang chủ...";
-        linkBtn.style.display = "none";
+        msgDiv.innerText = "❌ Bạn chưa nhập UID ở trang chủ! Đang chuyển hướng về...";
         setTimeout(() => { window.location.href = "index.html"; }, 1500);
         return;
       }
 
+      // Nếu khách vào mà không có Token (truy cập thẳng file)
       if (!token) {
-        keyBox.innerText = "CHƯA VƯỢT LINK";
+        keyBox.innerText = "THIẾU TOKEN";
         msgDiv.style.color = "#eab308";
-        msgDiv.innerText = "👉 Đang chuẩn bị đường link xác minh...";
-        
-        let targetLink = LINK_VIETNAM;
-
-        try {
-          const geoRes = await fetch('https://ipapi.co/json/');
-          const geoData = await geoRes.json();
-          if (geoData && geoData.country_code && geoData.country_code !== 'VN') {
-            targetLink = LINK_OVERSEAS;
-          }
-        } catch (e) {}
-
-        linkBtn.href = targetLink;
-        linkBtn.style.display = "block";
-        msgDiv.innerText = "👉 Xem video hướng dẫn bên dưới và bấm nút vàng để vượt link!";
+        msgDiv.innerText = "⚠️ Bạn chưa vượt link quảng cáo! Vui lòng quay lại trang chủ thực hiện lại.";
         return;
       }
 
-      // 🛑 NẾU CÓ TOKEN KHÁCH TRUY CẬP VÀO: Xóa ngay tham số khỏi URL để chống chia sẻ link
+      // Xóa token trên URL để chống lộ/chia sẻ link
       if (window.history.replaceState) {
         window.history.replaceState(null, null, window.location.pathname);
       }
 
-      linkBtn.style.display = "none";
-      keyBox.innerText = "ĐANG TẠO KEY...";
       msgDiv.style.color = "#aaaaaa";
-      msgDiv.innerText = "Đang kiểm tra xác minh và tạo Key...";
+      msgDiv.innerText = "Đang xác minh và cấp Key bảo mật...";
 
       try {
         let userIp = "UNKNOWN_IP";
@@ -126,7 +106,7 @@
         } else {
           keyBox.innerText = "LỖI XÁC MINH";
           msgDiv.style.color = "#f87171";
-          msgDiv.innerText = data.message || "Không thể lấy key!";
+          msgDiv.innerText = data.message || "Token không hợp lệ hoặc đã được sử dụng!";
         }
       } catch (err) {
         keyBox.innerText = "LỖI KẾT NỐI";
@@ -136,7 +116,7 @@
     });
 
     function copyKey() {
-      if (!currentKey || currentKey.includes("ĐANG") || currentKey.includes("CHƯA") || currentKey.includes("LỖI") || currentKey.includes("TRUY CẬP")) {
+      if (!currentKey || currentKey.includes("ĐANG") || currentKey.includes("THIẾU") || currentKey.includes("LỖI")) {
         alert("Chưa có Key hợp lệ để chép!");
         return;
       }
