@@ -32,7 +32,7 @@
     <!-- Nút sao chép Key -->
     <button class="btn" onclick="copyKey()">SAO CHÉP KEY</button>
 
-    <!-- Video hướng dẫn (giữ lại để khách tham khảo nếu cần) -->
+    <!-- Video hướng dẫn -->
     <p style="font-size: 13px; color: #aaaaaa; text-align: left; margin-top: 20px;">🎬 Video hướng dẫn:</p>
     <div class="video-box">
       <video controls>
@@ -52,14 +52,14 @@
     let currentKey = "";
 
     const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token') || '';
+    // Tự động nhận diện token từ URL HOẶC từ bộ nhớ máy (chống mất token của Link4M)
+    const token = urlParams.get('token') || localStorage.getItem('tiz_pending_token') || '';
     const userUid = localStorage.getItem('tiz_current_uid') || '';
 
     window.addEventListener('DOMContentLoaded', async () => {
       const keyBox = document.getElementById("keyDisplay");
       const msgDiv = document.getElementById("msg");
 
-      // Nếu khách chưa nhập UID ở trang chủ mà bấm mò vào đây
       if (!userUid) {
         keyBox.innerText = "LỖI TRUY CẬP";
         msgDiv.style.color = "#f87171";
@@ -68,15 +68,14 @@
         return;
       }
 
-      // Nếu khách vào mà không có Token (truy cập thẳng file)
       if (!token) {
         keyBox.innerText = "THIẾU TOKEN";
         msgDiv.style.color = "#eab308";
-        msgDiv.innerText = "⚠️ Bạn chưa vượt link quảng cáo! Vui lòng quay lại trang chủ thực hiện lại.";
+        msgDiv.innerText = "⚠️ Bạn chưa vượt link quảng cáo! Vui lòng quay lại trang chủ bấm Lấy Key.";
         return;
       }
 
-      // Xóa token trên URL để chống lộ/chia sẻ link
+      // Xóa token trên URL để bảo mật
       if (window.history.replaceState) {
         window.history.replaceState(null, null, window.location.pathname);
       }
@@ -101,6 +100,10 @@
           currentKey = data.key;
           keyBox.innerText = data.key;
           localStorage.setItem("tiz_last_key", currentKey);
+          
+          // Xóa token tạm đã dùng thành công
+          localStorage.removeItem("tiz_pending_token");
+
           msgDiv.style.color = "#4ade80";
           msgDiv.innerText = data.message || "✅ Lấy Key thành công! Hãy bấm Sao chép Key.";
         } else {
