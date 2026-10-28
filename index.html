@@ -89,6 +89,7 @@
   </div>
 
   <script>
+    // Dán URL Web App mới nhất của bạn vào đây
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZ2TCn6Ad4t-71E5z7snBBvnJ9xm2c4CY7dwiDPbjtJlK6_bsu1DQOSUbM1sSkBldH/exec";
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -165,20 +166,27 @@
         return;
       }
 
+      const pendingToken = localStorage.getItem("tiz_pending_token");
+      if (!pendingToken) {
+        alert("Phiên làm việc đã hết hạn hoặc bạn chưa lấy Key. Vui lòng bấm lấy Key lại từ đầu!");
+        return;
+      }
+
       msgDiv.style.color = "#aaaaaa";
       msgDiv.innerText = "Đang xác minh mã Key...";
 
       try {
-        const response = await fetch(`${SCRIPT_URL}?action=verify_and_buff&uid=${encodeURIComponent(uid)}&key=${encodeURIComponent(key)}`);
+        const response = await fetch(`${SCRIPT_URL}?action=verify_and_buff&uid=${encodeURIComponent(uid)}&token=${encodeURIComponent(pendingToken)}`);
         const data = await response.json();
 
         if (data.status === "success") {
           msgDiv.style.color = "#4ade80";
-          msgDiv.innerText = data.message;
-          alert(data.message);
+          msgDiv.innerText = "🎉 " + (data.message || "Buff Like thành công!");
+          alert("Thành công! Yêu cầu buff like đã được gửi.");
+          localStorage.removeItem("tiz_pending_token");
         } else {
           msgDiv.style.color = "#f87171";
-          msgDiv.innerText = data.message;
+          msgDiv.innerText = "❌ " + data.message;
         }
       } catch (err) {
         msgDiv.style.color = "#f87171";
