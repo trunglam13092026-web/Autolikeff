@@ -40,19 +40,19 @@
     
     let currentKey = "";
 
-    // Đọc token từ URL ngay lập tức trước khi bị xóa
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token') || '';
-    const userUid = localStorage.getItem('tiz_current_uid') || '';
-
     window.addEventListener('DOMContentLoaded', async () => {
       const keyBox = document.getElementById("keyDisplay");
       const msgDiv = document.getElementById("msg");
 
+      // Lấy token từ URL hoặc từ bộ nhớ đệm dự phòng
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get('token') || localStorage.getItem('tiz_pending_token') || '';
+      const userUid = localStorage.getItem('tiz_current_uid') || '';
+
       if (!userUid) {
         keyBox.innerText = "LỖI TRUY CẬP";
         msgDiv.style.color = "#f87171";
-        msgDiv.innerText = "❌ Bạn chưa nhập UID ở trang chủ! Đang chuyển hướng về...";
+        msgDiv.innerText = "❌ Bạn chưa nhập UID ở trang chủ!";
         setTimeout(() => { window.location.href = "index.html"; }, 1500);
         return;
       }
@@ -64,7 +64,7 @@
         return;
       }
 
-      // Xóa tham số trên URL để nhìn gọn gàng sau khi đã lấy được biến token
+      // Xóa tham số trên URL cho gọn
       if (window.history.replaceState) {
         window.history.replaceState(null, null, window.location.pathname);
       }
@@ -89,6 +89,7 @@
           currentKey = data.key;
           keyBox.innerText = data.key;
           localStorage.setItem("tiz_last_key", currentKey);
+          localStorage.removeItem("tiz_pending_token"); // Xóa token cũ sau khi đã đổi được key
 
           msgDiv.style.color = "#4ade80";
           msgDiv.innerText = data.message || "✅ Lấy Key thành công! Hãy bấm Sao chép Key.";
