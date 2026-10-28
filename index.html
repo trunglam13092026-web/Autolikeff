@@ -18,20 +18,10 @@
     .btn:hover { background-color: #16a34a; }
     .btn-key { background-color: #eab308; color: #000000; }
     .btn-key:hover { background-color: #ca8a04; }
-    
-    .btn-guide { background-color: #3b82f6; color: #ffffff; margin-top: 5px; }
-    .btn-guide:hover { background-color: #2563eb; }
-
     .notice { background-color: #262626; border-left: 4px solid #eab308; padding: 12px; font-size: 12px; color: #ccc; text-align: left; border-radius: 4px; margin-top: 15px; line-height: 1.6; word-break: break-all; }
     .notice a { color: #38bdf8; text-decoration: none; }
     .notice a:hover { text-decoration: underline; }
     #statusMsg { margin-top: 15px; font-size: 14px; color: #f87171; word-break: break-all; }
-
-    /* Modal xem Video Popup */
-    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); justify-content: center; align-items: center; padding: 15px; }
-    .modal-content { background-color: #1a1a1a; padding: 15px; border-radius: 12px; width: 100%; max-width: 450px; border: 1px solid #444; position: relative; }
-    .close-btn { position: absolute; top: 10px; right: 15px; color: #fff; font-size: 24px; font-weight: bold; cursor: pointer; }
-    video { width: 100%; border-radius: 8px; margin-top: 25px; }
   </style>
 </head>
 <body>
@@ -40,19 +30,13 @@
     <span class="badge">🔥 HỆ THỐNG BUFF LIKE</span>
     <h2>FREE FIRE VIP</h2>
 
-    <!-- Ô nhập UID Game -->
     <div class="input-group">
       <label for="uidInput">Nhập ID Game (UID) của bạn:</label>
       <input type="text" id="uidInput" placeholder="Ví dụ: 101177498">
     </div>
 
-    <!-- Nút đi lấy Key -->
     <button class="btn btn-key" onclick="goToGetKey()">🔑 Bấm Vào Đây Để Lấy Key</button>
 
-    <!-- Nút xem Video Hướng Dẫn -->
-    <button class="btn btn-guide" onclick="openGuide()">🎬 Bấm Vào Đây Để Xem Cách Lấy Key</button>
-
-    <!-- Ô nhập Key và Xác nhận Buff -->
     <div class="input-group" style="margin-top: 15px;">
       <label for="keyInput">Nhập Mã Key đã lấy:</label>
       <input type="text" id="keyInput" placeholder="Dán mã Key vào đây...">
@@ -76,18 +60,6 @@
     <div id="statusMsg"></div>
   </div>
 
-  <!-- BẢNG XEM VIDEO POPUP -->
-  <div id="videoModal" class="modal">
-    <div class="modal-content">
-      <span class="close-btn" onclick="closeGuide()">&times;</span>
-      <p style="text-align: left; font-size: 14px; font-weight: bold; color: #3b82f6;">🎬 Video hướng dẫn vượt link:</p>
-      <video id="guideVideo" controls>
-        <source src="lv_0_20261020044711.mp4" type="video/mp4">
-        Trình duyệt của bạn không hỗ trợ xem video.
-      </video>
-    </div>
-  </div>
-
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZ2TCn6Ad4t-71E5z7snBBvnJ9xm2c4CY7dwiDPbjtJlK6_bsu1DQOSUbM1sSkBldH/exec";
 
@@ -97,21 +69,6 @@
       if (savedUid) document.getElementById("uidInput").value = savedUid;
       if (savedKey) document.getElementById("keyInput").value = savedKey;
     });
-
-    function openGuide() {
-      document.getElementById("videoModal").style.display = "flex";
-    }
-
-    function closeGuide() {
-      const video = document.getElementById("guideVideo");
-      video.pause();
-      document.getElementById("videoModal").style.display = "none";
-    }
-
-    window.onclick = function(event) {
-      const modal = document.getElementById("videoModal");
-      if (event.target === modal) closeGuide();
-    }
 
     async function goToGetKey() {
       const uid = document.getElementById("uidInput").value.trim();
@@ -124,35 +81,40 @@
       msgDiv.style.color = "#aaaaaa";
       msgDiv.innerText = "Đang tạo phiên vượt link bảo mật...";
 
+      let uniqueToken = "TLZONETIME_" + Math.random().toString(36).substring(2, 10).toUpperCase() + "_" + Date.now();
+
+      // Cơ chế timeout chống kẹt mạng (5 giây)
       try {
-        const res = await fetch(`${SCRIPT_URL}?action=create_onetime_token&uid=${encodeURIComponent(uid)}`);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+        const res = await fetch(`${SCRIPT_URL}?action=create_onetime_token&uid=${encodeURIComponent(uid)}`, {
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
         const data = await res.json();
-
-        if (data.status === "success") {
-          const uniqueToken = data.token;
-          
-          localStorage.setItem("tiz_current_uid", uid);
-          localStorage.setItem("tiz_pending_token", uniqueToken);
-
-          let baseLink = "https://link4m.org/DRDP9J";
-          try {
-            const geoRes = await fetch('https://ipapi.co/json/');
-            const geoData = await geoRes.json();
-            if (geoData && geoData.country_code && geoData.country_code !== 'VN') {
-              baseLink = "https://link2m.com/0odue40O";
-            }
-          } catch(e) {}
-
-          const finalRedirectUrl = baseLink + "?api=0&url=" + encodeURIComponent("https://bufflikeff.site/getkey.html?token=" + uniqueToken);
-          window.location.href = finalRedirectUrl;
-        } else {
-          alert("Lỗi tạo phiên: " + data.message);
-          msgDiv.innerText = "";
+        if (data.status === "success" && data.token) {
+          uniqueToken = data.token;
         }
       } catch (err) {
-        alert("Lỗi kết nối đến máy chủ!");
-        msgDiv.innerText = "";
+        console.warn("Dùng token dự phòng do mạng/server trễ.");
       }
+
+      localStorage.setItem("tiz_current_uid", uid);
+      localStorage.setItem("tiz_pending_token", uniqueToken);
+
+      let baseLink = "https://link4m.org/DRDP9J";
+      try {
+        const geoRes = await fetch('https://ipapi.co/json/');
+        const geoData = await geoRes.json();
+        if (geoData && geoData.country_code && geoData.country_code !== 'VN') {
+          baseLink = "https://link2m.com/0odue40O";
+        }
+      } catch(e) {}
+
+      const finalRedirectUrl = baseLink + "?api=0&url=" + encodeURIComponent("https://bufflikeff.site/getkey.html?token=" + uniqueToken);
+      window.location.href = finalRedirectUrl;
     }
 
     async function submitBuff() {
@@ -176,6 +138,7 @@
           msgDiv.style.color = "#4ade80";
           msgDiv.innerText = data.message;
           alert(data.message);
+          document.getElementById("keyInput").value = "";
         } else {
           msgDiv.style.color = "#f87171";
           msgDiv.innerText = data.message;
