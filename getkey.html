@@ -40,8 +40,9 @@
     
     let currentKey = "";
 
+    // Đọc token từ URL ngay lập tức trước khi bị xóa
     const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token') || localStorage.getItem('tiz_pending_token') || '';
+    const token = urlParams.get('token') || '';
     const userUid = localStorage.getItem('tiz_current_uid') || '';
 
     window.addEventListener('DOMContentLoaded', async () => {
@@ -63,6 +64,7 @@
         return;
       }
 
+      // Xóa tham số trên URL để nhìn gọn gàng sau khi đã lấy được biến token
       if (window.history.replaceState) {
         window.history.replaceState(null, null, window.location.pathname);
       }
@@ -87,14 +89,13 @@
           currentKey = data.key;
           keyBox.innerText = data.key;
           localStorage.setItem("tiz_last_key", currentKey);
-          localStorage.removeItem("tiz_pending_token");
 
           msgDiv.style.color = "#4ade80";
           msgDiv.innerText = data.message || "✅ Lấy Key thành công! Hãy bấm Sao chép Key.";
         } else {
           keyBox.innerText = "LỖI XÁC MINH";
           msgDiv.style.color = "#f87171";
-          msgDiv.innerText = data.message || "Token không hợp lệ hoặc đã được sử dụng!";
+          msgDiv.innerText = data.message || "Token không hợp lệ hoặc đã hết hạn!";
         }
       } catch (err) {
         keyBox.innerText = "LỖI KẾT NỐI";
