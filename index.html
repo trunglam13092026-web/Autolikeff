@@ -133,7 +133,6 @@
           const uniqueToken = data.token;
           
           localStorage.setItem("tiz_current_uid", uid);
-          localStorage.setItem("tiz_pending_token", uniqueToken);
 
           let baseLink = "https://link4m.org/DRDP9J";
           try {
@@ -166,24 +165,19 @@
         return;
       }
 
-      const pendingToken = localStorage.getItem("tiz_pending_token");
-      if (!pendingToken) {
-        alert("Phiên làm việc đã hết hạn hoặc bạn chưa lấy Key. Vui lòng bấm lấy Key lại từ đầu!");
-        return;
-      }
-
       msgDiv.style.color = "#aaaaaa";
       msgDiv.innerText = "Đang xác minh mã Key...";
 
       try {
-        const response = await fetch(`${SCRIPT_URL}?action=verify_and_buff&uid=${encodeURIComponent(uid)}&token=${encodeURIComponent(pendingToken)}`);
+        // Gửi trực tiếp UID và Mã Key lên Google Apps Script để xác thực
+        const response = await fetch(`${SCRIPT_URL}?action=verify_and_buff&uid=${encodeURIComponent(uid)}&token=${encodeURIComponent(key)}`);
         const data = await response.json();
 
         if (data.status === "success") {
           msgDiv.style.color = "#4ade80";
           msgDiv.innerText = "🎉 " + (data.message || "Buff Like thành công!");
           alert("Thành công! Yêu cầu buff like đã được gửi.");
-          localStorage.removeItem("tiz_pending_token");
+          document.getElementById("keyInput").value = ""; // Xóa ô nhập key sau khi xong
         } else {
           msgDiv.style.color = "#f87171";
           msgDiv.innerText = "❌ " + data.message;
