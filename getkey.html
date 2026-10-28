@@ -13,8 +13,6 @@
     .key-box { background-color: #262626; border: 2px dashed #666666; border-radius: 8px; padding: 15px; margin: 15px 0; font-size: 20px; font-weight: bold; letter-spacing: 2px; color: #22c55e; word-break: break-all; }
     .btn { width: 100%; padding: 14px; border-radius: 8px; font-size: 15px; font-weight: bold; background-color: #ffffff; color: #000000; border: none; cursor: pointer; transition: all 0.3s ease; margin-bottom: 12px; display: block; text-decoration: none; box-sizing: border-box; }
     .btn:hover { background-color: #e6e6e6; }
-    .btn-link4m { background-color: #eab308; color: #000000; }
-    .btn-link4m:hover { background-color: #ca8a04; }
     .btn-back { display: block; width: 100%; padding: 12px; border-radius: 8px; font-size: 14px; color: #aaaaaa; text-decoration: none; border: 1px solid #444444; box-sizing: border-box; margin-top: 15px; }
     .btn-back:hover { color: #ffffff; border-color: #ffffff; background-color: #222; }
     #msg { margin-top: 15px; font-size: 14px; color: #f87171; word-break: break-all; }
@@ -23,14 +21,12 @@
 <body>
 
   <div class="container">
-    <span class="badge">✨ Vượt Link Lấy Key</span>
-    <h2>LẤY KEY BẢN QUYỀN</h2>
+    <span class="badge">✨ Thành Công</span>
+    <h2>MÃ KEY CỦA BẠN</h2>
 
-    <div class="key-box" id="keyDisplay">CHƯA VƯỢT LINK</div>
+    <div class="key-box" id="keyDisplay">ĐANG TẠO KEY...</div>
 
     <button class="btn" onclick="copyKey()">SAO CHÉP KEY</button>
-
-    <a href="#" class="btn btn-link4m" id="link4mBtn" style="display:none;">⚡ Bấm Vào Đây Để Vượt Link Lấy Key</a>
 
     <a href="index.html" class="btn-back">← Quay lại trang chủ dán Key</a>
 
@@ -38,58 +34,30 @@
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZ2TCn6Ad4t-71E5z7snBBvnJ9xm2c4CY7dwiDPbjtJlK6_bsu1DQOSUbM1sSkBldH/exec";
-    const LINK_VIETNAM = "https://link4m.org/DRDP9J";
-    const LINK_OVERSEAS = "https://link2m.com/0odue40O";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyntb5KUaQJdRQFq9532zZhlll8bwLlOWw5o1wUYg96rW6gau4rRZjGJ_UPSZaTK-Hx/exec";
 
     let currentKey = "";
 
     const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token') || '';
+    const token = urlParams.get('token') || localStorage.getItem('tiz_pending_token') || '';
     const userUid = localStorage.getItem('tiz_current_uid') || '';
 
     window.addEventListener('DOMContentLoaded', async () => {
-      const linkBtn = document.getElementById("link4mBtn");
       const keyBox = document.getElementById("keyDisplay");
       const msgDiv = document.getElementById("msg");
 
       if (!userUid) {
-        keyBox.innerText = "TRUY CẬP TRỰC TIẾP";
+        keyBox.innerText = "THIẾU UID";
         msgDiv.style.color = "#f87171";
         msgDiv.innerText = "❌ Bạn chưa nhập UID! Đang chuyển hướng về trang chủ...";
-        linkBtn.style.display = "none";
         setTimeout(() => { window.location.href = "index.html"; }, 1500);
         return;
       }
 
       if (!token) {
-        keyBox.innerText = "CHƯA VƯỢT LINK";
-        msgDiv.style.color = "#eab308";
-        msgDiv.innerText = "👉 Đang chuẩn bị đường link xác minh bảo mật...";
-        let targetLink = LINK_VIETNAM;
-
-        try {
-          const geoRes = await fetch('https://ipapi.co/json/');
-          const geoData = await geoRes.json();
-          if (geoData && geoData.country_code && geoData.country_code !== 'VN') {
-            targetLink = LINK_OVERSEAS;
-          }
-        } catch (e) {}
-
-        try {
-          const tokenRes = await fetch(`${SCRIPT_URL}?action=create_onetime_token&uid=${encodeURIComponent(userUid)}`);
-          const tokenData = await tokenRes.json();
-          if (tokenData.status === "success") {
-            linkBtn.href = targetLink + "?api=0&url=" + encodeURIComponent("https://bufflikeff.site/getkey.html?token=" + tokenData.token);
-          } else {
-            linkBtn.href = targetLink;
-          }
-        } catch (err) {
-          linkBtn.href = targetLink;
-        }
-
-        linkBtn.style.display = "block";
-        msgDiv.innerText = "👉 Bấm nút vàng bên trên để vượt link lấy Key!";
+        keyBox.innerText = "THIẾU TOKEN";
+        msgDiv.style.color = "#f87171";
+        msgDiv.innerText = "⚠️ Bạn chưa vượt link quảng cáo! Vui lòng quay lại trang chủ bấm Lấy Key.";
         return;
       }
 
@@ -97,7 +65,6 @@
         window.history.replaceState(null, null, window.location.pathname);
       }
 
-      linkBtn.style.display = "none";
       keyBox.innerText = "ĐANG TẠO KEY...";
       msgDiv.style.color = "#aaaaaa";
       msgDiv.innerText = "Đang kiểm tra xác minh và tạo Key...";
@@ -118,6 +85,7 @@
           currentKey = data.key;
           keyBox.innerText = data.key;
           localStorage.setItem("tiz_last_key", currentKey);
+          localStorage.removeItem("tiz_pending_token");
           msgDiv.style.color = "#4ade80";
           msgDiv.innerText = data.message || "✅ Lấy Key thành công! Hãy bấm Sao chép Key.";
         } else {
@@ -133,7 +101,7 @@
     });
 
     function copyKey() {
-      if (!currentKey || currentKey.includes("ĐANG") || currentKey.includes("CHƯA") || currentKey.includes("LỖI") || currentKey.includes("TRUY CẬP")) {
+      if (!currentKey || currentKey.includes("ĐANG") || currentKey.includes("THIẾU") || currentKey.includes("LỖI")) {
         alert("Chưa có Key hợp lệ để chép!");
         return;
       }
