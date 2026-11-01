@@ -28,37 +28,11 @@
       z-index: 10;
     }
 
-    .music-icon {
-      position: absolute;
-      top: 15px;
-      left: 15px;
-      background-color: #262626;
-      border: 1px solid #38bdf8;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 18px;
-      cursor: pointer;
-      box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
-      z-index: 10;
-      transition: transform 0.2s;
-    }
-    .music-icon:active { transform: scale(0.9); }
-    .music-icon.playing { animation: music-spin 3s linear infinite; border-color: #22c55e; }
-
     @keyframes bell-ring {
       0%, 100% { transform: rotate(0deg); }
       10%, 30% { transform: rotate(15deg); }
       20%, 40% { transform: rotate(-15deg); }
       50% { transform: rotate(0deg); }
-    }
-
-    @keyframes music-spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
     }
 
     .marquee-box {
@@ -102,12 +76,7 @@
 </head>
 <body>
 
-  <audio id="bgMusic" loop>
-    <source src="nhac.mp3" type="audio/mp3">
-  </audio>
-
   <div class="container">
-    <div id="musicToggleBtn" class="music-icon" onclick="toggleMusic()" title="Bật/Tắt nhạc nền">🔇</div>
     <div class="bell-icon" onclick="openNoticeModal()" title="Xem thông báo mới">🔔</div>
 
     <span class="badge">🔥 HỆ THỐNG BUFF LIKE</span>
@@ -185,33 +154,6 @@
       if (savedKey) document.getElementById("keyInput").value = savedKey;
     });
 
-    const music = document.getElementById("bgMusic");
-    const musicBtn = document.getElementById("musicToggleBtn");
-    music.volume = 0.5;
-
-    function toggleMusic() {
-      if (music.paused) {
-        music.play().then(() => {
-          musicBtn.innerText = "🔊";
-          musicBtn.classList.add("playing");
-        }).catch(e => {});
-      } else {
-        music.pause();
-        musicBtn.innerText = "🔇";
-        musicBtn.classList.remove("playing");
-      }
-    }
-
-    document.body.addEventListener('click', function initMusicOnce() {
-      if (music.paused) {
-        music.play().then(() => {
-          musicBtn.innerText = "🔊";
-          musicBtn.classList.add("playing");
-        }).catch(e => {});
-      }
-      document.body.removeEventListener('click', initMusicOnce);
-    }, { once: true });
-
     function openNoticeModal() { document.getElementById("noticeModal").style.display = "flex"; }
     function closeNoticeModal() { document.getElementById("noticeModal").style.display = "none"; }
     function openGuide() { document.getElementById("videoModal").style.display = "flex"; }
@@ -257,18 +199,25 @@
       }
 
       msgDiv.style.color = "#aaaaaa";
-      msgDiv.innerText = "Đang tiến hành gửi yêu cầu Buff Like...";
+      msgDiv.innerText = "Đang xác minh mã Key từ hệ thống...";
 
       try {
         const targetUrl = `${SCRIPT_URL}?action=verify_and_buff&uid=${encodeURIComponent(uid)}&key=${encodeURIComponent(key)}`;
         
-        // Gọi request chuẩn để Google Apps Script nhận được và đẩy thông báo Telegram thành công
-        await fetch(targetUrl);
+        const response = await fetch(targetUrl);
+        const data = await response.json();
 
-        msgDiv.style.color = "#4ade80";
-        msgDiv.innerText = "✅ Gửi yêu cầu thành công cho UID: " + uid + "! Bot Telegram đã nhận thông báo.";
-        alert("✅ Gửi yêu cầu buff thành công!");
-        document.getElementById("keyInput").value = "";
+        if (data.status === "success") {
+          msgDiv.style.color = "#4ade80";
+          msgDiv.innerText = "✅ " + data.message;
+          alert("✅ " + data.message);
+          document.getElementById("keyInput").value = "";
+          localStorage.removeItem("tiz_last_key");
+        } else {
+          msgDiv.style.color = "#f87171";
+          msgDiv.innerText = "❌ " + (data.message || "Mã Key không hợp lệ hoặc đã hết hạn!");
+          alert("❌ " + (data.message || "Mã Key không hợp lệ!"));
+        }
       } catch (err) {
         msgDiv.style.color = "#f87171";
         msgDiv.innerText = "Không thể kết nối đến Server!";
