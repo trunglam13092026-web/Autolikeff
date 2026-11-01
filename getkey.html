@@ -13,8 +13,6 @@
     .key-box { background-color: #262626; border: 2px dashed #666666; border-radius: 8px; padding: 15px; margin: 15px 0; font-size: 20px; font-weight: bold; letter-spacing: 2px; color: #22c55e; word-break: break-all; }
     .btn { width: 100%; padding: 14px; border-radius: 8px; font-size: 15px; font-weight: bold; background-color: #ffffff; color: #000000; border: none; cursor: pointer; transition: all 0.3s ease; margin-bottom: 12px; display: block; text-decoration: none; box-sizing: border-box; }
     .btn:hover { background-color: #e6e6e6; }
-    .btn-link4m { background-color: #eab308; color: #000000; }
-    .btn-link4m:hover { background-color: #ca8a04; }
     .btn-back { display: block; width: 100%; padding: 12px; border-radius: 8px; font-size: 14px; color: #aaaaaa; text-decoration: none; border: 1px solid #444444; box-sizing: border-box; margin-top: 15px; }
     .btn-back:hover { color: #ffffff; border-color: #ffffff; background-color: #222; }
     #msg { margin-top: 15px; font-size: 14px; color: #f87171; word-break: break-all; }
@@ -29,7 +27,6 @@
     <div class="key-box" id="keyDisplay">ĐANG TẠO KEY...</div>
 
     <button class="btn" onclick="copyKey()">SAO CHÉP KEY</button>
-    <a href="#" class="btn btn-link4m" id="link4mBtn" style="display:none;">⚡ Bấm Vào Đây Để Vượt Link Lấy Key</a>
     <a href="index.html" class="btn-back">← Quay lại trang chủ dán Key</a>
 
     <div id="msg"></div>
@@ -37,7 +34,6 @@
 
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyLs0JbLy82nCIuIXXmTZUIih6QNw43u9nyWHAPCGzH-AxuXhKgEV2vuAuHalkjI9GS/exec";
-    const LINK_VIETNAM = "https://link4m.org/DRDP9J";
 
     let currentKey = "";
 
@@ -48,7 +44,6 @@
     window.addEventListener('DOMContentLoaded', async () => {
       const keyBox = document.getElementById("keyDisplay");
       const msgDiv = document.getElementById("msg");
-      const linkBtn = document.getElementById("link4mBtn");
 
       if (!userUid) {
         keyBox.innerText = "THIẾU UID";
@@ -58,26 +53,10 @@
         return;
       }
 
-      // Nếu người dùng vào thẳng getkey.html mà chưa qua link rút gọn (không có token)
       if (!token) {
         keyBox.innerText = "CHƯA VƯỢT LINK";
-        msgDiv.style.color = "#eab308";
-        msgDiv.innerText = "👉 Bấm nút bên dưới để vượt link lấy Key:";
-        
-        // Tạo token tạm và hiển thị nút vượt link ngay lập tức không bị đứng
-        try {
-          const tokenRes = await fetch(`${SCRIPT_URL}?action=create_onetime_token&uid=${encodeURIComponent(userUid)}`);
-          const tokenData = await tokenRes.json();
-          if (tokenData.status === "success") {
-            linkBtn.href = LINK_VIETNAM + "?api=0&url=" + encodeURIComponent("https://bufflikeff.site/getkey.html?token=" + tokenData.token);
-          } else {
-            linkBtn.href = LINK_VIETNAM;
-          }
-        } catch (e) {
-          linkBtn.href = LINK_VIETNAM;
-        }
-
-        linkBtn.style.display = "block";
+        msgDiv.style.color = "#f87171";
+        msgDiv.innerText = "⚠️ Bạn chưa vượt link quảng cáo hợp lệ!";
         return;
       }
 
@@ -90,10 +69,8 @@
       msgDiv.innerText = "Đang cấp mã Key bản quyền...";
 
       try {
-        // Dùng mode no-cors kết hợp tự sinh key mượt mà để tránh bị đứng màn hình chờ
         await fetch(`${SCRIPT_URL}?action=generate_key&token=${encodeURIComponent(token)}&uid=${encodeURIComponent(userUid)}`, { method: 'GET', mode: 'no-cors' });
 
-        // Tạo mã key chuẩn dựa trên UID của khách
         currentKey = "FFVIP_" + userUid.slice(-4).toUpperCase() + "_" + Math.random().toString(36).substring(2, 8).toUpperCase();
         
         keyBox.innerText = currentKey;
