@@ -56,12 +56,10 @@
     .input-group label { display: block; font-size: 13px; color: #aaaaaa; margin-bottom: 5px; }
     .input-group input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background-color: #262626; color: #fff; font-size: 15px; outline: none; }
     .input-group input:focus { border-color: #22c55e; }
-    .btn { width: 100%; padding: 14px; border-radius: 8px; font-size: 15px; font-weight: bold; background-color: #22c55e; color: #000000; border: none; cursor: pointer; transition: all 0.3s ease; margin-bottom: 12px; }
+    .btn { width: 100%; padding: 14px; border-radius: 8px; font-size: 15px; font-weight: bold; background-color: #22c55e; color: #000000; border: none; cursor: pointer; transition: all 0.3s ease; margin-bottom: 12px; display: block; text-decoration: none; box-sizing: border-box; }
     .btn:hover { background-color: #16a34a; }
     .btn-key { background-color: #eab308; color: #000000; }
     .btn-key:hover { background-color: #ca8a04; }
-    .btn-guide { background-color: #3b82f6; color: #ffffff; margin-top: 5px; }
-    .btn-guide:hover { background-color: #2563eb; }
 
     .notice { background-color: #262626; border-left: 4px solid #eab308; padding: 12px; font-size: 12px; color: #ccc; text-align: left; border-radius: 4px; margin-top: 15px; line-height: 1.6; word-break: break-all; }
     .notice a { color: #38bdf8; text-decoration: none; }
@@ -71,7 +69,6 @@
     .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); justify-content: center; align-items: center; padding: 15px; }
     .modal-content { background-color: #1a1a1a; padding: 20px; border-radius: 12px; width: 100%; max-width: 450px; border: 1px solid #444; position: relative; text-align: left; }
     .close-btn { position: absolute; top: 10px; right: 15px; color: #fff; font-size: 24px; font-weight: bold; cursor: pointer; }
-    video { width: 100%; border-radius: 8px; margin-top: 15px; }
   </style>
 </head>
 <body>
@@ -85,7 +82,7 @@
     <div class="marquee-box" onclick="openNoticeModal()">
       <span style="margin-right: 5px;">🔔</span>
       <marquee behavior="scroll" direction="left" scrollamount="5">
-        Nếu thấy lỗi kết nối là do bot hết token để buff like , hãy quay lại sau 30 phút nó sẽ có lại !
+        hiện tại còn 141/230 slot !
       </marquee>
     </div>
 
@@ -94,8 +91,8 @@
       <input type="text" id="uidInput" placeholder="Ví dụ: 2230853045">
     </div>
 
-    <button class="btn btn-key" onclick="goToGetKey()">🔑 Bấm Vào Đây Để Lấy Key</button>
-    <button class="btn btn-guide" onclick="openGuide()">🎬 Bấm Vào Đây Để Xem Cách Lấy Key</button>
+    <!-- Nút sang trang getkey.html trực tiếp không cần sinh token rườm rà ở trang chủ nữa -->
+    <a href="getkey.html" class="btn btn-key" onclick="saveUidBeforeLeave(event)">🔑 Bấm Vào Đây Để Lấy Key</a>
 
     <div class="input-group" style="margin-top: 15px;">
       <label for="keyInput">Nhập Mã Key đã lấy:</label>
@@ -133,17 +130,6 @@
     </div>
   </div>
 
-  <div id="videoModal" class="modal">
-    <div class="modal-content">
-      <span class="close-btn" onclick="closeGuide()">&times;</span>
-      <p style="text-align: left; font-size: 14px; font-weight: bold; color: #3b82f6;">🎬 Video hướng dẫn vượt link:</p>
-      <video id="guideVideo" controls>
-        <source src="lv_0_20261020044711.mp4" type="video/mp4">
-        Trình duyệt của bạn không hỗ trợ xem video.
-      </video>
-    </div>
-  </div>
-
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyLs0JbLy82nCIuIXXmTZUIih6QNw43u9nyWHAPCGzH-AxuXhKgEV2vuAuHalkjI9GS/exec";
 
@@ -154,38 +140,21 @@
       if (savedKey) document.getElementById("keyInput").value = savedKey;
     });
 
-    function openNoticeModal() { document.getElementById("noticeModal").style.display = "flex"; }
-    function closeNoticeModal() { document.getElementById("noticeModal").style.display = "none"; }
-    function openGuide() { document.getElementById("videoModal").style.display = "flex"; }
-    function closeGuide() {
-      const video = document.getElementById("guideVideo");
-      video.pause();
-      document.getElementById("videoModal").style.display = "none";
-    }
-
-    window.onclick = function(event) {
-      if (event.target === document.getElementById("noticeModal")) closeNoticeModal();
-      if (event.target === document.getElementById("videoModal")) closeGuide();
-    }
-
-    async function goToGetKey() {
+    function saveUidBeforeLeave(e) {
       const uid = document.getElementById("uidInput").value.trim();
       if (!uid) {
+        e.preventDefault();
         alert("Vui lòng nhập ID Game (UID) của bạn trước khi đi lấy Key!");
         return;
       }
-      
-      const msgDiv = document.getElementById("statusMsg");
-      msgDiv.style.color = "#aaaaaa";
-      msgDiv.innerText = "Đang tạo phiên vượt link bảo mật...";
-
-      let uniqueToken = "TLZONETIME_" + Math.random().toString(36).substring(2, 10).toUpperCase() + "_" + Date.now();
       localStorage.setItem("tiz_current_uid", uid);
-      localStorage.setItem("tiz_pending_token", uniqueToken);
+    }
 
-      let baseLink = "https://link4m.org/DRDP9J";
-      const finalRedirectUrl = baseLink + "?api=0&url=" + encodeURIComponent("https://bufflikeff.site/getkey.html?token=" + uniqueToken);
-      window.location.href = finalRedirectUrl;
+    function openNoticeModal() { document.getElementById("noticeModal").style.display = "flex"; }
+    function closeNoticeModal() { document.getElementById("noticeModal").style.display = "none"; }
+
+    window.onclick = function(event) {
+      if (event.target === document.getElementById("noticeModal")) closeNoticeModal();
     }
 
     async function submitBuff() {
