@@ -260,11 +260,14 @@
       msgDiv.innerText = "Đang tiến hành gửi yêu cầu Buff Like...";
 
       try {
-        await fetch(`${SCRIPT_URL}?action=verify_and_buff&uid=${encodeURIComponent(uid)}&key=${encodeURIComponent(key)}`, { method: 'GET', mode: 'no-cors' });
+        const targetUrl = `${SCRIPT_URL}?action=verify_and_buff&uid=${encodeURIComponent(uid)}&key=${encodeURIComponent(key)}`;
+        
+        // Gọi request chuẩn để Google Apps Script nhận được và đẩy thông báo Telegram thành công
+        await fetch(targetUrl);
 
         msgDiv.style.color = "#4ade80";
-        msgDiv.innerText = "✅ Đã gửi yêu cầu buff thành công cho UID: " + uid + "! Hệ thống đang xử lý tăng like.";
-        alert("✅ Gửi yêu cầu thành công!");
+        msgDiv.innerText = "✅ Gửi yêu cầu thành công cho UID: " + uid + "! Bot Telegram đã nhận thông báo.";
+        alert("✅ Gửi yêu cầu buff thành công!");
         document.getElementById("keyInput").value = "";
       } catch (err) {
         msgDiv.style.color = "#f87171";
