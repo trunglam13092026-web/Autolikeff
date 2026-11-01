@@ -6,94 +6,52 @@
   <title>BUFF LIKE FREE FIRE - TRANG CHỦ</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: #0d0d0d; color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; position: relative; }
-    .container { background-color: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 25px 20px; width: 100%; max-width: 420px; box-shadow: 0 8px 24px rgba(255, 255, 255, 0.05); text-align: center; position: relative; }
-    
-    .bell-icon {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      background-color: #262626;
-      border: 1px solid #eab308;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 20px;
-      cursor: pointer;
-      box-shadow: 0 0 10px rgba(234, 179, 8, 0.4);
-      animation: bell-ring 2s infinite ease-in-out;
-      z-index: 10;
-    }
-
-    @keyframes bell-ring {
-      0%, 100% { transform: rotate(0deg); }
-      10%, 30% { transform: rotate(15deg); }
-      20%, 40% { transform: rotate(-15deg); }
-      50% { transform: rotate(0deg); }
-    }
-
-    .marquee-box {
-      background-color: #262626;
-      border-radius: 6px;
-      padding: 6px 10px;
-      margin-bottom: 15px;
-      font-size: 13px;
-      color: #eab308;
-      display: flex;
-      align-items: center;
-      overflow: hidden;
-      border: 1px dashed #eab308;
-      cursor: pointer;
-    }
-    .marquee-box marquee { width: 100%; font-weight: 500; }
-
+    body { background-color: #0d0d0d; color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+    .container { background-color: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 25px 20px; width: 100%; max-width: 420px; box-shadow: 0 8px 24px rgba(255, 255, 255, 0.05); text-align: center; }
     .badge { display: inline-block; background-color: #22c55e; color: #000000; font-size: 12px; font-weight: bold; padding: 4px 12px; border-radius: 20px; margin-bottom: 10px; }
-    h2 { color: #ffffff; margin-bottom: 12px; font-size: 20px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+    h2 { color: #ffffff; margin-bottom: 15px; font-size: 20px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #333; padding-bottom: 10px; }
     .input-group { margin-bottom: 15px; text-align: left; }
     .input-group label { display: block; font-size: 13px; color: #aaaaaa; margin-bottom: 5px; }
     .input-group input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background-color: #262626; color: #fff; font-size: 15px; outline: none; }
     .input-group input:focus { border-color: #22c55e; }
-    .btn { width: 100%; padding: 14px; border-radius: 8px; font-size: 15px; font-weight: bold; background-color: #22c55e; color: #000000; border: none; cursor: pointer; transition: all 0.3s ease; margin-bottom: 12px; display: block; text-decoration: none; box-sizing: border-box; }
+    .btn { width: 100%; padding: 14px; border-radius: 8px; font-size: 15px; font-weight: bold; background-color: #22c55e; color: #000000; border: none; cursor: pointer; transition: all 0.3s ease; margin-bottom: 12px; }
     .btn:hover { background-color: #16a34a; }
     .btn-key { background-color: #eab308; color: #000000; }
     .btn-key:hover { background-color: #ca8a04; }
+    .btn-guide { background-color: #3b82f6; color: #ffffff; margin-top: 5px; }
+    .btn-guide:hover { background-color: #2563eb; }
 
     .notice { background-color: #262626; border-left: 4px solid #eab308; padding: 12px; font-size: 12px; color: #ccc; text-align: left; border-radius: 4px; margin-top: 15px; line-height: 1.6; word-break: break-all; }
     .notice a { color: #38bdf8; text-decoration: none; }
     .notice a:hover { text-decoration: underline; }
     #statusMsg { margin-top: 15px; font-size: 14px; color: #f87171; word-break: break-all; }
 
+    /* Modal xem Video Popup */
     .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); justify-content: center; align-items: center; padding: 15px; }
-    .modal-content { background-color: #1a1a1a; padding: 20px; border-radius: 12px; width: 100%; max-width: 450px; border: 1px solid #444; position: relative; text-align: left; }
+    .modal-content { background-color: #1a1a1a; padding: 15px; border-radius: 12px; width: 100%; max-width: 450px; border: 1px solid #444; position: relative; }
     .close-btn { position: absolute; top: 10px; right: 15px; color: #fff; font-size: 24px; font-weight: bold; cursor: pointer; }
+    video { width: 100%; border-radius: 8px; margin-top: 25px; }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <div class="bell-icon" onclick="openNoticeModal()" title="Xem thông báo mới">🔔</div>
-
     <span class="badge">🔥 HỆ THỐNG BUFF LIKE</span>
     <h2>FREE FIRE VIP</h2>
 
-    <div class="marquee-box" onclick="openNoticeModal()">
-      <span style="margin-right: 5px;">🔔</span>
-      <marquee behavior="scroll" direction="left" scrollamount="5">
-        hiện tại còn 141/230 slot !
-      </marquee>
-    </div>
-
+    <!-- Ô nhập UID Game -->
     <div class="input-group">
       <label for="uidInput">Nhập ID Game (UID) của bạn:</label>
-      <input type="text" id="uidInput" placeholder="Ví dụ: 2230853045">
+      <input type="text" id="uidInput" placeholder="Ví dụ: 101177498">
     </div>
 
-    <!-- Nút sang trang getkey.html trực tiếp không cần sinh token rườm rà ở trang chủ nữa -->
-    <a href="getkey.html" class="btn btn-key" onclick="saveUidBeforeLeave(event)">🔑 Bấm Vào Đây Để Lấy Key</a>
+    <!-- Nút đi lấy Key -->
+    <button class="btn btn-key" onclick="goToGetKey()">🔑 Bấm Vào Đây Để Lấy Key</button>
 
+    <!-- Nút xem Video Hướng Dẫn -->
+    <button class="btn btn-guide" onclick="openGuide()">🎬 Bấm Vào Đây Để Xem Cách Lấy Key</button>
+
+    <!-- Ô nhập Key và Xác nhận Buff -->
     <div class="input-group" style="margin-top: 15px;">
       <label for="keyInput">Nhập Mã Key đã lấy:</label>
       <input type="text" id="keyInput" placeholder="Dán mã Key vào đây...">
@@ -108,25 +66,24 @@
       ⚠️ Buff bên khác buff thêm bên đây không được cộng thêm đâu nhé!<br>
       💬 Support mua gói like ibox:<br>
       • TikTok: <a href="https://www.tiktok.com/@hvpcutis1tg" target="_blank">@hvpcutis1tg</a><br>
-      • Nhóm TikTok: <a href="https://tiktok.me/group/ZSgWYffCH/" target="_blank">@tlzproject</a><br>
+      • Telegram: <a href="https://t.me/tlzproject" target="_blank">@tlzproject</a><br>
       • Nhóm chat: <a href="https://t.me/tlzchat" target="_blank">@tlzchat</a><br>
-      • Hiện tại các UID 11 số bắt đầu từ 1888xxxx sẽ không nhận buff vì nghi vấn sử dụng bot spam <br>
+      • Kênh thông báo: @tlzNotification<br>
+      • Kênh thông báo lệnh buff: bufflike_ff
     </div>
 
     <div id="statusMsg"></div>
   </div>
 
-  <div id="noticeModal" class="modal">
+  <!-- BẢNG XEM VIDEO POPUP -->
+  <div id="videoModal" class="modal">
     <div class="modal-content">
-      <span class="close-btn" onclick="closeNoticeModal()">&times;</span>
-      <h3 style="color: #eab308; margin-bottom: 12px; border-bottom: 1px solid #333; padding-bottom: 8px;">🔔 THÔNG BÁO HỆ THỐNG</h3>
-      <div style="font-size: 13px; color: #ddd; line-height: 1.6;">
-        <p>✨ <b>Cập nhật hệ thống Buff Like FF:</b></p>
-        <p>• Thời gian mở cổng: <b>09:00 - 23:00</b> hằng ngày.</p>
-        <p>• Mỗi IP/Thiết bị được nhận tối đa <b>200 like/ngày</b>.</p>
-        <p>• Mã Key có hiệu lực trong ngày, vui lòng dùng ngay sau khi vượt link.</p>
-        <p>• Kênh cập nhật thông báo mới nhất: <a href="https://t.me/tlzNotification" target="_blank" style="color: #38bdf8;">@tlzNotification</a></p>
-      </div>
+      <span class="close-btn" onclick="closeGuide()">×</span>
+      <p style="text-align: left; font-size: 14px; font-weight: bold; color: #3b82f6;">🎬 Video hướng dẫn vượt link:</p>
+      <video id="guideVideo" controls>
+        <source src="lv_0_20261020044711.mp4" type="video/mp4">
+        Trình duyệt của bạn không hỗ trợ xem video.
+      </video>
     </div>
   </div>
 
@@ -140,21 +97,59 @@
       if (savedKey) document.getElementById("keyInput").value = savedKey;
     });
 
-    function saveUidBeforeLeave(e) {
+    function openGuide() {
+      document.getElementById("videoModal").style.display = "flex";
+    }
+
+    function closeGuide() {
+      const video = document.getElementById("guideVideo");
+      video.pause();
+      document.getElementById("videoModal").style.display = "none";
+    }
+
+    window.onclick = function(event) {
+      const modal = document.getElementById("videoModal");
+      if (event.target === modal) closeGuide();
+    }
+
+    async function goToGetKey() {
       const uid = document.getElementById("uidInput").value.trim();
       if (!uid) {
-        e.preventDefault();
         alert("Vui lòng nhập ID Game (UID) của bạn trước khi đi lấy Key!");
         return;
       }
-      localStorage.setItem("tiz_current_uid", uid);
-    }
+      const msgDiv = document.getElementById("statusMsg");
+      msgDiv.style.color = "#aaaaaa";
+      msgDiv.innerText = "Đang tạo phiên vượt link bảo mật...";
 
-    function openNoticeModal() { document.getElementById("noticeModal").style.display = "flex"; }
-    function closeNoticeModal() { document.getElementById("noticeModal").style.display = "none"; }
+      try {
+        const res = await fetch(`${SCRIPT_URL}?action=create_onetime_token&uid=${encodeURIComponent(uid)}`);
+        const data = await res.json();
 
-    window.onclick = function(event) {
-      if (event.target === document.getElementById("noticeModal")) closeNoticeModal();
+        if (data.status === "success") {
+          const uniqueToken = data.token;
+          localStorage.setItem("tiz_current_uid", uid);
+          localStorage.setItem("tiz_pending_token", uniqueToken);
+
+          let baseLink = "https://link4m.org/DRDP9J";
+          try {
+            const geoRes = await fetch('https://ipapi.co/json/');
+            const geoData = await geoRes.json();
+            if (geoData && geoData.country_code && geoData.country_code !== 'VN') {
+              baseLink = "https://link2m.com/0odue40O";
+            }
+          } catch(e) {}
+
+          const finalRedirectUrl = baseLink + "?api=0&url=" + encodeURIComponent("https://bufflikeff.site/getkey.html?token=" + uniqueToken);
+          window.location.href = finalRedirectUrl;
+        } else {
+          alert("Lỗi tạo phiên: " + data.message);
+          msgDiv.innerText = "";
+        }
+      } catch (err) {
+        alert("Lỗi kết nối đến máy chủ!");
+        msgDiv.innerText = "";
+      }
     }
 
     async function submitBuff() {
@@ -168,24 +163,19 @@
       }
 
       msgDiv.style.color = "#aaaaaa";
-      msgDiv.innerText = "Đang xác minh mã Key từ hệ thống...";
+      msgDiv.innerText = "Đang xác minh mã Key...";
 
       try {
-        const targetUrl = `${SCRIPT_URL}?action=verify_and_buff&uid=${encodeURIComponent(uid)}&key=${encodeURIComponent(key)}`;
-        
-        const response = await fetch(targetUrl);
+        const response = await fetch(`${SCRIPT_URL}?action=verify_and_buff&uid=${encodeURIComponent(uid)}&key=${encodeURIComponent(key)}`);
         const data = await response.json();
 
         if (data.status === "success") {
           msgDiv.style.color = "#4ade80";
-          msgDiv.innerText = "✅ " + data.message;
-          alert("✅ " + data.message);
-          document.getElementById("keyInput").value = "";
-          localStorage.removeItem("tiz_last_key");
+          msgDiv.innerText = data.message;
+          alert(data.message);
         } else {
           msgDiv.style.color = "#f87171";
-          msgDiv.innerText = "❌ " + (data.message || "Mã Key không hợp lệ hoặc đã hết hạn!");
-          alert("❌ " + (data.message || "Mã Key không hợp lệ!"));
+          msgDiv.innerText = data.message;
         }
       } catch (err) {
         msgDiv.style.color = "#f87171";
