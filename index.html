@@ -29,11 +29,38 @@
       z-index: 10;
     }
 
+    /* Nút Bật/Tắt Nhạc Nổi Góc Trái */
+    .music-icon {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background-color: #262626;
+      border: 1px solid #38bdf8;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+      z-index: 10;
+      transition: transform 0.2s;
+    }
+    .music-icon:active { transform: scale(0.9); }
+    .music-icon.playing { animation: music-spin 3s linear infinite; border-color: #22c55e; }
+
     @keyframes bell-ring {
       0%, 100% { transform: rotate(0deg); }
       10%, 30% { transform: rotate(15deg); }
       20%, 40% { transform: rotate(-15deg); }
       50% { transform: rotate(0deg); }
+    }
+
+    @keyframes music-spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     /* Thanh Thông Báo Chạy Chữ */
@@ -79,8 +106,16 @@
 </head>
 <body>
 
+  <!-- THẺ AUDIO PHÁT NHẠC NỀN -->
+  <audio id="bgMusic" loop>
+    <source src="nhac.mp3" type="audio/mp3">
+  </audio>
+
   <div class="container">
-    <!-- Nút Chuông Rung Nhấp Nháy -->
+    <!-- Nút Bật/Tắt Nhạc Góc Trái -->
+    <div id="musicToggleBtn" class="music-icon" onclick="toggleMusic()" title="Bật/Tắt nhạc nền">🔇</div>
+
+    <!-- Nút Chuông Rung Nhấp Nháy Góc Phải -->
     <div class="bell-icon" onclick="openNoticeModal()" title="Xem thông báo mới">🔔</div>
 
     <span class="badge">🔥 HỆ THỐNG BUFF LIKE</span>
@@ -165,6 +200,37 @@
       if (savedUid) document.getElementById("uidInput").value = savedUid;
       if (savedKey) document.getElementById("keyInput").value = savedKey;
     });
+
+    // --- XỬ LÝ NHẠC NỀN ---
+    const music = document.getElementById("bgMusic");
+    const musicBtn = document.getElementById("musicToggleBtn");
+    music.volume = 0.5; // Đặt âm lượng 50%
+
+    function toggleMusic() {
+      if (music.paused) {
+        music.play().then(() => {
+          musicBtn.innerText = "🔊";
+          musicBtn.classList.add("playing");
+        }).catch(e => {
+          console.log("Trình duyệt chặn tự động phát");
+        });
+      } else {
+        music.pause();
+        musicBtn.innerText = "🔇";
+        musicBtn.classList.remove("playing");
+      }
+    }
+
+    // Tự động bật nhạc khi user có tương tác đầu tiên trên trang (tránh bị trình duyệt chặn)
+    document.body.addEventListener('click', function initMusicOnce() {
+      if (music.paused) {
+        music.play().then(() => {
+          musicBtn.innerText = "🔊";
+          musicBtn.classList.add("playing");
+        }).catch(e => {});
+      }
+      document.body.removeEventListener('click', initMusicOnce);
+    }, { once: true });
 
     function openNoticeModal() {
       document.getElementById("noticeModal").style.display = "flex";
