@@ -8,7 +8,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: #0d0d0d; color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; position: relative; }
     
-    /* Nút Menu 3 Gạch cố định tuyệt đối lên trên cùng */
+    /* Nút Menu 3 Gạch cố định tuyệt đối lên góc */
     .menu-toggle-btn { position: fixed; top: 15px; left: 15px; background-color: #262626; border: 2px solid #38bdf8; color: #fff; font-size: 22px; padding: 10px 14px; border-radius: 8px; cursor: pointer; z-index: 999999; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
     .menu-toggle-btn:active { transform: scale(0.95); }
 
@@ -53,8 +53,8 @@
 </head>
 <body>
 
-  <!-- Nút Menu 3 Gạch cố định màn hình -->
-  <button type="button" class="menu-toggle-btn" onclick="openMenuModal()">☰</button>
+  <!-- Nút Menu 3 Gạch -->
+  <button type="button" class="menu-toggle-btn">☰</button>
 
   <div class="container">
     <span class="badge">🔥 HỆ THỐNG BUFF LIKE</span>
@@ -94,14 +94,14 @@
   <!-- MODAL MENU 3 GẠCH -->
   <div id="menuModal" class="modal">
     <div class="modal-content">
-      <span class="close-btn" onclick="closeMenuModal()">&times;</span>
+      <span class="close-btn">&times;</span>
       <h3 style="color: #38bdf8; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 8px; text-align: center;">📂 MENU HỆ THỐNG</h3>
       
       <a class="menu-item event-diamond" onclick="openDiamondEvent()">🎁 Sự Kiện Sưu Tầm Linh Vật (Đổi KC)</a>
       <a class="menu-item event-checkin" onclick="openCheckInModal()">📅 Điểm Danh Liên Tiếp (Nhận 25 & 50 KC)</a>
       <a href="https://t.me/tlzchat" target="_blank" class="menu-item">💬 Nhóm Hỗ Trợ Telegram</a>
       <a href="https://www.tiktok.com/@hvpcutis1tg" target="_blank" class="menu-item">🎵 Liên Hệ Admin TikTok</a>
-      <a class="menu-item" onclick="closeMenuModal()" style="background: #333;">❌ Đóng Menu</a>
+      <a class="menu-item close-menu-text" style="background: #333; text-align: center;">❌ Đóng Menu</a>
     </div>
   </div>
 
@@ -200,7 +200,32 @@
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyLs0JbLy82nCIuIXXmTZUIih6QNw43u9nyWHAPCGzH-AxuXhKgEV2vuAuHalkjI9GS/exec";
 
-    window.addEventListener('DOMContentLoaded', async () => {
+    // Gắn sự kiện trực tiếp bằng addEventListener để tránh bị lỗi click nút 3 gạch
+    document.addEventListener("DOMContentLoaded", () => {
+      const menuBtn = document.querySelector(".menu-toggle-btn");
+      const menuModal = document.getElementById("menuModal");
+      const closeMenuBtn = document.querySelector("#menuModal .close-btn");
+      const closeMenuText = document.querySelector("#menuModal .close-menu-text");
+
+      if (menuBtn && menuModal) {
+        menuBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          menuModal.style.display = "flex";
+        });
+      }
+
+      if (closeMenuBtn && menuModal) {
+        closeMenuBtn.addEventListener("click", () => {
+          menuModal.style.display = "none";
+        });
+      }
+
+      if (closeMenuText && menuModal) {
+        closeMenuText.addEventListener("click", () => {
+          menuModal.style.display = "none";
+        });
+      }
+
       const savedUid = localStorage.getItem("tiz_current_uid");
       const savedKey = localStorage.getItem("tiz_last_key");
       if (savedUid) document.getElementById("uidInput").value = savedUid;
@@ -212,7 +237,7 @@
         document.getElementById("uidInput").value = uidFromUrl;
         localStorage.setItem("tiz_current_uid", uidFromUrl);
         try {
-          await fetch(`${SCRIPT_URL}?action=add_turn&uid=${encodeURIComponent(uidFromUrl)}`);
+          fetch(`${SCRIPT_URL}?action=add_turn&uid=${encodeURIComponent(uidFromUrl)}`);
           alert("🎉 Vượt link thành công! Hệ thống đã ghi nhận lượt cho bạn.");
           window.history.replaceState({}, document.title, window.location.pathname);
           openDiamondEvent();
@@ -220,19 +245,14 @@
       }
     });
 
-    // Hàm mở menu bắt buộc hiển thị trực tiếp
     function openMenuModal() {
       const modal = document.getElementById("menuModal");
-      if (modal) {
-        modal.style.display = "flex";
-      }
+      if (modal) modal.style.display = "flex";
     }
     
     function closeMenuModal() {
       const modal = document.getElementById("menuModal");
-      if (modal) {
-        modal.style.display = "none";
-      }
+      if (modal) modal.style.display = "none";
     }
 
     function openGuide() { document.getElementById("videoModal").style.display = "flex"; }
@@ -334,16 +354,4 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ action: "open_gift", uid: uid })
         });
-        const data = await res.json();
-        if (data.status !== "success") {
-          resultDiv.style.color = "#f87171";
-          resultDiv.innerText = "⚠️ " + data.message;
-          return;
-        }
-        const itemNames = { cat: "🐱 1 Con Mèo", cat_fish: "🐟 1 Con Mèo Cá", wolf: "🐺 1 Con Sói" };
-        resultDiv.style.color = "#4ade80";
-        resultDiv.innerText = `🎉 Mở Hộp #${boxNum} trúng: ${itemNames[data.item] || data.item}!`;
-        document.getElementById("userTurnsCount").innerText = data.turns;
-        document.getElementById("invCat").innerText = data.inventory.cat || 0;
-        document.getElementById("invCatFish").innerText = data.inventory.cat_fish || 0;
-        document.getElementById("invWo
+        const data
