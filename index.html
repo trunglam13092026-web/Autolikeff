@@ -7,13 +7,31 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: #0d0d0d; color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+
     .container { background-color: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 25px 20px; width: 100%; max-width: 420px; box-shadow: 0 8px 24px rgba(255, 255, 255, 0.05); text-align: center; }
     .badge { display: inline-block; background-color: #22c55e; color: #000000; font-size: 12px; font-weight: bold; padding: 4px 12px; border-radius: 20px; margin-bottom: 10px; }
+    
+    /* Khung Tích Lũy / Buff Liên Tục */
+    .streak-box { background-color: #262626; border: 1px solid #eab308; border-radius: 8px; padding: 12px; margin-bottom: 15px; text-align: center; }
+    .streak-box .streak-title { font-size: 13px; color: #eab308; font-weight: bold; margin-bottom: 4px; }
+    .streak-box .streak-count { font-size: 18px; color: #22c55e; font-weight: bold; }
+    .streak-box .streak-note { font-size: 11px; color: #aaa; margin-top: 4px; }
+
+    /* Bảng Mốc Thưởng Tích Lũy */
+    .milestone-section { background-color: #262626; border: 1px solid #444; border-radius: 8px; padding: 12px; margin-bottom: 15px; text-align: left; }
+    .milestone-section h4 { font-size: 13px; color: #38bdf8; margin-bottom: 8px; text-align: center; }
+    .milestone-row { display: flex; justify-content: space-between; align-items: center; background-color: #1f1f1f; padding: 8px 10px; border-radius: 6px; border: 1px solid #333; margin-bottom: 6px; }
+    .milestone-info { font-size: 12px; color: #ddd; }
+    .btn-claim { background-color: #eab308; color: #000; border: none; padding: 5px 10px; font-weight: bold; font-size: 11px; border-radius: 4px; cursor: pointer; transition: 0.2s; }
+    .btn-claim:hover { background-color: #ca8a04; color: #fff; }
+
     h2 { color: #ffffff; margin-bottom: 15px; font-size: 20px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+    
     .input-group { margin-bottom: 15px; text-align: left; }
     .input-group label { display: block; font-size: 13px; color: #aaaaaa; margin-bottom: 5px; }
     .input-group input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background-color: #262626; color: #fff; font-size: 15px; outline: none; }
     .input-group input:focus { border-color: #22c55e; }
+    
     .btn { width: 100%; padding: 14px; border-radius: 8px; font-size: 15px; font-weight: bold; background-color: #22c55e; color: #000000; border: none; cursor: pointer; transition: all 0.3s ease; margin-bottom: 12px; }
     .btn:hover { background-color: #16a34a; }
     .btn-key { background-color: #eab308; color: #000000; }
@@ -26,9 +44,8 @@
     .notice a:hover { text-decoration: underline; }
     #statusMsg { margin-top: 15px; font-size: 14px; color: #f87171; word-break: break-all; }
 
-    /* Modal xem Video Popup */
-    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); justify-content: center; align-items: center; padding: 15px; }
-    .modal-content { background-color: #1a1a1a; padding: 15px; border-radius: 12px; width: 100%; max-width: 450px; border: 1px solid #444; position: relative; }
+    .modal { display: none; position: fixed; z-index: 9999999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); justify-content: center; align-items: center; padding: 15px; }
+    .modal-content { background-color: #1a1a1a; padding: 20px; border-radius: 12px; width: 100%; max-width: 420px; border: 1px solid #444; position: relative; }
     .close-btn { position: absolute; top: 10px; right: 15px; color: #fff; font-size: 24px; font-weight: bold; cursor: pointer; }
     video { width: 100%; border-radius: 8px; margin-top: 25px; }
   </style>
@@ -37,12 +54,42 @@
 
   <div class="container">
     <span class="badge">🔥 HỆ THỐNG BUFF LIKE</span>
+
+    <!-- KHUNG TÍCH LŨY BUFF LIÊN TỤC -->
+    <div class="streak-box">
+      <div class="streak-title">🔥 CHUỖI BUFF LIKE LIÊN TỤC</div>
+      <div class="streak-count" id="streakDisplay">0 Ngày</div>
+      <div class="streak-note">⚠️ Cần buff mỗi ngày, quên 1 ngày sẽ gãy chuỗi tính lại từ đầu!</div>
+    </div>
+
+    <!-- BẢNG MỐC QUÀ TÍCH LŨY -->
+    <div class="milestone-section">
+      <h4>🎁 Mốc Thưởng Tích Lũy Ngày</h4>
+      
+      <div class="milestone-row">
+        <div class="milestone-info"><b>Mốc 14 Ngày:</b> 25 Kim Ngân / KC</div>
+        <button class="btn-claim" onclick="claimMilestone(14)">🚀 Rút</button>
+      </div>
+      <div class="milestone-row">
+        <div class="milestone-info"><b>Mốc 30 Ngày:</b> 50 Kim Cương</div>
+        <button class="btn-claim" onclick="claimMilestone(30)">🚀 Rút</button>
+      </div>
+      <div class="milestone-row">
+        <div class="milestone-info"><b>Mốc 60 Ngày:</b> 113 Kim Cương</div>
+        <button class="btn-claim" onclick="claimMilestone(60)">👑 Rút</button>
+      </div>
+      <div class="milestone-row">
+        <div class="milestone-info"><b>Mốc 120 Ngày:</b> Thẻ Tuần</div>
+        <button class="btn-claim" onclick="claimMilestone(120)">💎 Nhận</button>
+      </div>
+    </div>
+
     <h2>FREE FIRE VIP</h2>
 
     <!-- Ô nhập UID Game -->
     <div class="input-group">
       <label for="uidInput">Nhập ID Game (UID) của bạn:</label>
-      <input type="text" id="uidInput" placeholder="Ví dụ: 2230853045">
+      <input type="text" id="uidInput" placeholder="Ví dụ: 2230853045" oninput="loadUserStreak()">
     </div>
 
     <!-- Nút đi lấy Key -->
@@ -75,10 +122,10 @@
     <div id="statusMsg"></div>
   </div>
 
-  <!-- BẢNG XEM VIDEO POPUP -->
+  <!-- MODAL VIDEO HƯỚNG DẪN -->
   <div id="videoModal" class="modal">
     <div class="modal-content">
-      <span class="close-btn" onclick="closeGuide()">×</span>
+      <span class="close-btn" onclick="closeGuide()">&times;</span>
       <p style="text-align: left; font-size: 14px; font-weight: bold; color: #3b82f6;">🎬 Video hướng dẫn vượt link:</p>
       <video id="guideVideo" controls>
         <source src="lv_0_20261020044711.mp4" type="video/mp4">
@@ -93,31 +140,77 @@
     window.addEventListener('DOMContentLoaded', () => {
       const savedUid = localStorage.getItem("tiz_current_uid");
       const savedKey = localStorage.getItem("tiz_last_key");
-      if (savedUid) document.getElementById("uidInput").value = savedUid;
+      if (savedUid) {
+        document.getElementById("uidInput").value = savedUid;
+        loadUserStreak();
+      }
       if (savedKey) document.getElementById("keyInput").value = savedKey;
     });
 
-    function openGuide() {
-      document.getElementById("videoModal").style.display = "flex";
+    function loadUserStreak() {
+      const uid = document.getElementById("uidInput").value.trim();
+      if (!uid) {
+        document.getElementById("streakDisplay").innerText = "0 Ngày";
+        return;
+      }
+      localStorage.setItem("tiz_current_uid", uid);
+
+      let streakData = JSON.parse(localStorage.getItem("streak_" + uid)) || { count: 0, lastDate: "" };
+      let todayStr = new Date().toISOString().slice(0, 10);
+
+      if (streakData.lastDate) {
+        let lastD = new Date(streakData.lastDate);
+        let todayD = new Date(todayStr);
+        let diffTime = Math.abs(todayD - lastD);
+        let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays > 1) {
+          streakData.count = 0;
+          streakData.lastDate = "";
+          localStorage.setItem("streak_" + uid, JSON.stringify(streakData));
+        }
+      }
+
+      document.getElementById("streakDisplay").innerText = streakData.count + " Ngày";
     }
 
+    function claimMilestone(milestone) {
+      const uid = document.getElementById("uidInput").value.trim();
+      if (!uid) {
+        alert("Vui lòng nhập ID Game (UID) của bạn trước khi rút quà!");
+        return;
+      }
+      let streakData = JSON.parse(localStorage.getItem("streak_" + uid)) || { count: 0 };
+      
+      if (streakData.count < milestone) {
+        alert(`⚠️ Chuỗi buff hiện tại của bạn là ${streakData.count} ngày. Chưa đạt mốc ${milestone} ngày để rút phần thưởng này!`);
+        return;
+      }
+
+      const rewards = {
+        14: "25 Kim Cương",
+        30: "50 Kim Cương",
+        60: "113 Kim Cương",
+        120: "Thẻ Tuần"
+      };
+
+      alert(`🎉 Chúc mừng UID: ${uid} đã rút thành công phần thưởng mốc ${milestone} ngày: ${rewards[milestone]}! Hệ thống sẽ tự động gửi vào game cho bạn.`);
+    }
+
+    function openGuide() { document.getElementById("videoModal").style.display = "flex"; }
     function closeGuide() {
       const video = document.getElementById("guideVideo");
-      video.pause();
+      if (video) video.pause();
       document.getElementById("videoModal").style.display = "none";
     }
 
     window.onclick = function(event) {
-      const modal = document.getElementById("videoModal");
-      if (event.target === modal) closeGuide();
+      if (event.target === document.getElementById("videoModal")) closeGuide();
     }
 
     async function goToGetKey() {
       const uid = document.getElementById("uidInput").value.trim();
-      if (!uid) {
-        alert("Vui lòng nhập ID Game (UID) của bạn trước khi đi lấy Key!");
-        return;
-      }
+      if (!uid) { alert("Vui lòng nhập ID Game (UID) của bạn trước khi đi lấy Key!"); return; }
       const msgDiv = document.getElementById("statusMsg");
       msgDiv.style.color = "#aaaaaa";
       msgDiv.innerText = "Đang tạo phiên vượt link bảo mật...";
@@ -125,42 +218,25 @@
       try {
         const res = await fetch(`${SCRIPT_URL}?action=create_onetime_token&uid=${encodeURIComponent(uid)}`);
         const data = await res.json();
-
         if (data.status === "success") {
           const uniqueToken = data.token;
           localStorage.setItem("tiz_current_uid", uid);
           localStorage.setItem("tiz_pending_token", uniqueToken);
-
           let baseLink = "https://link4m.org/DRDP9J";
-          try {
-            const geoRes = await fetch('https://ipapi.co/json/');
-            const geoData = await geoRes.json();
-            if (geoData && geoData.country_code && geoData.country_code !== 'VN') {
-              baseLink = "https://link2m.com/0odue40O";
-            }
-          } catch(e) {}
-
           const finalRedirectUrl = baseLink + "?api=0&url=" + encodeURIComponent("https://bufflikeff.site/getkey.html?token=" + uniqueToken);
           window.location.href = finalRedirectUrl;
         } else {
           alert("Lỗi tạo phiên: " + data.message);
           msgDiv.innerText = "";
         }
-      } catch (err) {
-        alert("Lỗi kết nối đến máy chủ!");
-        msgDiv.innerText = "";
-      }
+      } catch (err) { alert("Lỗi kết nối đến máy chủ!"); msgDiv.innerText = ""; }
     }
 
     async function submitBuff() {
       const uid = document.getElementById("uidInput").value.trim();
       const key = document.getElementById("keyInput").value.trim();
       const msgDiv = document.getElementById("statusMsg");
-
-      if (!uid || !key) {
-        alert("Vui lòng nhập đầy đủ UID và Mã Key!");
-        return;
-      }
+      if (!uid || !key) { alert("Vui lòng nhập đầy đủ UID và Mã Key!"); return; }
 
       msgDiv.style.color = "#aaaaaa";
       msgDiv.innerText = "Đang xác minh mã Key...";
@@ -168,19 +244,35 @@
       try {
         const response = await fetch(`${SCRIPT_URL}?action=verify_and_buff&uid=${encodeURIComponent(uid)}&key=${encodeURIComponent(key)}`);
         const data = await response.json();
-
+        msgDiv.style.color = data.status === "success" ? "#4ade80" : "#f87171";
+        msgDiv.innerText = data.message;
+        
         if (data.status === "success") {
-          msgDiv.style.color = "#4ade80";
-          msgDiv.innerText = data.message;
-          alert(data.message);
-        } else {
-          msgDiv.style.color = "#f87171";
-          msgDiv.innerText = data.message;
+          let todayStr = new Date().toISOString().slice(0, 10);
+          let streakData = JSON.parse(localStorage.getItem("streak_" + uid)) || { count: 0, lastDate: "" };
+
+          if (streakData.lastDate !== todayStr) {
+            if (streakData.lastDate) {
+              let lastD = new Date(streakData.lastDate);
+              let todayD = new Date(todayStr);
+              let diffDays = Math.ceil(Math.abs(todayD - lastD) / (1000 * 60 * 60 * 24));
+              
+              if (diffDays === 1) {
+                streakData.count += 1;
+              } else if (diffDays > 1) {
+                streakData.count = 1;
+              }
+            } else {
+              streakData.count = 1;
+            }
+            streakData.lastDate = todayStr;
+            localStorage.setItem("streak_" + uid, JSON.stringify(streakData));
+            loadUserStreak();
+          }
+
+          alert(data.message + " 🎉 Đã ghi nhận chuỗi buff liên tục hôm nay!");
         }
-      } catch (err) {
-        msgDiv.style.color = "#f87171";
-        msgDiv.innerText = "Không thể kết nối đến Server!";
-      }
+      } catch (err) { msgDiv.style.color = "#f87171"; msgDiv.innerText = "Không thể kết nối đến Server!"; }
     }
   </script>
 </body>
