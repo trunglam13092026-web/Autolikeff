@@ -227,7 +227,6 @@
         document.getElementById("uidInput").value = uidFromUrl;
         localStorage.setItem("tiz_current_uid", uidFromUrl);
         try {
-          // Gọi tự động thêm lượt (Ở đây API open_gift/get_status có thể quy định thêm lượt vượt link nếu cấu hình, hoặc cộng thủ công)
           const res = await fetch(`${SCRIPT_URL}?action=add_turn&uid=${encodeURIComponent(uidFromUrl)}`);
           alert("🎉 Vượt link thành công! Hệ thống đã ghi nhận lượt cho bạn.");
           window.history.replaceState({}, document.title, window.location.pathname);
@@ -237,14 +236,20 @@
     });
 
     // Quản lý Modal Menu 3 gạch
-    function openMenuModal() { document.getElementById("menuModal").style.display = "flex"; }
-    function closeMenuModal() { document.getElementById("menuModal").style.display = "none"; }
+    function openMenuModal() {
+      const modal = document.getElementById("menuModal");
+      if (modal) modal.style.display = "flex";
+    }
+    function closeMenuModal() {
+      const modal = document.getElementById("menuModal");
+      if (modal) modal.style.display = "none";
+    }
 
     // Quản lý Modal Hướng dẫn Video
     function openGuide() { document.getElementById("videoModal").style.display = "flex"; }
     function closeGuide() {
       const video = document.getElementById("guideVideo");
-      video.pause();
+      if (video) video.pause();
       document.getElementById("videoModal").style.display = "none";
     }
 
@@ -343,7 +348,6 @@
       }
       const currentSiteUrl = window.location.origin + window.location.pathname;
       const redirectBackUrl = `${currentSiteUrl}?uid=${encodeURIComponent(uid)}`;
-      // Link rút gọn trỏ về trang web kèm cơ chế ?url=
       const finalLink4M = `https://link4m.org/DRDP9J?api=0&url=${encodeURIComponent(redirectBackUrl)}`;
       window.open(finalLink4M, '_blank');
     }
@@ -357,4 +361,5 @@
         if (data.status === "success") {
           document.getElementById("userTurnsCount").innerText = data.turns;
           document.getElementById("invCat").innerText = data.inventory.cat || 0;
-          document.getElementById("invCatFish").innerText = data.invent
+          document.getElementById("invCatFish").innerText = data.inventory.cat_fish || 0;
+          document.getElementById("invWolf").innerText = data.inven
