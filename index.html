@@ -43,7 +43,6 @@
       position: relative;
       margin: 15px 10px 8px 10px;
     }
-    /* Đường kẻ ngang của thước */
     .ruler-track::before {
       content: '';
       position: absolute;
@@ -62,7 +61,6 @@
       flex: 1;
       cursor: pointer;
     }
-    /* Vạch chia độ trên cây thước */
     .ruler-tick {
       width: 3px;
       height: 14px;
@@ -252,6 +250,13 @@
       if (savedKey) document.getElementById("keyInput").value = savedKey;
     });
 
+    // HÀM KIỂM TRA ĐẦU UID BỊ CHẶN (11 SỐ, TỪ 1889 ĐẾN 1900)
+    function isUidBlocked(uid) {
+      if (!/^\d{11}$/.test(uid)) return false; 
+      const prefix = parseInt(uid.substring(0, 4), 10);
+      return prefix >= 1889 && prefix <= 1900;
+    }
+
     function loadUserStreak() {
       const uid = document.getElementById("uidInput").value.trim();
       if (!uid) {
@@ -259,6 +264,7 @@
         updateRulerProgress(0);
         return;
       }
+
       localStorage.setItem("tiz_current_uid", uid);
 
       let streakData = JSON.parse(localStorage.getItem("streak_" + uid)) || { count: 0, lastDate: "" };
@@ -281,7 +287,6 @@
       updateRulerProgress(streakData.count);
     }
 
-    // Tự động sáng đèn các vạch mốc trên thước khi đạt đủ ngày
     function updateRulerProgress(count) {
       [14, 30, 60, 120].forEach(milestone => {
         const node = document.getElementById("node-" + milestone);
@@ -299,6 +304,13 @@
         alert("Vui lòng nhập ID Game (UID) của bạn trước khi rút quà!");
         return;
       }
+
+      // Vẫn cho vượt link/rút quà bình thường, nhưng nếu UID dính chưởng thì chặn ở đây
+      if (isUidBlocked(uid)) {
+        alert("❌ ID này đã bị hạn chế, không thể nhận phần thưởng từ hệ thống!");
+        return;
+      }
+
       let streakData = JSON.parse(localStorage.getItem("streak_" + uid)) || { count: 0 };
       
       if (streakData.count < milestone) {
@@ -313,7 +325,7 @@
         120: "Thẻ Tuần"
       };
 
-      alert(`🎉 Chúc mừng UID: ${uid} đã rút thành công phần thưởng mốc ${milestone} ngày: ${rewards[milestone]}! Hệ thống sẽ tự động gửi vào game cho bạn.`);
+      alert(`🎉 Chúc mừng UID: ${uid} đã rút thành công phần thưởng mốc ${milestone} ngày: ${rewards[milestone]}!`);
     }
 
     function openGuide() { document.getElementById("videoModal").style.display = "flex"; }
@@ -327,9 +339,11 @@
       if (event.target === document.getElementById("videoModal")) closeGuide();
     }
 
+    // ĐOẠN 1: CHO PHÉP TẠO KEY BÌNH THƯỜNG (VẪN ĐI QUA LINK RÚT GỌN ĐỂ TÍNH DOANH THU)
     async function goToGetKey() {
       const uid = document.getElementById("uidInput").value.trim();
       if (!uid) { alert("Vui lòng nhập ID Game (UID) của bạn trước khi đi lấy Key!"); return; }
+
       const msgDiv = document.getElementById("statusMsg");
       msgDiv.style.color = "#38bdf8";
       msgDiv.innerText = "Đang tạo phiên vượt link bảo mật...";
@@ -361,11 +375,21 @@
       } catch (err) { alert("Lỗi kết nối đến máy chủ!"); msgDiv.innerText = ""; }
     }
 
+    // ĐOẠN 2: ĐẾN KHI BẤM "TIẾN HÀNH BUFF" MỚI CHẶN VÀ LÀM MẤT KEY CỦA CHÚNG
     async function submitBuff() {
       const uid = document.getElementById("uidInput").value.trim();
       const key = document.getElementById("keyInput").value.trim();
       const msgDiv = document.getElementById("statusMsg");
+      
       if (!uid || !key) { alert("Vui lòng nhập đầy đủ UID và Mã Key!"); return; }
+
+      // KIỂM TRA NẾU THUỘC UID BỊ CHẶN -> TỪ CHỐI, HỦY LỆNH, BÁO MẤT KEY
+      if (isUidBlocked(uid)) {
+        msgDiv.style.color = "#f87171";
+        msgDiv.innerText = "❌ ID này đã bị từ chối nhận buff!";
+        alert("❌ Rất tiếc! UID 11 số (từ 1889 đến 1900) đã bị hệ thống hạn chế. Mã Key bạn vừa vượt sẽ bị hủy và không thể sử dụng!");
+        return;
+      }
 
       msgDiv.style.color = "#38bdf8";
       msgDiv.innerText = "Đang xác minh mã Key...";
@@ -401,7 +425,7 @@
 
           alert(data.message + " 🎉 Đã ghi nhận chuỗi buff liên tục hôm nay!");
         }
-      } catch (err) { msgDiv.style.color = "#f87171"; msgDiv.innerText = "Không thể kết nối đến Server!"; }
+      } catch (err) { msgDiv.style.log; msgDiv.style.color = "#f87171"; msgDiv.innerText = "Không thể kết nối đến Server!"; }
     }
   </script>
 </body>
