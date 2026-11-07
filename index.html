@@ -6,44 +6,137 @@
   <title>BUFF LIKE FREE FIRE - TRANG CHỦ</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: #0d0d0d; color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-
-    .container { background-color: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 25px 20px; width: 100%; max-width: 420px; box-shadow: 0 8px 24px rgba(255, 255, 255, 0.05); text-align: center; }
-    .badge { display: inline-block; background-color: #22c55e; color: #000000; font-size: 12px; font-weight: bold; padding: 4px 12px; border-radius: 20px; margin-bottom: 10px; }
     
-    /* Khung Tích Lũy / Buff Liên Tục */
-    .streak-box { background-color: #262626; border: 1px solid #eab308; border-radius: 8px; padding: 12px; margin-bottom: 15px; text-align: center; }
-    .streak-box .streak-title { font-size: 13px; color: #eab308; font-weight: bold; margin-bottom: 4px; }
-    .streak-box .streak-count { font-size: 18px; color: #22c55e; font-weight: bold; }
-    .streak-box .streak-note { font-size: 11px; color: #aaa; margin-top: 4px; }
+    body { background-color: #0b0f19; color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
 
-    /* Bảng Mốc Thưởng Tích Lũy */
-    .milestone-section { background-color: #262626; border: 1px solid #444; border-radius: 8px; padding: 12px; margin-bottom: 15px; text-align: left; }
-    .milestone-section h4 { font-size: 13px; color: #38bdf8; margin-bottom: 8px; text-align: center; }
-    .milestone-row { display: flex; justify-content: space-between; align-items: center; background-color: #1f1f1f; padding: 8px 10px; border-radius: 6px; border: 1px solid #333; margin-bottom: 6px; }
-    .milestone-info { font-size: 12px; color: #ddd; }
-    .btn-claim { background-color: #eab308; color: #000; border: none; padding: 5px 10px; font-weight: bold; font-size: 11px; border-radius: 4px; cursor: pointer; transition: 0.2s; }
-    .btn-claim:hover { background-color: #ca8a04; color: #fff; }
-
-    h2 { color: #ffffff; margin-bottom: 15px; font-size: 20px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+    .container { 
+      background-color: #111827; 
+      border: 1px solid #38bdf8; 
+      border-radius: 14px; 
+      padding: 18px 14px; 
+      width: 100%; 
+      max-width: 420px; 
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.25); 
+      text-align: center; 
+    }
     
-    .input-group { margin-bottom: 15px; text-align: left; }
-    .input-group label { display: block; font-size: 13px; color: #aaaaaa; margin-bottom: 5px; }
-    .input-group input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background-color: #262626; color: #fff; font-size: 15px; outline: none; }
-    .input-group input:focus { border-color: #22c55e; }
+    .badge { display: inline-block; background-color: #22c55e; color: #000000; font-size: 12px; font-weight: bold; padding: 3px 10px; border-radius: 20px; margin-bottom: 8px; }
     
-    .btn { width: 100%; padding: 14px; border-radius: 8px; font-size: 15px; font-weight: bold; background-color: #22c55e; color: #000000; border: none; cursor: pointer; transition: all 0.3s ease; margin-bottom: 12px; }
-    .btn:hover { background-color: #16a34a; }
-    .btn-key { background-color: #eab308; color: #000000; }
-    .btn-key:hover { background-color: #ca8a04; }
-    .btn-guide { background-color: #3b82f6; color: #ffffff; margin-top: 5px; }
-    .btn-guide:hover { background-color: #2563eb; }
+    /* KHUNG MỐC THƯỞNG DẠNG CÂY THƯỚC (RULER STYLE) */
+    .ruler-box { 
+      background-color: #1f2937; 
+      border: 1px solid #eab308; 
+      border-radius: 10px; 
+      padding: 12px 10px; 
+      margin-bottom: 12px; 
+      text-align: center; 
+      box-shadow: 0 0 10px rgba(234, 179, 8, 0.15); 
+    }
+    .ruler-title { font-size: 12px; color: #eab308; font-weight: bold; margin-bottom: 2px; }
+    .ruler-count { font-size: 17px; color: #22c55e; font-weight: bold; margin-bottom: 2px; }
+    .ruler-note { font-size: 10px; color: #9ca3af; margin-bottom: 10px; }
 
-    .notice { background-color: #262626; border-left: 4px solid #eab308; padding: 12px; font-size: 12px; color: #ccc; text-align: left; border-radius: 4px; margin-top: 15px; line-height: 1.6; word-break: break-all; }
-    #statusMsg { margin-top: 15px; font-size: 14px; color: #f87171; word-break: break-all; }
+    /* Thanh Thước Đo Mốc Quà */
+    .ruler-track {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin: 15px 10px 8px 10px;
+    }
+    /* Đường kẻ ngang của thước */
+    .ruler-track::before {
+      content: '';
+      position: absolute;
+      top: 50px;
+      left: 10px;
+      right: 10px;
+      height: 4px;
+      background: #374151;
+      z-index: 1;
+      border-radius: 2px;
+    }
+    .ruler-node {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      flex: 1;
+      cursor: pointer;
+    }
+    /* Vạch chia độ trên cây thước */
+    .ruler-tick {
+      width: 3px;
+      height: 14px;
+      background-color: #9ca3af;
+      margin: 0 auto 4px auto;
+      border-radius: 2px;
+    }
+    .ruler-node.active .ruler-tick {
+      background-color: #22c55e;
+      height: 18px;
+      box-shadow: 0 0 8px #22c55e;
+    }
+    .ruler-label {
+      font-size: 10px;
+      color: #9ca3af;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+    .ruler-node.active .ruler-label {
+      color: #22c55e;
+    }
+    .ruler-btn {
+      margin-top: 4px;
+      background-color: #eab308;
+      color: #000;
+      border: none;
+      padding: 2px 6px;
+      font-size: 9px;
+      font-weight: bold;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .ruler-btn:hover { background-color: #ca8a04; color: #fff; }
+
+    /* KHUNG CHỮ CHẠY */
+    .marquee-container {
+      background-color: #1f2937;
+      border: 1px dashed #38bdf8;
+      border-radius: 6px;
+      padding: 6px 4px;
+      margin-bottom: 10px;
+    }
+    .marquee-container marquee {
+      color: #38bdf8;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    /* THANH ĐIỀU KHIỂN GỌN GÀNG */
+    .control-panel { background-color: #1f2937; border: 1px solid #38bdf8; border-radius: 10px; padding: 10px; margin-bottom: 10px; text-align: left; box-shadow: 0 0 10px rgba(56, 189, 248, 0.15); }
+    .control-panel label { display: block; font-size: 11px; color: #9ca3af; margin-bottom: 3px; font-weight: 600; }
+    
+    .input-box { width: 100%; padding: 9px 10px; border-radius: 6px; border: 1px solid #4b5563; background-color: #111827; color: #fff; font-size: 13px; outline: none; margin-bottom: 8px; }
+    .input-box:focus { border-color: #38bdf8; box-shadow: 0 0 5px rgba(56, 189, 248, 0.5); }
+
+    .btn-row { display: flex; gap: 6px; margin-bottom: 6px; }
+    .btn-action { flex: 1; padding: 10px 6px; border-radius: 6px; font-size: 12px; font-weight: bold; border: none; cursor: pointer; transition: 0.2s; text-align: center; }
+    
+    .btn-key { background: linear-gradient(to bottom, #facc15, #eab308); color: #000; box-shadow: 0 2px 6px rgba(234, 179, 8, 0.3); }
+    .btn-key:hover { opacity: 0.9; }
+    
+    .btn-guide { background: linear-gradient(to bottom, #3b82f6, #2563eb); color: #fff; box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3); }
+    .btn-guide:hover { opacity: 0.9; }
+    
+    .btn-buff { background: linear-gradient(to bottom, #38bdf8, #0284c7); color: #000; box-shadow: 0 0 10px rgba(56, 189, 248, 0.4); font-size: 13px; }
+    .btn-buff:hover { opacity: 0.9; }
+
+    .notice { background-color: #1f2937; border-left: 4px solid #38bdf8; border-top: 1px solid #374151; border-right: 1px solid #374151; border-bottom: 1px solid #374151; padding: 10px; font-size: 11px; color: #d1d5db; text-align: left; border-radius: 6px; margin-top: 10px; line-height: 1.5; word-break: break-all; }
+    #statusMsg { margin-top: 8px; font-size: 12px; color: #f87171; word-break: break-all; font-weight: 600; }
 
     .modal { display: none; position: fixed; z-index: 9999999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); justify-content: center; align-items: center; padding: 15px; }
-    .modal-content { background-color: #1a1a1a; padding: 20px; border-radius: 12px; width: 100%; max-width: 420px; border: 1px solid #444; position: relative; }
+    .modal-content { background-color: #111827; padding: 20px; border-radius: 12px; width: 100%; max-width: 420px; border: 1px solid #38bdf8; position: relative; box-shadow: 0 0 20px rgba(56, 189, 248, 0.3); }
     .close-btn { position: absolute; top: 10px; right: 15px; color: #fff; font-size: 24px; font-weight: bold; cursor: pointer; }
     video { width: 100%; border-radius: 8px; margin-top: 25px; }
   </style>
@@ -53,56 +146,59 @@
   <div class="container">
     <span class="badge">🔥 HỆ THỐNG BUFF LIKE</span>
 
-    <!-- KHUNG TÍCH LŨY BUFF LIÊN TỤC -->
-    <div class="streak-box">
-      <div class="streak-title">🔥 CHUỖI BUFF LIKE LIÊN TỤC</div>
-      <div class="streak-count" id="streakDisplay">0 Ngày</div>
-      <div class="streak-note">⚠️ Cần buff mỗi ngày, quên 1 ngày sẽ gãy chuỗi tính lại từ đầu!</div>
+    <!-- KHUNG MỐC THƯỞNG DẠNG CÂY THƯỚC (RULER PROGRESS) -->
+    <div class="ruler-box">
+      <div class="ruler-title">🔥 CHUỖI BUFF LIKE LIÊN TỤC</div>
+      <div class="ruler-count" id="streakDisplay">0 Ngày</div>
+      <div class="ruler-note">⚠️ Cần buff mỗi ngày, quên 1 ngày sẽ gãy chuỗi!</div>
+
+      <!-- Thanh Thước Đo Các Mốc Quà -->
+      <div class="ruler-track">
+        <div class="ruler-node" id="node-14">
+          <div class="ruler-tick"></div>
+          <div class="ruler-label">14 Ngày<br><b>25 KC</b></div>
+          <button class="ruler-btn" onclick="claimMilestone(14)">Rút</button>
+        </div>
+        <div class="ruler-node" id="node-30">
+          <div class="ruler-tick"></div>
+          <div class="ruler-label">30 Ngày<br><b>50 KC</b></div>
+          <button class="ruler-btn" onclick="claimMilestone(30)">Rút</button>
+        </div>
+        <div class="ruler-node" id="node-60">
+          <div class="ruler-tick"></div>
+          <div class="ruler-label">60 Ngày<br><b>113 KC</b></div>
+          <button class="ruler-btn" onclick="claimMilestone(60)">Rút</button>
+        </div>
+        <div class="ruler-node" id="node-120">
+          <div class="ruler-tick"></div>
+          <div class="ruler-label">120 Ngày<br><b>Thẻ Tuần</b></div>
+          <button class="ruler-btn" onclick="claimMilestone(120)">Nhận</button>
+        </div>
+      </div>
     </div>
 
-    <!-- BẢNG MỐC QUÀ TÍCH LŨY -->
-    <div class="milestone-section">
-      <h4>🎁 Mốc Thưởng Tích Lũy Ngày</h4>
-      
-      <div class="milestone-row">
-        <div class="milestone-info"><b>Mốc 14 Ngày:</b> 25 Kim Cương</div>
-        <button class="btn-claim" onclick="claimMilestone(14)">🚀 Rút</button>
-      </div>
-      <div class="milestone-row">
-        <div class="milestone-info"><b>Mốc 30 Ngày:</b> 50 Kim Cương</div>
-        <button class="btn-claim" onclick="claimMilestone(30)">🚀 Rút</button>
-      </div>
-      <div class="milestone-row">
-        <div class="milestone-info"><b>Mốc 60 Ngày:</b> 113 Kim Cương</div>
-        <button class="btn-claim" onclick="claimMilestone(60)">👑 Rút</button>
-      </div>
-      <div class="milestone-row">
-        <div class="milestone-info"><b>Mốc 120 Ngày:</b> Thẻ Tuần</div>
-        <button class="btn-claim" onclick="claimMilestone(120)">💎 Nhận</button>
-      </div>
+    <!-- CHỮ CHẠY NGANG -->
+    <div class="marquee-container">
+      <marquee scrollamount="5">⚡ VÔ NHÓM TIKTOK Ở DƯỚI ĐỂ BIẾT LỆNH BUFF ĐƯỢC DUYỆT HAY CHƯA 👇 ⚡</marquee>
     </div>
 
-    <h2>Vô Nhóm TikTok Ở Dưới Để Biết Lệnh Buff Được Duyệt Hay Chưa 👇</h2>
-
-    <!-- Ô nhập UID Game -->
-    <div class="input-group">
+    <!-- THANH ĐIỀU KHIỂN GỌN GÀNG -->
+    <div class="control-panel">
       <label for="uidInput">Nhập ID Game (UID) của bạn:</label>
-      <input type="text" id="uidInput" placeholder="Ví dụ: 2230853045" oninput="loadUserStreak()">
+      <input type="text" id="uidInput" class="input-box" placeholder="Ví dụ: 2230853045" oninput="loadUserStreak()">
+
+      <div class="btn-row">
+        <button class="btn-action btn-key" onclick="goToGetKey()">🔑 Lấy Key</button>
+        <button class="btn-action btn-guide" onclick="openGuide()">🎬 Hướng Dẫn</button>
+      </div>
+
+      <label for="keyInput" style="margin-top: 6px;">Nhập Mã Key đã lấy:</label>
+      <input type="text" id="keyInput" class="input-box" placeholder="Dán mã Key vào đây...">
+
+      <div class="btn-row" style="margin-bottom: 0;">
+        <button class="btn-action btn-buff" onclick="submitBuff()">⚡ TIẾN HÀNH BUFF LIKE ⚡</button>
+      </div>
     </div>
-
-    <!-- Nút đi lấy Key -->
-    <button class="btn btn-key" onclick="goToGetKey()">🔑 Bấm Vào Đây Để Lấy Key</button>
-
-    <!-- Nút xem Video Hướng Dẫn -->
-    <button class="btn btn-guide" onclick="openGuide()">🎬 Bấm Vào Đây Để Xem Cách Lấy Key</button>
-
-    <!-- Ô nhập Key và Xác nhận Buff -->
-    <div class="input-group" style="margin-top: 15px;">
-      <label for="keyInput">Nhập Mã Key đã lấy:</label>
-      <input type="text" id="keyInput" placeholder="Dán mã Key vào đây...">
-    </div>
-
-    <button class="btn" onclick="submitBuff()">🚀 Tiến Hành Buff Like</button>
 
     <div class="notice">
       <b>📌 THÔNG BÁO & LƯU Ý:</b><br>
@@ -111,19 +207,18 @@
       ⚠️ Buff bên khác buff thêm bên đây không được cộng thêm đâu nhé!<br>
       • Nếu không thấy key là hết like quay lại 30p nha<br><br>
       
-      <!-- PHẦN LIÊN HỆ ĐÃ THAY BẰNG NÚT BẤM LOGO -->
-      <div style="margin-top: 6px; font-weight: bold; margin-bottom: 5px;">💬 Support mua gói like ibox:</div>
-      <div style="display: flex; flex-direction: column; gap: 6px;">
-        <a href="https://www.tiktok.com/@hvpcutis1tg" target="_blank" style="display: flex; align-items: center; justify-content: center; background: #000; color: #fff; padding: 8px; border-radius: 6px; text-decoration: none; border: 1px solid #444; font-size: 13px;">
+      <div style="margin-top: 4px; font-weight: bold; margin-bottom: 4px; color: #38bdf8;">💬 Support mua gói like ibox:</div>
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <a href="https://www.tiktok.com/@hvpcutis1tg" target="_blank" style="display: flex; align-items: center; justify-content: center; background: #111827; color: #fff; padding: 6px; border-radius: 6px; text-decoration: none; border: 1px solid #374151; font-size: 11px;">
           🎵 TikTok: @hvpcutis1tg
         </a>
-        <a href="https://t.me/tlzproject" target="_blank" style="display: flex; align-items: center; justify-content: center; background: #229ED9; color: #fff; padding: 8px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold;">
+        <a href="https://t.me/tlzproject" target="_blank" style="display: flex; align-items: center; justify-content: center; background: #0284c7; color: #fff; padding: 6px; border-radius: 6px; text-decoration: none; font-size: 11px; font-weight: bold;">
           ✈️ Telegram: @tlzproject
         </a>
-        <a href="https://t.me/tlzchat" target="_blank" style="display: flex; align-items: center; justify-content: center; background: #2b5278; color: #fff; padding: 8px; border-radius: 6px; text-decoration: none; font-size: 13px;">
+        <a href="https://t.me/tlzchat" target="_blank" style="display: flex; align-items: center; justify-content: center; background: #1e293b; color: #fff; padding: 6px; border-radius: 6px; text-decoration: none; font-size: 11px;">
           👥 Nhóm Chat Telegram: @tlzchat
         </a>
-        <a href="https://tiktok.me/group/ZSgWYffCH/" target="_blank" style="display: flex; align-items: center; justify-content: center; background: #111; color: #38bdf8; padding: 8px; border-radius: 6px; text-decoration: none; font-size: 12px; border: 1px dashed #38bdf8;">
+        <a href="https://tiktok.me/group/ZSgWYffCH/" target="_blank" style="display: flex; align-items: center; justify-content: center; background: #111827; color: #38bdf8; padding: 6px; border-radius: 6px; text-decoration: none; font-size: 11px; border: 1px dashed #38bdf8;">
           📢 Kênh Thông Báo TikTok
         </a>
       </div>
@@ -136,7 +231,7 @@
   <div id="videoModal" class="modal">
     <div class="modal-content">
       <span class="close-btn" onclick="closeGuide()">&times;</span>
-      <p style="text-align: left; font-size: 14px; font-weight: bold; color: #3b82f6;">🎬 Video hướng dẫn vượt link:</p>
+      <p style="text-align: left; font-size: 14px; font-weight: bold; color: #38bdf8;">🎬 Video hướng dẫn vượt link:</p>
       <video id="guideVideo" controls>
         <source src="lv_0_20261020044711.mp4" type="video/mp4">
         Trình duyệt của bạn không hỗ trợ xem video.
@@ -161,6 +256,7 @@
       const uid = document.getElementById("uidInput").value.trim();
       if (!uid) {
         document.getElementById("streakDisplay").innerText = "0 Ngày";
+        updateRulerProgress(0);
         return;
       }
       localStorage.setItem("tiz_current_uid", uid);
@@ -182,6 +278,19 @@
       }
 
       document.getElementById("streakDisplay").innerText = streakData.count + " Ngày";
+      updateRulerProgress(streakData.count);
+    }
+
+    // Tự động sáng đèn các vạch mốc trên thước khi đạt đủ ngày
+    function updateRulerProgress(count) {
+      [14, 30, 60, 120].forEach(milestone => {
+        const node = document.getElementById("node-" + milestone);
+        if (count >= milestone) {
+          node.classList.add("active");
+        } else {
+          node.classList.remove("active");
+        }
+      });
     }
 
     function claimMilestone(milestone) {
@@ -222,7 +331,7 @@
       const uid = document.getElementById("uidInput").value.trim();
       if (!uid) { alert("Vui lòng nhập ID Game (UID) của bạn trước khi đi lấy Key!"); return; }
       const msgDiv = document.getElementById("statusMsg");
-      msgDiv.style.color = "#aaaaaa";
+      msgDiv.style.color = "#38bdf8";
       msgDiv.innerText = "Đang tạo phiên vượt link bảo mật...";
 
       try {
@@ -232,7 +341,17 @@
           const uniqueToken = data.token;
           localStorage.setItem("tiz_current_uid", uid);
           localStorage.setItem("tiz_pending_token", uniqueToken);
+          
           let baseLink = "https://link4m.org/DRDP9J";
+
+          try {
+            const geoRes = await fetch('https://ipapi.co/json/');
+            const geoData = await geoRes.json();
+            if (geoData && geoData.country_code && geoData.country_code !== 'VN') {
+              baseLink = "https://link2m.com/0odue400";
+            }
+          } catch(e) {}
+
           const finalRedirectUrl = baseLink + "?api=0&url=" + encodeURIComponent("https://bufflikeff.site/getkey.html?token=" + uniqueToken);
           window.location.href = finalRedirectUrl;
         } else {
@@ -248,7 +367,7 @@
       const msgDiv = document.getElementById("statusMsg");
       if (!uid || !key) { alert("Vui lòng nhập đầy đủ UID và Mã Key!"); return; }
 
-      msgDiv.style.color = "#aaaaaa";
+      msgDiv.style.color = "#38bdf8";
       msgDiv.innerText = "Đang xác minh mã Key...";
 
       try {
