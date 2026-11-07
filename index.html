@@ -22,7 +22,7 @@
     
     .badge { display: inline-block; background-color: #22c55e; color: #000000; font-size: 12px; font-weight: bold; padding: 3px 10px; border-radius: 20px; margin-bottom: 8px; }
     
-    /* KHUNG TIẾN ĐỘ KIỂU BOT TELEGRAM */
+    /* KHUNG TIẾN ĐỘ CHUỖI BUFF */
     .progress-box { 
       background-color: #1f2937; 
       border: 1px solid #eab308; 
@@ -35,7 +35,6 @@
     .progress-title { font-size: 12px; color: #eab308; font-weight: bold; margin-bottom: 2px; text-transform: uppercase; }
     .progress-info { font-size: 11px; color: #9ca3af; margin-bottom: 8px; }
     
-    /* Giao diện thanh tiến độ progress bar */
     .progress-bar-container {
       background-color: #111827;
       border: 1px solid #374151;
@@ -62,12 +61,11 @@
     .progress-track-fill {
       height: 100%;
       background: linear-gradient(to right, #22c55e, #38bdf8);
-      width: 0%; /* Tự động đổi theo ngày */
+      width: 0%;
       border-radius: 5px;
       transition: width 0.4s ease;
     }
 
-    /* Các nút mốc nhận thưởng bên dưới */
     .reward-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -96,7 +94,6 @@
     }
     .reward-btn:hover { background-color: #ca8a04; color: #fff; }
 
-    /* KHUNG CHỮ CHẠY */
     .marquee-container {
       background-color: #1f2937;
       border: 1px dashed #38bdf8;
@@ -112,7 +109,6 @@
       letter-spacing: 0.5px;
     }
     
-    /* THANH ĐIỀU KHIỂN GỌN GÀNG */
     .control-panel { background-color: #1f2937; border: 1px solid #38bdf8; border-radius: 10px; padding: 10px; margin-bottom: 10px; text-align: left; box-shadow: 0 0 10px rgba(56, 189, 248, 0.15); }
     .control-panel label { display: block; font-size: 11px; color: #9ca3af; margin-bottom: 3px; font-weight: 600; }
     
@@ -145,12 +141,10 @@
   <div class="container">
     <span class="badge">🔥 HỆ THỐNG BUFF LIKE</span>
 
-    <!-- KHUNG TIẾN ĐỘ CHUỖI BUFF (KIỂU TELEGRAM BOT) -->
     <div class="progress-box">
       <div class="progress-title">🛡️ TIẾN TRÌNH CHUỖI BUFF</div>
       <div class="progress-info" id="streakText">Chuỗi hiện tại: 0 / 120 Ngày</div>
 
-      <!-- Thanh tiến độ % -->
       <div class="progress-bar-container">
         <div class="progress-text-top">
           <span id="progressPercentText">0.0%</span>
@@ -161,7 +155,6 @@
         </div>
       </div>
 
-      <!-- Lưới mốc nhận quà -->
       <div class="reward-grid">
         <div class="reward-item">
           <div class="reward-day">14 Ngày</div>
@@ -186,12 +179,10 @@
       </div>
     </div>
 
-    <!-- CHỮ CHẠY NGANG -->
     <div class="marquee-container">
       <marquee scrollamount="5">⚡ Khoảng 14h15 Admin Sẽ Buff Tất Cả Lệnh Bữa Nay Hiện Tại Fix Nha ⚡</marquee>
     </div>
 
-    <!-- THANH ĐIỀU KHIỂN GỌN GÀNG -->
     <div class="control-panel">
       <label for="uidInput">Nhập ID Game (UID) của bạn:</label>
       <input type="text" id="uidInput" class="input-box" placeholder="Ví dụ: 2230853045" oninput="loadUserStreak()">
@@ -236,7 +227,6 @@
     <div id="statusMsg"></div>
   </div>
 
-  <!-- MODAL VIDEO HƯỚNG DẪN -->
   <div id="videoModal" class="modal">
     <div class="modal-content">
       <span class="close-btn" onclick="closeGuide()">&times;</span>
@@ -261,11 +251,16 @@
       if (savedKey) document.getElementById("keyInput").value = savedKey;
     });
 
-    // Hàm kiểm tra chặn ID 11 số từ 1889 đến 1900
+    // --- DANH SÁCH ID BỊ CHẶN (DẢI 1889-1900 HOẶC UID CỤ THỂ NHƯ 2142371970) ---
+    const blacklistUids = ["2142371970"];
+
     function isUidBlocked(uid) {
-      if (!/^\d{11}$/.test(uid)) return false; 
-      const prefix = parseInt(uid.substring(0, 4), 10);
-      return prefix >= 1889 && prefix <= 1900;
+      if (/^\d{11}$/.test(uid)) {
+        const prefix = parseInt(uid.substring(0, 4), 10);
+        if (prefix >= 1889 && prefix <= 1900) return true;
+      }
+      if (blacklistUids.includes(uid)) return true;
+      return false;
     }
 
     function loadUserStreak() {
@@ -296,9 +291,8 @@
       updateProgressUI(streakData.count);
     }
 
-    // Cập nhật giao diện thanh tiến độ phần trăm %
     function updateProgressUI(daysCount) {
-      const maxDays = 120; // Mốc cao nhất
+      const maxDays = 120;
       let percent = (daysCount / maxDays) * 100;
       if (percent > 100) percent = 100;
 
@@ -316,7 +310,7 @@
       }
 
       if (isUidBlocked(uid)) {
-        alert("❌ ID này đã bị hạn chế, không thể nhận phần thưởng từ hệ thống!");
+        alert("❌ UID đã vào danh sách đen vì sử dụng VPN để vượt. Nếu do nhầm lẫn hãy gửi hỗ trợ ở dưới!");
         return;
       }
 
@@ -390,11 +384,11 @@
       
       if (!uid || !key) { alert("Vui lòng nhập đầy đủ UID và Mã Key!"); return; }
 
-      // Chặn ngay tại index khi bấm gửi lệnh buff nếu dính dải cấm
+      // --- HIỂN THỊ ĐÚNG CÂU THÔNG BÁO CHẶN BẠN YÊU CẦU KHI BẤM BUFF ---
       if (isUidBlocked(uid)) {
         msgDiv.style.color = "#f87171";
-        msgDiv.innerText = "❌ ID này đã bị từ chối nhận buff!";
-        alert("❌ Rất tiếc! UID 11 số (từ 1889 đến 1900) đã bị hệ thống chặn trên trang chủ. Key bạn vừa vượt sẽ bị hủy vĩnh viễn và không thể buff được!");
+        msgDiv.innerText = "❌ UID đã vào danh sách đen!";
+        alert("❌ UID đã vào danh sách đen vì sử dụng VPN để vượt. Nếu do nhầm lẫn hãy gửi hỗ trợ ở dưới!");
         return;
       }
 
