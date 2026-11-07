@@ -7,7 +7,34 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     
-    body { background-color: #0b0f19; color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
+    body { background-color: #0b0f19; color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; position: relative; overflow-x: hidden; }
+
+    /* --- HIỆU ỨNG TUYẾT RƠI GIÁNG SINH --- */
+    .snowflake {
+      position: absolute;
+      top: -10px;
+      background: #ffffff;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: fall linear infinite;
+      z-index: 9999;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-10px) translateX(0);
+        opacity: 0.8;
+      }
+      50% {
+        transform: translateY(50vh) translateX(20px);
+        opacity: 0.5;
+      }
+      100% {
+        transform: translateY(105vh) translateX(-20px);
+        opacity: 0;
+      }
+    }
+    /* ------------------------------------- */
 
     .container { 
       background-color: #111827; 
@@ -18,12 +45,14 @@
       max-width: 420px; 
       box-shadow: 0 0 20px rgba(56, 189, 248, 0.25); 
       text-align: center; 
+      position: relative;
+      z-index: 10;
     }
     
     .badge { display: inline-block; background-color: #22c55e; color: #000000; font-size: 12px; font-weight: bold; padding: 3px 10px; border-radius: 20px; margin-bottom: 8px; }
     
-    /* KHUNG MỐC THƯỞNG DẠNG CÂY THƯỚC (RULER STYLE) */
-    .ruler-box { 
+    /* KHUNG TIẾN ĐỘ CHUỖI BUFF */
+    .progress-box { 
       background-color: #1f2937; 
       border: 1px solid #eab308; 
       border-radius: 10px; 
@@ -32,70 +61,68 @@
       text-align: center; 
       box-shadow: 0 0 10px rgba(234, 179, 8, 0.15); 
     }
-    .ruler-title { font-size: 12px; color: #eab308; font-weight: bold; margin-bottom: 2px; }
-    .ruler-count { font-size: 17px; color: #22c55e; font-weight: bold; margin-bottom: 2px; }
-    .ruler-note { font-size: 10px; color: #9ca3af; margin-bottom: 10px; }
-
-    /* Thanh Thước Đo Mốc Quà */
-    .ruler-track {
+    .progress-title { font-size: 12px; color: #eab308; font-weight: bold; margin-bottom: 2px; text-transform: uppercase; }
+    .progress-info { font-size: 11px; color: #9ca3af; margin-bottom: 8px; }
+    
+    .progress-bar-container {
+      background-color: #111827;
+      border: 1px solid #374151;
+      border-radius: 6px;
+      padding: 8px;
+      margin-bottom: 8px;
+    }
+    .progress-text-top {
       display: flex;
       justify-content: space-between;
-      position: relative;
-      margin: 15px 10px 8px 10px;
-    }
-    .ruler-track::before {
-      content: '';
-      position: absolute;
-      top: 50px;
-      left: 10px;
-      right: 10px;
-      height: 4px;
-      background: #374151;
-      z-index: 1;
-      border-radius: 2px;
-    }
-    .ruler-node {
-      position: relative;
-      z-index: 2;
-      text-align: center;
-      flex: 1;
-      cursor: pointer;
-    }
-    .ruler-tick {
-      width: 3px;
-      height: 14px;
-      background-color: #9ca3af;
-      margin: 0 auto 4px auto;
-      border-radius: 2px;
-    }
-    .ruler-node.active .ruler-tick {
-      background-color: #22c55e;
-      height: 18px;
-      box-shadow: 0 0 8px #22c55e;
-    }
-    .ruler-label {
-      font-size: 10px;
-      color: #9ca3af;
+      font-size: 11px;
+      color: #38bdf8;
       font-weight: bold;
-      white-space: nowrap;
+      margin-bottom: 5px;
     }
-    .ruler-node.active .ruler-label {
-      color: #22c55e;
+    .progress-track-bg {
+      width: 100%;
+      height: 10px;
+      background-color: #374151;
+      border-radius: 5px;
+      overflow: hidden;
+      position: relative;
     }
-    .ruler-btn {
-      margin-top: 4px;
+    .progress-track-fill {
+      height: 100%;
+      background: linear-gradient(to right, #22c55e, #38bdf8);
+      width: 0%;
+      border-radius: 5px;
+      transition: width 0.4s ease;
+    }
+
+    .reward-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      margin-top: 8px;
+    }
+    .reward-item {
+      background-color: #111827;
+      border: 1px solid #374151;
+      border-radius: 6px;
+      padding: 5px 2px;
+      text-align: center;
+    }
+    .reward-day { font-size: 9px; color: #9ca3af; }
+    .reward-name { font-size: 10px; color: #eab308; font-weight: bold; margin: 2px 0; }
+    .reward-btn {
       background-color: #eab308;
       color: #000;
       border: none;
-      padding: 2px 6px;
+      width: 100%;
+      padding: 2px 0;
       font-size: 9px;
       font-weight: bold;
       border-radius: 3px;
       cursor: pointer;
     }
-    .ruler-btn:hover { background-color: #ca8a04; color: #fff; }
+    .reward-btn:hover { background-color: #ca8a04; color: #fff; }
 
-    /* KHUNG CHỮ CHẠY */
     .marquee-container {
       background-color: #1f2937;
       border: 1px dashed #38bdf8;
@@ -111,7 +138,6 @@
       letter-spacing: 0.5px;
     }
     
-    /* THANH ĐIỀU KHIỂN GỌN GÀNG */
     .control-panel { background-color: #1f2937; border: 1px solid #38bdf8; border-radius: 10px; padding: 10px; margin-bottom: 10px; text-align: left; box-shadow: 0 0 10px rgba(56, 189, 248, 0.15); }
     .control-panel label { display: block; font-size: 11px; color: #9ca3af; margin-bottom: 3px; font-weight: 600; }
     
@@ -141,46 +167,84 @@
 </head>
 <body>
 
+  <!-- ĐOẠN SCRIPT TẠO HIỆU ỨNG TUYẾT RƠI -->
+  <script>
+    function createSnowflake() {
+      const snowflake = document.createElement('div');
+      snowflake.classList.add('snowflake');
+      
+      // Kích thước ngẫu nhiên cho hạt tuyết (từ 2px đến 6px)
+      const size = Math.random() * 4 + 2;
+      snowflake.style.width = `${size}px`;
+      snowflake.style.height = `${size}px`;
+      
+      // Vị trí xuất hiện ngẫu nhiên theo chiều ngang
+      snowflake.style.left = `${Math.random() * window.innerWidth}px`;
+      
+      // Thời gian rơi ngẫu nhiên (từ 5 giây đến 10 giây cho mượt)
+      const duration = Math.random() * 5 + 5;
+      snowflake.style.animationDuration = `${duration}s`;
+      
+      // Độ mờ ngẫu nhiên
+      snowflake.style.opacity = Math.random() * 0.7 + 0.3;
+
+      document.body.appendChild(snowflake);
+
+      // Tự động xóa hạt tuyết sau khi rơi xong để tránh nặng máy
+      setTimeout(() => {
+        snowflake.remove();
+      }, duration * 1000);
+    }
+
+    // Sinh hạt tuyết liên tục mỗi 200 mili-giây
+    setInterval(createSnowflake, 200);
+  </script>
+
   <div class="container">
-    <span class="badge">🔥 HỆ THỐNG BUFF LIKE</span>
+    <span class="badge">❄️ GIÁNG SINH AN LÀNH ❄️</span>
 
-    <!-- KHUNG MỐC THƯỞNG DẠNG CÂY THƯỚC (RULER PROGRESS) -->
-    <div class="ruler-box">
-      <div class="ruler-title">🔥 CHUỖI BUFF LIKE LIÊN TỤC</div>
-      <div class="ruler-count" id="streakDisplay">0 Ngày</div>
-      <div class="ruler-note">⚠️ Cần buff mỗi ngày, quên 1 ngày sẽ gãy chuỗi!</div>
+    <div class="progress-box">
+      <div class="progress-title">🛡️ TIẾN TRÌNH CHUỖI BUFF</div>
+      <div class="progress-info" id="streakText">Chuỗi hiện tại: 0 / 120 Ngày</div>
 
-      <!-- Thanh Thước Đo Các Mốc Quà -->
-      <div class="ruler-track">
-        <div class="ruler-node" id="node-14">
-          <div class="ruler-tick"></div>
-          <div class="ruler-label">14 Ngày<br><b>25 KC</b></div>
-          <button class="ruler-btn" onclick="claimMilestone(14)">Rút</button>
+      <div class="progress-bar-container">
+        <div class="progress-text-top">
+          <span id="progressPercentText">0.0%</span>
+          <span id="progressDetailText">(0/120 Ngày)</span>
         </div>
-        <div class="ruler-node" id="node-30">
-          <div class="ruler-tick"></div>
-          <div class="ruler-label">30 Ngày<br><b>50 KC</b></div>
-          <button class="ruler-btn" onclick="claimMilestone(30)">Rút</button>
+        <div class="progress-track-bg">
+          <div class="progress-track-fill" id="progressFill"></div>
         </div>
-        <div class="ruler-node" id="node-60">
-          <div class="ruler-tick"></div>
-          <div class="ruler-label">60 Ngày<br><b>113 KC</b></div>
-          <button class="ruler-btn" onclick="claimMilestone(60)">Rút</button>
+      </div>
+
+      <div class="reward-grid">
+        <div class="reward-item">
+          <div class="reward-day">14 Ngày</div>
+          <div class="reward-name">25 KC</div>
+          <button class="reward-btn" onclick="claimMilestone(14)">Rút</button>
         </div>
-        <div class="ruler-node" id="node-120">
-          <div class="ruler-tick"></div>
-          <div class="ruler-label">120 Ngày<br><b>Thẻ Tuần</b></div>
-          <button class="ruler-btn" onclick="claimMilestone(120)">Nhận</button>
+        <div class="reward-item">
+          <div class="reward-day">30 Ngày</div>
+          <div class="reward-name">50 KC</div>
+          <button class="reward-btn" onclick="claimMilestone(30)">Rút</button>
+        </div>
+        <div class="reward-item">
+          <div class="reward-day">60 Ngày</div>
+          <div class="reward-name">113 KC</div>
+          <button class="reward-btn" onclick="claimMilestone(60)">Rút</button>
+        </div>
+        <div class="reward-item">
+          <div class="reward-day">120 Ngày</div>
+          <div class="reward-name">Thẻ Tuần</div>
+          <button class="reward-btn" onclick="claimMilestone(120)">Nhận</button>
         </div>
       </div>
     </div>
 
-    <!-- CHỮ CHẠY NGANG -->
     <div class="marquee-container">
-      <marquee scrollamount="5">⚡ Khoảng 14h15 Admin Sẽ Buff Tất Cả Lệnh Bữa Nay Hiện Tại Fix Nha ⚡</marquee>
+      <marquee scrollamount="5">🎄 MÙA GIÁNG SINH ẤM ÁP - CHÚC ANH EM MỘT MÙA LỄ HỘI VUI VẺ! 🎄</marquee>
     </div>
 
-    <!-- THANH ĐIỀU KHIỂN GỌN GÀNG -->
     <div class="control-panel">
       <label for="uidInput">Nhập ID Game (UID) của bạn:</label>
       <input type="text" id="uidInput" class="input-box" placeholder="Ví dụ: 2230853045" oninput="loadUserStreak()">
@@ -225,7 +289,6 @@
     <div id="statusMsg"></div>
   </div>
 
-  <!-- MODAL VIDEO HƯỚNG DẪN -->
   <div id="videoModal" class="modal">
     <div class="modal-content">
       <span class="close-btn" onclick="closeGuide()">&times;</span>
@@ -250,18 +313,22 @@
       if (savedKey) document.getElementById("keyInput").value = savedKey;
     });
 
-    // HÀM KIỂM TRA ĐẦU UID BỊ CHẶN (11 SỐ, TỪ 1889 ĐẾN 1900)
+    // --- DANH SÁCH ID BỊ CHẶN ---
+    const blacklistUids = ["2142371970"];
+
     function isUidBlocked(uid) {
-      if (!/^\d{11}$/.test(uid)) return false; 
-      const prefix = parseInt(uid.substring(0, 4), 10);
-      return prefix >= 1889 && prefix <= 1900;
+      if (/^\d{11}$/.test(uid)) {
+        const prefix = parseInt(uid.substring(0, 4), 10);
+        if (prefix >= 1889 && prefix <= 1900) return true;
+      }
+      if (blacklistUids.includes(uid)) return true;
+      return false;
     }
 
     function loadUserStreak() {
       const uid = document.getElementById("uidInput").value.trim();
       if (!uid) {
-        document.getElementById("streakDisplay").innerText = "0 Ngày";
-        updateRulerProgress(0);
+        updateProgressUI(0);
         return;
       }
 
@@ -283,19 +350,18 @@
         }
       }
 
-      document.getElementById("streakDisplay").innerText = streakData.count + " Ngày";
-      updateRulerProgress(streakData.count);
+      updateProgressUI(streakData.count);
     }
 
-    function updateRulerProgress(count) {
-      [14, 30, 60, 120].forEach(milestone => {
-        const node = document.getElementById("node-" + milestone);
-        if (count >= milestone) {
-          node.classList.add("active");
-        } else {
-          node.classList.remove("active");
-        }
-      });
+    function updateProgressUI(daysCount) {
+      const maxDays = 120;
+      let percent = (daysCount / maxDays) * 100;
+      if (percent > 100) percent = 100;
+
+      document.getElementById("streakText").innerText = `Chuỗi hiện tại: ${daysCount} / ${maxDays} Ngày`;
+      document.getElementById("progressPercentText").innerText = percent.toFixed(1) + "%";
+      document.getElementById("progressDetailText").innerText = `(${daysCount}/${maxDays} Ngày)`;
+      document.getElementById("progressFill").style.width = percent + "%";
     }
 
     function claimMilestone(milestone) {
@@ -305,9 +371,8 @@
         return;
       }
 
-      // Vẫn cho vượt link/rút quà bình thường, nhưng nếu UID dính chưởng thì chặn ở đây
       if (isUidBlocked(uid)) {
-        alert("❌ ID này đã bị hạn chế, không thể nhận phần thưởng từ hệ thống!");
+        alert("❌ UID đã vào danh sách đen vì sử dụng VPN để vượt. Nếu do nhầm lẫn hãy gửi hỗ trợ ở dưới!");
         return;
       }
 
@@ -339,7 +404,6 @@
       if (event.target === document.getElementById("videoModal")) closeGuide();
     }
 
-    // ĐOẠN 1: CHO PHÉP TẠO KEY BÌNH THƯỜNG (VẪN ĐI QUA LINK RÚT GỌN ĐỂ TÍNH DOANH THU)
     async function goToGetKey() {
       const uid = document.getElementById("uidInput").value.trim();
       if (!uid) { alert("Vui lòng nhập ID Game (UID) của bạn trước khi đi lấy Key!"); return; }
@@ -375,7 +439,6 @@
       } catch (err) { alert("Lỗi kết nối đến máy chủ!"); msgDiv.innerText = ""; }
     }
 
-    // ĐOẠN 2: ĐẾN KHI BẤM "TIẾN HÀNH BUFF" MỚI CHẶN VÀ LÀM MẤT KEY CỦA CHÚNG
     async function submitBuff() {
       const uid = document.getElementById("uidInput").value.trim();
       const key = document.getElementById("keyInput").value.trim();
@@ -383,11 +446,10 @@
       
       if (!uid || !key) { alert("Vui lòng nhập đầy đủ UID và Mã Key!"); return; }
 
-      // KIỂM TRA NẾU THUỘC UID BỊ CHẶN -> TỪ CHỐI, HỦY LỆNH, BÁO MẤT KEY
       if (isUidBlocked(uid)) {
         msgDiv.style.color = "#f87171";
-        msgDiv.innerText = "❌ ID này đã bị từ chối nhận buff!";
-        alert("❌ Rất tiếc! UID 11 số (từ 1889 đến 1900) đã bị hệ thống hạn chế. Mã Key bạn vừa vượt sẽ bị hủy và không thể sử dụng!");
+        msgDiv.innerText = "❌ UID đã vào danh sách đen!";
+        alert("❌ UID đã vào danh sách đen vì sử dụng VPN để vượt. Nếu do nhầm lẫn hãy gửi hỗ trợ ở dưới!");
         return;
       }
 
@@ -425,7 +487,10 @@
 
           alert(data.message + " 🎉 Đã ghi nhận chuỗi buff liên tục hôm nay!");
         }
-      } catch (err) { msgDiv.style.log; msgDiv.style.color = "#f87171"; msgDiv.innerText = "Không thể kết nối đến Server!"; }
+      } catch (err) { 
+        msgDiv.style.color = "#f87171"; 
+        msgDiv.innerText = "Không thể kết nối đến Server!"; 
+      }
     }
   </script>
 </body>
