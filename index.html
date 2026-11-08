@@ -173,30 +173,24 @@
       const snowflake = document.createElement('div');
       snowflake.classList.add('snowflake');
       
-      // Kích thước ngẫu nhiên cho hạt tuyết (từ 2px đến 6px)
       const size = Math.random() * 4 + 2;
       snowflake.style.width = `${size}px`;
       snowflake.style.height = `${size}px`;
       
-      // Vị trí xuất hiện ngẫu nhiên theo chiều ngang
       snowflake.style.left = `${Math.random() * window.innerWidth}px`;
       
-      // Thời gian rơi ngẫu nhiên (từ 5 giây đến 10 giây cho mượt)
       const duration = Math.random() * 5 + 5;
       snowflake.style.animationDuration = `${duration}s`;
       
-      // Độ mờ ngẫu nhiên
       snowflake.style.opacity = Math.random() * 0.7 + 0.3;
 
       document.body.appendChild(snowflake);
 
-      // Tự động xóa hạt tuyết sau khi rơi xong để tránh nặng máy
       setTimeout(() => {
         snowflake.remove();
       }, duration * 1000);
     }
 
-    // Sinh hạt tuyết liên tục mỗi 200 mili-giây
     setInterval(createSnowflake, 200);
   </script>
 
@@ -313,8 +307,9 @@
       if (savedKey) document.getElementById("keyInput").value = savedKey;
     });
 
-    // --- DANH SÁCH ID BỊ CHẶN ---
+    // --- DANH SÁCH ID BỊ CHẶN & THÔNG BÁO GẮT ---
     const blacklistUids = ["2142371970"];
+    const bannedMessage = "❌ Không được phép buff like vì con tuất này fake VPN để vượt link nhiều lần!";
 
     function isUidBlocked(uid) {
       if (/^\d{11}$/.test(uid)) {
@@ -372,7 +367,7 @@
       }
 
       if (isUidBlocked(uid)) {
-        alert("❌ UID đã vào danh sách đen vì sử dụng VPN để vượt. Nếu do nhầm lẫn hãy gửi hỗ trợ ở dưới!");
+        alert(bannedMessage);
         return;
       }
 
@@ -407,6 +402,11 @@
     async function goToGetKey() {
       const uid = document.getElementById("uidInput").value.trim();
       if (!uid) { alert("Vui lòng nhập ID Game (UID) của bạn trước khi đi lấy Key!"); return; }
+
+      if (isUidBlocked(uid)) {
+        alert(bannedMessage);
+        return;
+      }
 
       const msgDiv = document.getElementById("statusMsg");
       msgDiv.style.color = "#38bdf8";
@@ -448,8 +448,8 @@
 
       if (isUidBlocked(uid)) {
         msgDiv.style.color = "#f87171";
-        msgDiv.innerText = "❌ UID đã vào danh sách đen!";
-        alert("❌ UID đã vào danh sách đen vì sử dụng VPN để vượt. Nếu do nhầm lẫn hãy gửi hỗ trợ ở dưới!");
+        msgDiv.innerText = bannedMessage;
+        alert(bannedMessage);
         return;
       }
 
