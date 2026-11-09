@@ -295,8 +295,8 @@
   </div>
 
   <script>
-    // 👇 THAY LINK WEB APP GOOGLE APPS SCRIPT CỦA BẠN VÀO TRONG DẤU NGOẶC KÉP NÀY 👇
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzI2FIrUGBwkpDCreJLdU8B2uWH5FXYRtl3gKyrqwupQUWqjhxSSsqzbTydlq2oXJehZQ/exec";
+    // 👇 THAY ĐƯỜNG DẪN WEB APP THẬT CỦA BẠN VÀO ĐÂY (CÓ CHỮ /exec Ở CUỐI) 👇
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzI2FIrUGBwkpDCreJLdU8B2uWH5FXYRtl3gKyrqwupQUWqjhxSSsqzbTydlq2oXJehZQ/exec" ;
 
     window.addEventListener('DOMContentLoaded', () => {
       const savedUid = localStorage.getItem("tiz_current_uid");
@@ -308,7 +308,6 @@
       if (savedKey) document.getElementById("keyInput").value = savedKey;
     });
 
-    // --- HÀM LẤY IP KHÁCH TỰ ĐỘNG ---
     async function getClientIp() {
       try {
         let res = await fetch('https://api.ipify.org?format=json');
@@ -319,7 +318,6 @@
       }
     }
 
-    // --- DANH SÁCH ID BỊ CHẶN & THÔNG BÁO GẮT ---
     const blacklistUids = ["2142371970", "1611729612"];
     const bannedMessage = "❌ Không được phép buff like vì tài khoản này nằm trong danh sách hạn chế!";
 
@@ -412,6 +410,7 @@
       if (event.target === document.getElementById("videoModal")) closeGuide();
     }
 
+    // --- HÀM LẤY KEY (Dùng gọi GET trực tiếp để tránh lỗi kết nối) ---
     async function goToGetKey() {
       const uid = document.getElementById("uidInput").value.trim();
       if (!uid) { alert("Vui lòng nhập ID Game (UID) của bạn trước khi đi lấy Key!"); return; }
@@ -428,16 +427,7 @@
       try {
         let userIp = await getClientIp();
 
-        const res = await fetch(SCRIPT_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "create_onetime_token",
-            uid: uid,
-            userIp: userIp
-          })
-        });
-
+        const res = await fetch(`${SCRIPT_URL}?action=create_onetime_token&uid=${encodeURIComponent(uid)}&userIp=${encodeURIComponent(userIp)}`);
         const data = await res.json();
         
         if (data.status === "success") {
@@ -446,25 +436,19 @@
           localStorage.setItem("tiz_pending_token", uniqueToken);
           
           let baseLink = "https://link4m.org/DRDP9J";
-          if (userIp !== "UNKNOWN_IP") {
-            try {
-              const geoRes = await fetch(`https://ipapi.co/${userIp}/json/`);
-              const geoData = await geoRes.json();
-              if (geoData && geoData.country_code && geoData.country_code !== 'VN') {
-                baseLink = "https://link2m.com/0odue400";
-              }
-            } catch(e) {}
-          }
-
           const finalRedirectUrl = baseLink + "?api=0&url=" + encodeURIComponent("https://bufflikeff.site/getkey.html?token=" + uniqueToken);
           window.location.href = finalRedirectUrl;
         } else {
           alert("Lỗi tạo phiên: " + data.message);
           msgDiv.innerText = "";
         }
-      } catch (err) { alert("Lỗi kết nối đến máy chủ!"); msgDiv.innerText = ""; }
+      } catch (err) { 
+        alert("Lỗi kết nối đến máy chủ! Vui lòng kiểm tra lại SCRIPT_URL."); 
+        msgDiv.innerText = ""; 
+      }
     }
 
+    // --- HÀM TIẾN HÀNH BUFF LIKE ---
     async function submitBuff() {
       const uid = document.getElementById("uidInput").value.trim();
       const key = document.getElementById("keyInput").value.trim();
@@ -485,18 +469,9 @@
       try {
         let userIp = await getClientIp();
 
-        const response = await fetch(SCRIPT_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "verify_and_buff",
-            uid: uid,
-            key: key,
-            userIp: userIp
-          })
-        });
-
+        const response = await fetch(`${SCRIPT_URL}?action=verify_and_buff&uid=${encodeURIComponent(uid)}&key=${encodeURIComponent(key)}&userIp=${encodeURIComponent(userIp)}`);
         const data = await response.json();
+
         msgDiv.style.color = data.status === "success" ? "#4ade80" : "#f87171";
         msgDiv.innerText = data.message;
         
