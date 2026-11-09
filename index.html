@@ -295,6 +295,7 @@
   </div>
 
   <script>
+    // NHỚ THAY ĐƯỜNG LINK GOOGLE APPS SCRIPT CỦA BẠN VÀO ĐÂY
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyqAFPj9sKucsq82o9GqjDRcmwLJWFKDMY6nPlS3BF3RpRvLQAdlE5k4lA3cfHbvjvcdQ/exec";
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -307,9 +308,20 @@
       if (savedKey) document.getElementById("keyInput").value = savedKey;
     });
 
+    // --- HÀM LẤY IP KHÁCH TỰ ĐỘNG ---
+    async function getClientIp() {
+      try {
+        let res = await fetch('https://api.ipify.org?format=json');
+        let data = await res.json();
+        return data.ip || "UNKNOWN_IP";
+      } catch (e) {
+        return "UNKNOWN_IP";
+      }
+    }
+
     // --- DANH SÁCH ID BỊ CHẶN & THÔNG BÁO GẮT ---
     const blacklistUids = ["2142371970"];
-    const bannedMessage = "❌ Không được phép buff like vì con tuất này fake VPN để vượt link nhiều lần!";
+    const bannedMessage = "❌ Không được phép buff like vì tài khoản này nằm trong danh sách hạn chế!";
 
     function isUidBlocked(uid) {
       if (/^\d{11}$/.test(uid)) {
@@ -410,25 +422,28 @@
 
       const msgDiv = document.getElementById("statusMsg");
       msgDiv.style.color = "#38bdf8";
-      msgDiv.innerText = "Đang tạo phiên vượt link bảo mật...";
+      msgDiv.innerText = "Đang lấy IP & tạo phiên bảo mật...";
 
       try {
-        const res = await fetch(`${SCRIPT_URL}?action=create_onetime_token&uid=${encodeURIComponent(uid)}`);
+        let userIp = await getClientIp();
+        const res = await fetch(`${SCRIPT_URL}?action=create_onetime_token&uid=${encodeURIComponent(uid)}&userIp=${encodeURIComponent(userIp)}`);
         const data = await res.json();
+        
         if (data.status === "success") {
           const uniqueToken = data.token;
           localStorage.setItem("tiz_current_uid", uid);
           localStorage.setItem("tiz_pending_token", uniqueToken);
           
           let baseLink = "https://link4m.org/DRDP9J";
-
-          try {
-            const geoRes = await fetch('https://ipapi.co/json/');
-            const geoData = await geoRes.json();
-            if (geoData && geoData.country_code && geoData.country_code !== 'VN') {
-              baseLink = "https://link2m.com/0odue400";
-            }
-          } catch(e) {}
+          if (userIp !== "UNKNOWN_IP") {
+            try {
+              const geoRes = await fetch(`https://ipapi.co/${userIp}/json/`);
+              const geoData = await geoRes.json();
+              if (geoData && geoData.country_code && geoData.country_code !== 'VN') {
+                baseLink = "https://link2m.com/0odue400";
+              }
+            } catch(e) {}
+          }
 
           const finalRedirectUrl = baseLink + "?api=0&url=" + encodeURIComponent("https://bufflikeff.site/getkey.html?token=" + uniqueToken);
           window.location.href = finalRedirectUrl;
@@ -454,10 +469,23 @@
       }
 
       msgDiv.style.color = "#38bdf8";
-      msgDiv.innerText = "Đang xác minh mã Key...";
+      msgDiv.innerText = "Đang lấy IP & xác minh mã Key...";
 
       try {
-        const response = await fetch(`${SCRIPT_URL}?action=verify_and_buff&uid=${encodeURIComponent(uid)}&key=${encodeURIComponent(key)}`);
+        let userIp = await getClientIp();
+
+        // Đổi sang gửi POST để truyền IP chính xác xuống server Google Script
+        const response = await fetch(SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "verify_and_buff",
+            uid: uid,
+            key: key,
+            userIp: userIp
+          })
+        });
+
         const data = await response.json();
         msgDiv.style.color = data.status === "success" ? "#4ade80" : "#f87171";
         msgDiv.innerText = data.message;
@@ -490,8 +518,3 @@
       } catch (err) { 
         msgDiv.style.color = "#f87171"; 
         msgDiv.innerText = "Không thể kết nối đến Server!"; 
-      }
-    }
-  </script>
-</body>
-</html>
