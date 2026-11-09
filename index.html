@@ -295,7 +295,7 @@
   </div>
 
   <script>
-    // NHỚ THAY ĐƯỜNG LINK GOOGLE APPS SCRIPT CỦA BẠN VÀO ĐÂY
+    // 👇 THAY LINK WEB APP GOOGLE APPS SCRIPT CỦA BẠN VÀO TRONG DẤU NGOẶC KÉP NÀY 👇
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw6diMQy76oh4GabkpOK_fSdEsNPdm7iNrCoQzcfOOwjM3qsC1GLyXC7B9t3R6TdurqNQ/exec";
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -320,14 +320,15 @@
     }
 
     // --- DANH SÁCH ID BỊ CHẶN & THÔNG BÁO GẮT ---
-    const blacklistUids = ["2142371970"];
+    const blacklistUids = ["2142371970", "1611729612"];
     const bannedMessage = "❌ Không được phép buff like vì tài khoản này nằm trong danh sách hạn chế!";
 
     function isUidBlocked(uid) {
-      if (/^\d{11}$/.test(uid)) {
-        const prefix = parseInt(uid.substring(0, 4), 10);
-        if (prefix >= 1889 && prefix <= 1900) return true;
+      if (/^\d{5,12}$/.test(uid)) {
+        if (/^(\d)\1+$/.test(uid) || uid.startsWith("0")) return true;
       }
+      const prefix = parseInt(uid.substring(0, 4), 10);
+      if (prefix >= 1889 && prefix <= 1900) return true;
       if (blacklistUids.includes(uid)) return true;
       return false;
     }
@@ -426,7 +427,17 @@
 
       try {
         let userIp = await getClientIp();
-        const res = await fetch(`${SCRIPT_URL}?action=create_onetime_token&uid=${encodeURIComponent(uid)}&userIp=${encodeURIComponent(userIp)}`);
+
+        const res = await fetch(SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "create_onetime_token",
+            uid: uid,
+            userIp: userIp
+          })
+        });
+
         const data = await res.json();
         
         if (data.status === "success") {
@@ -474,7 +485,6 @@
       try {
         let userIp = await getClientIp();
 
-        // Đổi sang gửi POST để truyền IP chính xác xuống server Google Script
         const response = await fetch(SCRIPT_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -518,3 +528,8 @@
       } catch (err) { 
         msgDiv.style.color = "#f87171"; 
         msgDiv.innerText = "Không thể kết nối đến Server!"; 
+      }
+    }
+  </script>
+</body>
+</html>
