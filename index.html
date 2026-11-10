@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BUFF LIKE FREE FIRE - TRANG CHỦ</title>
+  <!-- 🛡️ Thêm thư viện Cloudflare Turnstile -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     
@@ -21,18 +24,9 @@
     }
 
     @keyframes fall {
-      0% {
-        transform: translateY(-10px) translateX(0);
-        opacity: 0.8;
-      }
-      50% {
-        transform: translateY(50vh) translateX(20px);
-        opacity: 0.5;
-      }
-      100% {
-        transform: translateY(105vh) translateX(-20px);
-        opacity: 0;
-      }
+      0% { transform: translateY(-10px) translateX(0); opacity: 0.8; }
+      50% { transform: translateY(50vh) translateX(20px); opacity: 0.5; }
+      100% { transform: translateY(105vh) translateX(-20px); opacity: 0; }
     }
     /* ------------------------------------- */
 
@@ -153,7 +147,7 @@
     .btn-guide { background: linear-gradient(to bottom, #3b82f6, #2563eb); color: #fff; box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3); }
     .btn-guide:hover { opacity: 0.9; }
     
-    .btn-buff { background: linear-gradient(to bottom, #38bdf8, #0284c7); color: #000; box-shadow: 0 0 10px rgba(56, 189, 248, 0.4); font-size: 13px; }
+    .btn-buff { background: linear-gradient(to bottom, #38bdf8, #0284c7); color: #000; box-shadow: 0 0 10px rgba(56, 189, 248, 0.4); font-size: 13px; width: 100%; }
     .btn-buff:hover { opacity: 0.9; }
 
     .notice { background-color: #1f2937; border-left: 4px solid #38bdf8; border-top: 1px solid #374151; border-right: 1px solid #374151; border-bottom: 1px solid #374151; padding: 10px; font-size: 11px; color: #d1d5db; text-align: left; border-radius: 6px; margin-top: 10px; line-height: 1.5; word-break: break-all; }
@@ -250,6 +244,14 @@
 
       <label for="keyInput" style="margin-top: 6px;">Nhập Mã Key đã lấy:</label>
       <input type="text" id="keyInput" class="input-box" placeholder="Dán mã Key vào đây...">
+
+      <!-- 🛡️ KHUNG XÁC THỰC CLOUDFLARE TURNSTILE (CÓ ICON DỄ THẤY) -->
+      <div style="margin: 10px 0; text-align: left;">
+        <label style="color: #38bdf8; font-size: 11px; font-weight: bold; margin-bottom: 4px; display: block;">
+          🛡️ XÁC THỰC BẢO MẬT (CHỐNG BOT):
+        </label>
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAAFjRIB-TKckzcc9j" data-theme="dark"></div>
+      </div>
 
       <div class="btn-row" style="margin-bottom: 0;">
         <button class="btn-action btn-buff" onclick="submitBuff()">⚡ TIẾN HÀNH BUFF LIKE ⚡</button>
@@ -410,7 +412,7 @@
       if (event.target === document.getElementById("videoModal")) closeGuide();
     }
 
-    // --- HÀM LẤY KEY (Đã trỏ sang token.html sạch sẽ) ---
+    // --- HÀM LẤY KEY ---
     async function goToGetKey() {
       const uid = document.getElementById("uidInput").value.trim();
       if (!uid) { alert("Vui lòng nhập ID Game (UID) của bạn trước khi đi lấy Key!"); return; }
@@ -436,7 +438,6 @@
           localStorage.setItem("tiz_pending_token", uniqueToken);
           
           let baseLink = "https://link4m.org/SkpGQw";
-          // Đã cập nhật chuyển hướng sang token.html thay vì getkey.html cũ
           const finalRedirectUrl = baseLink + "?api=0&url=" + encodeURIComponent("https://bufflikeff.site/token.html?token=" + uniqueToken);
           window.location.href = finalRedirectUrl;
         } else {
@@ -449,7 +450,7 @@
       }
     }
 
-    // --- HÀM TIẾN HÀNH BUFF LIKE ---
+    // --- HÀM TIẾN HÀNH BUFF LIKE (ĐÃ TÍCH HỢP TURNSTILE TOKEN) ---
     async function submitBuff() {
       const uid = document.getElementById("uidInput").value.trim();
       const key = document.getElementById("keyInput").value.trim();
@@ -464,13 +465,32 @@
         return;
       }
 
+      // 🛡️ Kiểm tra xem người dùng đã tích chọn Captcha hay chưa
+      const turnstileToken = document.querySelector('[name="cf-turnstile-response"]')?.value || "";
+      if (!turnstileToken) {
+        alert("⚠️ Vui lòng hoàn thành xác thực bảo mật (Tôi là con người) trước khi buff!");
+        return;
+      }
+
       msgDiv.style.color = "#38bdf8";
-      msgDiv.innerText = "Đang lấy IP & xác minh mã Key...";
+      msgDiv.innerText = "Đang xác minh bảo mật & xử lý...";
 
       try {
         let userIp = await getClientIp();
 
-        const response = await fetch(`${SCRIPT_URL}?action=verify_and_buff&uid=${encodeURIComponent(uid)}&key=${encodeURIComponent(key)}&userIp=${encodeURIComponent(userIp)}`);
+        // Gửi request dạng POST kèm token bảo mật lên Apps Script
+        const response = await fetch(SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            action: "verify_and_buff",
+            uid: uid,
+            key: key,
+            userIp: userIp,
+            turnstileToken: turnstileToken
+          })
+        });
+
         const data = await response.json();
 
         msgDiv.style.color = data.status === "success" ? "#4ade80" : "#f87171";
