@@ -410,7 +410,7 @@
       if (event.target === document.getElementById("videoModal")) closeGuide();
     }
 
-    // --- HÀM LẤY KEY (Dùng gọi GET trực tiếp để tránh lỗi kết nối) ---
+    // --- HÀM LẤY KEY (Đã trỏ sang token.html sạch sẽ) ---
     async function goToGetKey() {
       const uid = document.getElementById("uidInput").value.trim();
       if (!uid) { alert("Vui lòng nhập ID Game (UID) của bạn trước khi đi lấy Key!"); return; }
@@ -436,7 +436,8 @@
           localStorage.setItem("tiz_pending_token", uniqueToken);
           
           let baseLink = "https://link4m.org/DRDP9J";
-          const finalRedirectUrl = baseLink + "?api=0&url=" + encodeURIComponent("https://bufflikeff.site/getkey.html?token=" + uniqueToken);
+          // Đã cập nhật chuyển hướng sang token.html thay vì getkey.html cũ
+          const finalRedirectUrl = baseLink + "?api=0&url=" + encodeURIComponent("https://bufflikeff.site/token.html?token=" + uniqueToken);
           window.location.href = finalRedirectUrl;
         } else {
           alert("Lỗi tạo phiên: " + data.message);
