@@ -229,7 +229,7 @@
       </div>
     </div>
 
-    <div class="marquee-container">
+   <div class="marquee-container">
       <marquee scrollamount="5">🎄 Mẹo hãy load lại web để tránh bị lỗi khi lấy key ! 🎄</marquee>
     </div>
 
@@ -505,4 +505,27 @@
               let lastD = new Date(streakData.lastDate);
               let todayD = new Date(todayStr);
               let diffDays = Math.ceil(Math.abs(todayD - lastD) / (1000 * 60 * 60 * 24));
-            
+              
+              if (diffDays === 1) {
+                streakData.count += 1;
+              } else if (diffDays > 1) {
+                streakData.count = 1;
+              }
+            } else {
+              streakData.count = 1;
+            }
+            streakData.lastDate = todayStr;
+            localStorage.setItem("streak_" + uid, JSON.stringify(streakData));
+            loadUserStreak();
+          }
+
+          alert(data.message + " 🎉 Đã ghi nhận chuỗi buff liên tục hôm nay!");
+        }
+      } catch (err) { 
+        msgDiv.style.color = "#f87171"; 
+        msgDiv.innerText = "Không thể kết nối đến Server!"; 
+      }
+    }
+  </script>
+</body>
+</html>
