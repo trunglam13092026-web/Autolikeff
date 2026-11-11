@@ -36,7 +36,8 @@
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxGSIPwsF43W6YIsqeKQKvzphBXP2YFLGufNWjSPbZ7-iCrxtf0mP2jLojnq70SYkbk/exec";
+    // Điền link /exec của Google Apps Script vào trong dấu ngoặc kép này
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxGSIPwsF43W6YIsqeKQKvzphBXP2YFLGufNWjSPbZ7-iCrxtf0mP2jLojnq70SYkbk/exec"; 
     let currentKey = "";
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -77,8 +78,19 @@
           userIp = ipData.ip || 'UNKNOWN_IP';
         } catch (e) {}
 
-        const targetUrl = `${SCRIPT_URL}?action=generate_key&token=${encodeURIComponent(token)}&userIp=${encodeURIComponent(userIp)}&uid=${encodeURIComponent(userUid)}`;
-        const response = await fetch(targetUrl);
+        // Gửi yêu cầu dạng POST chuẩn chỉnh khớp với Google Apps Script
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "generate_key",
+            token: token,
+            uid: userUid,
+            ip: userIp,
+            turnstileToken: "bypass_token"
+          })
+        });
+
         const data = await response.json();
 
         if (data.status === "success") {
