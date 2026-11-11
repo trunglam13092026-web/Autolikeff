@@ -3,124 +3,383 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LẤY KEY BẢN QUYỀN</title>
+  <title>BUFF LIKE FF - TRANG CHỦ</title>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: #0d0d0d; color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-    .container { background-color: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 25px 20px; width: 100%; max-width: 420px; box-shadow: 0 8px 24px rgba(255, 255, 255, 0.05); text-align: center; }
-    .badge { display: inline-block; background-color: #22c55e; color: #000000; font-size: 12px; font-weight: bold; padding: 4px 12px; border-radius: 20px; margin-bottom: 10px; }
-    h2 { color: #ffffff; margin-bottom: 15px; font-size: 20px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #333; padding-bottom: 10px; }
-    .key-box { background-color: #262626; border: 2px dashed #666666; border-radius: 8px; padding: 15px; margin: 20px 0; font-size: 20px; font-weight: bold; letter-spacing: 2px; color: #22c55e; word-break: break-all; }
-    .btn { width: 100%; padding: 14px; border-radius: 8px; font-size: 15px; font-weight: bold; background-color: #ffffff; color: #000000; border: none; cursor: pointer; transition: all 0.3s ease; margin-bottom: 12px; display: block; text-decoration: none; box-sizing: border-box; }
-    .btn:hover { background-color: #e6e6e6; }
-    .btn-back { display: block; width: 100%; padding: 12px; border-radius: 8px; font-size: 14px; color: #aaaaaa; text-decoration: none; border: 1px solid #444444; box-sizing: border-box; margin-top: 15px; }
-    .btn-back:hover { color: #ffffff; border-color: #ffffff; background-color: #222; }
-    #msg { margin-top: 15px; font-size: 14px; color: #f87171; word-break: break-all; }
+    body { background-color: #0b0f19; color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; position: relative; overflow-x: hidden; }
+
+    .snowflake {
+      position: absolute; top: -10px; background: #ffffff; border-radius: 50%; pointer-events: none; animation: fall linear infinite; z-index: 9999;
+    }
+    @keyframes fall {
+      0% { transform: translateY(-10px) translateX(0); opacity: 0.8; }
+      50% { transform: translateY(50vh) translateX(20px); opacity: 0.5; }
+      100% { transform: translateY(105vh) translateX(-20px); opacity: 0; }
+    }
+
+    .container { background-color: #111827; border: 1px solid #38bdf8; border-radius: 14px; padding: 18px 14px; width: 100%; max-width: 420px; box-shadow: 0 0 20px rgba(56, 189, 248, 0.25); text-align: center; position: relative; z-index: 10; }
+    .badge { display: inline-block; background-color: #22c55e; color: #000000; font-size: 12px; font-weight: bold; padding: 3px 10px; border-radius: 20px; margin-bottom: 8px; }
+
+    .progress-box { background-color: #1f2937; border: 1px solid #eab308; border-radius: 10px; padding: 12px 10px; margin-bottom: 12px; text-align: center; box-shadow: 0 0 10px rgba(234, 179, 8, 0.15); }
+    .progress-title { font-size: 12px; color: #eab308; font-weight: bold; margin-bottom: 2px; text-transform: uppercase; }
+    .progress-info { font-size: 11px; color: #9ca3af; margin-bottom: 8px; }
+
+    .progress-bar-container { background-color: #111827; border: 1px solid #374151; border-radius: 6px; padding: 8px; margin-bottom: 8px; }
+    .progress-text-top { display: flex; justify-content: space-between; font-size: 11px; color: #38bdf8; font-weight: bold; margin-bottom: 5px; }
+    .progress-track-bg { width: 100%; height: 10px; background-color: #374151; border-radius: 5px; overflow: hidden; position: relative; }
+    .progress-track-fill { height: 100%; background: linear-gradient(to right, #22c55e, #38bdf8); width: 0%; border-radius: 5px; transition: width 0.4s ease; }
+
+    .reward-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 8px; }
+    .reward-item { background-color: #111827; border: 1px solid #374151; border-radius: 6px; padding: 5px 2px; text-align: center; }
+    .reward-day { font-size: 9px; color: #9ca3af; }
+    .reward-name { font-size: 10px; color: #eab308; font-weight: bold; margin: 2px 0; }
+    .reward-btn { background-color: #eab308; color: #000; border: none; width: 100%; padding: 2px 0; font-size: 9px; font-weight: bold; border-radius: 3px; cursor: pointer; }
+    .reward-btn:hover { background-color: #ca8a04; color: #fff; }
+
+    .marquee-container { background-color: #1f2937; border: 1px dashed #38bdf8; border-radius: 6px; padding: 6px 4px; margin-bottom: 10px; }
+    .marquee-container marquee { color: #38bdf8; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .control-panel { background-color: #1f2937; border: 1px solid #38bdf8; border-radius: 10px; padding: 10px; margin-bottom: 10px; text-align: left; box-shadow: 0 0 10px rgba(56, 189, 248, 0.15); }
+    .control-panel label { display: block; font-size: 11px; color: #9ca3af; margin-bottom: 3px; font-weight: 600; }
+
+    .input-box { width: 100%; padding: 9px 10px; border-radius: 6px; border: 1px solid #4b5563; background-color: #111827; color: #fff; font-size: 13px; outline: none; margin-bottom: 8px; }
+    .input-box:focus { border-color: #38bdf8; box-shadow: 0 0 5px rgba(56, 189, 248, 0.5); }
+
+    .btn-row { display: flex; gap: 6px; margin-bottom: 6px; }
+    .btn-action { flex: 1; padding: 10px 6px; border-radius: 6px; font-size: 12px; font-weight: bold; border: none; cursor: pointer; transition: 0.2s; text-align: center; }
+
+    .btn-key { background: linear-gradient(to bottom, #facc15, #eab308); color: #000; box-shadow: 0 2px 6px rgba(234, 179, 8, 0.3); }
+    .btn-key:hover { opacity: 0.9; }
+
+    .btn-guide { background: linear-gradient(to bottom, #3b82f6, #2563eb); color: #fff; box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3); }
+    .btn-guide:hover { opacity: 0.9; }
+
+    .btn-buff { background: linear-gradient(to bottom, #38bdf8, #0284c7); color: #000; box-shadow: 0 0 10px rgba(56, 189, 248, 0.4); font-size: 13px; width: 100%; }
+    .btn-buff:hover { opacity: 0.9; }
+
+    .notice { background-color: #1f2937; border-left: 4px solid #38bdf8; border: 1px solid #374151; padding: 10px; font-size: 11px; color: #d1d5db; text-align: left; border-radius: 6px; margin-top: 10px; line-height: 1.5; word-break: break-all; }
+    #statusMsg { margin-top: 8px; font-size: 12px; color: #f87171; word-break: break-all; font-weight: 600; text-align: center; }
+
+    .modal { display: none; position: fixed; z-index: 9999999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); justify-content: center; align-items: center; padding: 15px; }
+    .modal-content { background-color: #111827; padding: 20px; border-radius: 12px; width: 100%; max-width: 420px; border: 1px solid #38bdf8; position: relative; box-shadow: 0 0 20px rgba(56, 189, 248, 0.3); }
+    .close-btn { position: absolute; top: 10px; right: 15px; color: #fff; font-size: 24px; font-weight: bold; cursor: pointer; }
+    video { width: 100%; border-radius: 8px; margin-top: 25px; }
   </style>
 </head>
 <body>
 
+  <script>
+    function createSnowflake() {
+      const snowflake = document.createElement('div');
+      snowflake.classList.add('snowflake');
+      const size = Math.random() * 4 + 2;
+      snowflake.style.width = `${size}px`;
+      snowflake.style.height = `${size}px`;
+      snowflake.style.left = `${Math.random() * window.innerWidth}px`;
+      const duration = Math.random() * 5 + 5;
+      snowflake.style.animationDuration = `${duration}s`;
+      snowflake.style.opacity = Math.random() * 0.7 + 0.3;
+      document.body.appendChild(snowflake);
+      setTimeout(() => { snowflake.remove(); }, duration * 1000);
+    }
+    setInterval(createSnowflake, 200);
+  </script>
+
   <div class="container">
-    <span class="badge">✨ Thành Công</span>
-    <h2>MÃ KEY CỦA BẠN</h2>
+    <span class="badge">❄️ GIÁNG SINH AN LÀNH ❄️</span>
 
-    <!-- Ô hiển thị Key -->
-    <div class="key-box" id="keyDisplay">ĐANG TẠO KEY...</div>
+    <div class="progress-box">
+      <div class="progress-title">🛡️ TIẾN TRÌNH CHUỖI BUFF</div>
+      <div class="progress-info" id="streakText">Chuỗi hiện tại: 0 / 120 Ngày</div>
 
-    <!-- Nút sao chép Key -->
-    <button class="btn" onclick="copyKey()">SAO CHÉP KEY</button>
+      <div class="progress-bar-container">
+        <div class="progress-text-top">
+          <span id="progressPercentText">0.0%</span>
+          <span id="progressDetailText">(0/120 Ngày)</span>
+        </div>
+        <div class="progress-track-bg">
+          <div class="progress-track-fill" id="progressFill"></div>
+        </div>
+      </div>
 
-    <a href="index.html" class="btn-back">← Quay lại trang chủ dán Key</a>
+      <div class="reward-grid">
+        <div class="reward-item">
+          <div class="reward-day">14 Ngày</div>
+          <div class="reward-name">25 KC</div>
+          <button class="reward-btn" onclick="claimMilestone(14)">Rút</button>
+        </div>
+        <div class="reward-item">
+          <div class="reward-day">30 Ngày</div>
+          <div class="reward-name">50 KC</div>
+          <button class="reward-btn" onclick="claimMilestone(30)">Rút</button>
+        </div>
+        <div class="reward-item">
+          <div class="reward-day">60 Ngày</div>
+          <div class="reward-name">113 KC</div>
+          <button class="reward-btn" onclick="claimMilestone(60)">Rút</button>
+        </div>
+        <div class="reward-item">
+          <div class="reward-day">120 Ngày</div>
+          <div class="reward-name">Thẻ Tuần</div>
+          <button class="reward-btn" onclick="claimMilestone(120)">Nhận</button>
+        </div>
+      </div>
+    </div>
 
-    <div id="msg"></div>
+    <div class="marquee-container">
+      <marquee scrollamount="5">🎄 Mẹo hãy load lại web để tránh bị lỗi khi lấy key ! 🎄</marquee>
+    </div>
+
+    <div class="control-panel">
+      <label for="uidInput">Nhập ID Game (UID) của bạn:</label>
+      <input type="text" id="uidInput" class="input-box" placeholder="Ví dụ: 2230853045" oninput="loadUserStreak()">
+
+      <div class="btn-row">
+        <button class="btn-action btn-key" onclick="goToGetKey()">🔑 Lấy Key</button>
+        <button class="btn-action btn-guide" onclick="openGuide()">🎬 Hướng Dẫn</button>
+      </div>
+
+      <label for="keyInput" style="margin-top: 6px;">Nhập Mã Key đã lấy:</label>
+      <input type="text" id="keyInput" class="input-box" placeholder="Dán mã Key vào đây...">
+
+      <div style="margin: 10px 0; text-align: left;">
+        <label style="color: #38bdf8; font-size: 11px; font-weight: bold; margin-bottom: 4px; display: block;">
+          🛡️ XÁC THỰC BẢO MẬT (CHỐNG BOT):
+        </label>
+        <!-- 🔴 ĐIỀN SITE KEY CLOUDFLARE TURNSTILE CỦA BẠN VÀO DATA-SITEKEY 🔴 -->
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAAFjRIDKi9Li7yl8TvXRnCtsmhVg" data-theme="dark"></div>
+      </div>
+
+      <div class="btn-row" style="margin-bottom: 0;">
+        <button class="btn-action btn-buff" onclick="submitBuff()">⚡ TIẾN HÀNH BUFF LIKE ⚡</button>
+      </div>
+    </div>
+
+    <div class="notice">
+      <b>📌 THÔNG BÁO & LƯU Ý:</b><br>
+      ⏳ Thời gian: 09:00 - 23:00<br>
+      📊 1 ngày chỉ buff được tối đa 200 like.<br>
+      ⚠️ Buff bên khác buff thêm bên đây không được cộng thêm đâu nhé!<br>
+      • Không fake VPN để vượt link Phát hiện sẽ ban khỏi hệ thống vĩnh viễn<br><br>
+
+      <div style="margin-top: 4px; font-weight: bold; margin-bottom: 4px; color: #38bdf8;">💬 Support mua gói like ibox:</div>
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <a href="https://www.tiktok.com/@hvpcutis1tg" target="_blank" style="display: flex; align-items: center; justify-content: center; background: #111827; color: #fff; padding: 6px; border-radius: 6px; text-decoration: none; border: 1px solid #374151; font-size: 11px;">🎵 TikTok: @hvpcutis1tg</a>
+        <a href="https://t.me/tlzproject" target="_blank" style="display: flex; align-items: center; justify-content: center; background: #0284c7; color: #fff; padding: 6px; border-radius: 6px; text-decoration: none; font-size: 11px; font-weight: bold;">✈️ Telegram: @tlzproject</a>
+        <a href="https://t.me/tlzchat" target="_blank" style="display: flex; align-items: center; justify-content: center; background: #1e293b; color: #fff; padding: 6px; border-radius: 6px; text-decoration: none; font-size: 11px;">👥 Nhóm Chat Telegram: @tlzchat</a>
+        <a href="https://tiktok.me/group/ZSgWYffCH/" target="_blank" style="display: flex; align-items: center; justify-content: center; background: #111827; color: #38bdf8; padding: 6px; border-radius: 6px; text-decoration: none; font-size: 11px; border: 1px dashed #38bdf8;">📢 Kênh Thông Báo TikTok</a>
+      </div>
+    </div>
+
+    <div id="statusMsg"></div>
+  </div>
+
+  <div id="videoModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeGuide()">&times;</span>
+      <p style="text-align: left; font-size: 14px; font-weight: bold; color: #38bdf8;">🎬 Video hướng dẫn vượt link:</p>
+      <video id="guideVideo" controls>
+        <source src="lv_0_20261020044711.mp4" type="video/mp4">
+        Trình duyệt của bạn không hỗ trợ xem video.
+      </video>
+    </div>
   </div>
 
   <script>
-    // Điền link /exec của Google Apps Script vào trong dấu ngoặc kép này
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyM6M6sp33RwIyQlF1rNy1aFLyKYiiwAhiTrQ7oU8TCspo2pEZnaov4d-MDKYSWH7s/exec"; 
-    let currentKey = "";
+    // 🔴 THAY ĐƯỜNG DẪN WEB APP CÓ CHỮ /exec Ở CUỐI VÀO ĐÂY 🔴
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyM6M6sp33RwIyQlF1rNy1aFLyKYiiwAhiTrQ7oU8TCspo2pEZnaov4d-MDKYSWH7s/exec";
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token') || localStorage.getItem('tiz_pending_token') || '';
-    const userUid = localStorage.getItem('tiz_current_uid') || '';
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedUid = localStorage.getItem("tiz_current_uid");
+      const savedKey = localStorage.getItem("tiz_last_key");
+      if (savedUid) {
+        document.getElementById("uidInput").value = savedUid;
+        loadUserStreak();
+      }
+      if (savedKey) document.getElementById("keyInput").value = savedKey;
+    });
 
-    window.addEventListener('DOMContentLoaded', async () => {
-      const keyBox = document.getElementById("keyDisplay");
-      const msgDiv = document.getElementById("msg");
+    async function getClientIp() {
+      try {
+        let res = await fetch('https://api.ipify.org?format=json');
+        let data = await res.json();
+        return data.ip || "UNKNOWN_IP";
+      } catch (e) {
+        return "UNKNOWN_IP";
+      }
+    }
 
-      if (!userUid) {
-        keyBox.innerText = "LỖI TRUY CẬP";
-        msgDiv.style.color = "#f87171";
-        msgDiv.innerText = "❌ Bạn chưa nhập UID ở trang chủ! Đang chuyển hướng về...";
-        setTimeout(() => { window.location.href = "index.html"; }, 1500);
+    const blacklistUids = ["2142371970", "1611729612"];
+    const bannedMessage = "❌ Không được phép buff like vì tài khoản này nằm trong danh sách hạn chế!";
+
+    function isUidBlocked(uid) {
+      if (/^\d{5,12}$/.test(uid)) {
+        if (/^(\d)\1+$/.test(uid) || uid.startsWith("0")) return true;
+      }
+      const prefix = parseInt(uid.substring(0, 4), 10);
+      if (prefix >= 1889 && prefix <= 1900) return true;
+      if (blacklistUids.includes(uid)) return true;
+      return false;
+    }
+
+    function loadUserStreak() {
+      const uid = document.getElementById("uidInput").value.trim();
+      if (!uid) { updateProgressUI(0); return; }
+      localStorage.setItem("tiz_current_uid", uid);
+
+      let streakData = JSON.parse(localStorage.getItem("streak_" + uid)) || { count: 0, lastDate: "" };
+      let todayStr = new Date().toISOString().slice(0, 10);
+
+      if (streakData.lastDate) {
+        let lastD = new Date(streakData.lastDate);
+        let todayD = new Date(todayStr);
+        let diffDays = Math.ceil(Math.abs(todayD - lastD) / (1000 * 60 * 60 * 24));
+        if (diffDays > 1) {
+          streakData.count = 0;
+          streakData.lastDate = "";
+          localStorage.setItem("streak_" + uid, JSON.stringify(streakData));
+        }
+      }
+      updateProgressUI(streakData.count);
+    }
+
+    function updateProgressUI(daysCount) {
+      const maxDays = 120;
+      let percent = (daysCount / maxDays) * 100;
+      if (percent > 100) percent = 100;
+
+      document.getElementById("streakText").innerText = `Chuỗi hiện tại: ${daysCount} / ${maxDays} Ngày`;
+      document.getElementById("progressPercentText").innerText = percent.toFixed(1) + "%";
+      document.getElementById("progressDetailText").innerText = `(${daysCount}/${maxDays} Ngày)`;
+      document.getElementById("progressFill").style.width = percent + "%";
+    }
+
+    function claimMilestone(milestone) {
+      const uid = document.getElementById("uidInput").value.trim();
+      if (!uid) { alert("Vui lòng nhập ID Game (UID) của bạn trước khi rút quà!"); return; }
+      if (isUidBlocked(uid)) { alert(bannedMessage); return; }
+
+      let streakData = JSON.parse(localStorage.getItem("streak_" + uid)) || { count: 0 };
+      if (streakData.count < milestone) {
+        alert(`⚠️ Chuỗi buff hiện tại của bạn là ${streakData.count} ngày. Chưa đạt mốc ${milestone} ngày để rút phần thưởng này!`);
         return;
       }
+      const rewards = { 14: "25 Kim Cương", 30: "50 Kim Cương", 60: "113 Kim Cương", 120: "Thẻ Tuần" };
+      alert(`🎉 Chúc mừng UID: ${uid} đã rút thành công phần thưởng mốc ${milestone} ngày: ${rewards[milestone]}!`);
+    }
 
-      if (!token) {
-        keyBox.innerText = "THIẾU TOKEN";
-        msgDiv.style.color = "#eab308";
-        msgDiv.innerText = "⚠️ Bạn chưa vượt link quảng cáo! Vui lòng quay lại trang chủ bấm Lấy Key.";
-        return;
-      }
+    function openGuide() { document.getElementById("videoModal").style.display = "flex"; }
+    function closeGuide() {
+      const video = document.getElementById("guideVideo");
+      if (video) video.pause();
+      document.getElementById("videoModal").style.display = "none";
+    }
+    window.onclick = function(event) {
+      if (event.target === document.getElementById("videoModal")) closeGuide();
+    }
 
-      if (window.history.replaceState) {
-        window.history.replaceState(null, null, window.location.pathname);
-      }
+    // --- HÀM LẤY KEY ---
+    async function goToGetKey() {
+      const uid = document.getElementById("uidInput").value.trim();
+      if (!uid) { alert("Vui lòng nhập ID Game (UID) của bạn trước khi đi lấy Key!"); return; }
+      if (isUidBlocked(uid)) { alert(bannedMessage); return; }
 
-      msgDiv.style.color = "#aaaaaa";
-      msgDiv.innerText = "Đang xác minh và cấp Key bảo mật...";
+      const msgDiv = document.getElementById("statusMsg");
+      msgDiv.style.color = "#38bdf8";
+      msgDiv.innerText = "Đang kết nối server tạo phiên...";
 
       try {
-        let userIp = "UNKNOWN_IP";
-        try {
-          const ipRes = await fetch('https://api.ipify.org?format=json');
-          const ipData = await ipRes.json();
-          userIp = ipData.ip || 'UNKNOWN_IP';
-        } catch (e) {}
+        let userIp = await getClientIp();
+        const res = await fetch(`${SCRIPT_URL}?action=create_onetime_token&uid=${encodeURIComponent(uid)}&userIp=${encodeURIComponent(userIp)}`);
+        const data = await res.json();
 
-        // Gửi yêu cầu dạng POST chuẩn chỉnh khớp với Google Apps Script
+        if (data.status === "success") {
+          const uniqueToken = data.token;
+          localStorage.setItem("tiz_current_uid", uid);
+          localStorage.setItem("tiz_pending_token", uniqueToken);
+
+          let baseLink = "https://link4m.org/SkpGQw";
+          const finalRedirectUrl = baseLink + "?api=0&url=" + encodeURIComponent("https://bufflikeff.site/token.html?token=" + uniqueToken);
+          window.location.href = finalRedirectUrl;
+        } else {
+          alert("Lỗi tạo phiên: " + data.message);
+          msgDiv.innerText = "";
+        }
+      } catch (err) {
+        alert("Lỗi kết nối đến máy chủ! Vui lòng kiểm tra lại SCRIPT_URL.");
+        msgDiv.innerText = "";
+      }
+    }
+
+    // --- HÀM TIẾN HÀNH BUFF LIKE ---
+    async function submitBuff() {
+      const uid = document.getElementById("uidInput").value.trim();
+      const key = document.getElementById("keyInput").value.trim();
+      const msgDiv = document.getElementById("statusMsg");
+
+      if (!uid || !key) { alert("Vui lòng nhập đầy đủ UID và Mã Key!"); return; }
+      if (isUidBlocked(uid)) {
+        msgDiv.style.color = "#f87171";
+        msgDiv.innerText = bannedMessage;
+        alert(bannedMessage);
+        return;
+      }
+
+      const turnstileToken = document.querySelector('[name="cf-turnstile-response"]')?.value || "";
+      if (!turnstileToken) {
+        alert("⚠️ Vui lòng hoàn thành xác thực bảo mật (Tôi là con người) trước khi buff!");
+        return;
+      }
+
+      msgDiv.style.color = "#38bdf8";
+      msgDiv.innerText = "Đang xác minh bảo mật & xử lý...";
+
+      try {
+        let userIp = await getClientIp();
+
+        // Gửi text/plain để né lỗi CORS Preflight
         const response = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify({
-            action: "generate_key",
-            token: token,
-            uid: userUid,
-            ip: userIp,
-            turnstileToken: "bypass_token"
+            action: "verify_and_buff",
+            uid: uid,
+            key: key,
+            userIp: userIp,
+            turnstileToken: turnstileToken
           })
         });
 
         const data = await response.json();
+        msgDiv.style.color = data.status === "success" ? "#4ade80" : "#f87171";
+        msgDiv.innerText = data.message;
 
         if (data.status === "success") {
-          currentKey = data.key;
-          keyBox.innerText = data.key;
-          localStorage.setItem("tiz_last_key", currentKey);
-          localStorage.removeItem("tiz_pending_token");
+          let todayStr = new Date().toISOString().slice(0, 10);
+          let streakData = JSON.parse(localStorage.getItem("streak_" + uid)) || { count: 0, lastDate: "" };
 
-          msgDiv.style.color = "#4ade80";
-          msgDiv.innerText = data.message || "✅ Lấy Key thành công! Hãy bấm Sao chép Key.";
-        } else {
-          keyBox.innerText = "LỖI XÁC MINH";
-          msgDiv.style.color = "#f87171";
-          msgDiv.innerText = data.message || "Token không hợp lệ hoặc đã được sử dụng!";
+          if (streakData.lastDate !== todayStr) {
+            if (streakData.lastDate) {
+              let lastD = new Date(streakData.lastDate);
+              let todayD = new Date(todayStr);
+              let diffDays = Math.ceil(Math.abs(todayD - lastD) / (1000 * 60 * 60 * 24));
+              if (diffDays === 1) streakData.count += 1;
+              else if (diffDays > 1) streakData.count = 1;
+            } else {
+              streakData.count = 1;
+            }
+            streakData.lastDate = todayStr;
+            localStorage.setItem("streak_" + uid, JSON.stringify(streakData));
+            loadUserStreak();
+          }
+          alert(data.message);
         }
       } catch (err) {
-        keyBox.innerText = "LỖI KẾT NỐI";
         msgDiv.style.color = "#f87171";
-        msgDiv.innerText = "Không thể kết nối đến Server!";
+        msgDiv.innerText = "Lỗi kết nối đến máy chủ! Vui lòng kiểm tra lại SCRIPT_URL.";
       }
-    });
-
-    function copyKey() {
-      if (!currentKey || currentKey.includes("ĐANG") || currentKey.includes("THIẾU") || currentKey.includes("LỖI")) {
-        alert("Chưa có Key hợp lệ để chép!");
-        return;
-      }
-      navigator.clipboard.writeText(currentKey).then(() => {
-        alert("Đã sao chép Mã Key vào bộ nhớ tạm: " + currentKey);
-      });
     }
   </script>
 </body>
