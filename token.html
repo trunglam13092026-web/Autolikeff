@@ -1,98 +1,61 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>XÁC NHẬN LẤY KEY - BUFF LIKE FF</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: #0b0f19; color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
-    .card { background-color: #111827; border: 1px solid #38bdf8; border-radius: 14px; padding: 20px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 0 20px rgba(56, 189, 248, 0.3); }
-    h2 { color: #38bdf8; font-size: 18px; margin-bottom: 12px; }
-    p { font-size: 13px; color: #9ca3af; margin-bottom: 15px; }
-    .key-display { background-color: #1f2937; border: 1px dashed #eab308; padding: 12px; font-size: 16px; font-weight: bold; color: #eab308; border-radius: 8px; margin-bottom: 15px; word-break: break-all; }
-    .btn { background: linear-gradient(to right, #38bdf8, #0284c7); color: #000; font-weight: bold; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; width: 100%; font-size: 13px; }
-    .btn:hover { opacity: 0.9; }
-    #msg { margin-top: 10px; font-size: 12px; font-weight: 600; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác Nhận Lấy Key</title>
+    <style>
+        body { font-family: sans-serif; background: #0f172a; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 24px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .key-box { background: #0f172a; border: 1px dashed #f59e0b; color: #fbbf24; font-size: 20px; font-weight: bold; padding: 12px; border-radius: 8px; margin: 16px 0; word-break: break-all; }
+        .btn { background: #38bdf8; color: #0f172a; border: none; padding: 12px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; text-decoration: none; display: inline-block; box-sizing: border-box; }
+        .error { color: #f87171; font-weight: bold; }
+    </style>
 </head>
 <body>
-  <div class="card">
+
+<div class="card">
     <h2>🔑 XÁC NHẬN LẤY KEY</h2>
-    <p id="subText">Đang xác minh phiên làm việc của bạn...</p>
+    <div id="status">Đang xác thực tiến trình vượt link...</div>
+</div>
 
-    <div class="key-display" id="keyBox">ĐANG TẠO KEY...</div>
+<script>
+    // THAY LINK SCRIPT GOOGLE APPS SCRIPT CỦA ÔNG VÀO ĐÂY
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzBdiOzgz_-nJmHPSnsSrgkGUFRPCrMFqugOREU-cq7A-c4NP08w9ibDBcFx4ZrlA-vQg/exec";
 
-    <button class="btn" id="copyBtn" onclick="copyAndReturn()" style="display: none;">📋 SAO CHÉP KEY & VỀ TRANG CHỦ</button>
-    <div id="msg"></div>
-  </div>
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const uid = urlParams.get('uid') || '';
 
-  <script>
-    // 🔴 DÁN ĐÚNG LINK /EXEC CỦA GOOGLE APPS SCRIPT VÀO ĐÂY 🔴
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw0cbnoHwBPB1LSEQwjty_6ceABTuMIfF02vKHxgFDsbrbiSNZ4uOKl73KGRhxjutiBWw/exec";
+        const statusDiv = document.getElementById('status');
 
-    window.addEventListener('DOMContentLoaded', async () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      let token = urlParams.get('token');
-      
-      // Nếu link4m làm mất token trên URL, tự động lấy từ bộ nhớ tạm của máy
-      if (!token) {
-        token = localStorage.getItem("tiz_pending_token");
-      }
-
-      const savedUid = localStorage.getItem("tiz_current_uid");
-      const msgDiv = document.getElementById("msg");
-
-      if (!token || !savedUid) {
-        document.getElementById("keyBox").innerText = "LỖI PHIÊN!";
-        msgDiv.style.color = "#f87171";
-        msgDiv.innerText = "Phiên làm việc không hợp lệ! Vui lòng quay về trang chủ nhập lại UID và bấm Lấy Key.";
-        return;
-      }
-
-      try {
-        const res = await fetch(SCRIPT_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({
-            action: "generate_key",
-            token: token,
-            uid: savedUid
-          })
-        });
-
-        const data = await res.json();
-
-        if (data.status === "success") {
-          const generatedKey = data.key || data.key_code;
-          document.getElementById("keyBox").innerText = generatedKey;
-          document.getElementById("subText").innerText = "🎉 Chúc mừng! Bạn đã lấy Key thành công:";
-          document.getElementById("copyBtn").style.display = "block";
-          localStorage.setItem("tiz_last_key", generatedKey);
-          localStorage.removeItem("tiz_pending_token"); // Xóa token cũ tránh dùng lại
-          msgDiv.style.color = "#4ade80";
-          msgDiv.innerText = "Key đã được tạo thành công!";
-        } else {
-          document.getElementById("keyBox").innerText = "THẤT BẠI!";
-          msgDiv.style.color = "#f87171";
-          msgDiv.innerText = data.message || "Không thể lấy Key!";
+        // BẮT BÀI NHẢY CÓC: Không có token trên URL là chặn luôn từ FE
+        if (!token) {
+            statusDiv.innerHTML = `<p class="error">❌ Lỗi: Bạn chưa thực hiện vượt link từ Bước 1!</p>`;
+            return;
         }
-      } catch (err) {
-        document.getElementById("keyBox").innerText = "LỖI KẾT NỐI!";
-        msgDiv.style.color = "#f87171";
-        msgDiv.innerText = "Không thể kết nối Server Apps Script!";
-      }
-    });
 
-    function copyAndReturn() {
-      const keyText = document.getElementById("keyBox").innerText;
-      navigator.clipboard.writeText(keyText).then(() => {
-        alert("Đã sao chép mã Key: " + keyText);
-        window.location.href = "index.html";
-      }).catch(() => {
-        window.location.href = "index.html";
-      });
-    }
-  </script>
+        // Gọi về Google Apps Script để xác minh và lấy Key
+        fetch(`${SCRIPT_URL}?action=generate_key&token=${encodeURIComponent(token)}&uid=${encodeURIComponent(uid)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    statusDiv.innerHTML = `
+                        <p style="color: #4ade80;">🎉 Chúc mừng! Bạn đã lấy Key thành công:</p>
+                        <div class="key-box">${data.key}</div>
+                        <a href="index.html" class="btn">📋 SAO CHÉP KEY & VỀ TRANG CHỦ</a>
+                        <p style="font-size: 12px; color: #94a3b8; margin-top: 12px;">Key đã được tạo thành công và Token đã hủy!</p>
+                    `;
+                } else {
+                    statusDiv.innerHTML = `<p class="error">❌ ${data.message}</p>`;
+                }
+            })
+            .catch(err => {
+                statusDiv.innerHTML = `<p class="error">❌ Lỗi kết nối máy chủ! Vui lòng kiểm tra SCRIPT_URL.</p>`;
+            });
+    };
+</script>
+
 </body>
 </html>
