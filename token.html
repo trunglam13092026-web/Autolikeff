@@ -28,19 +28,25 @@
   </div>
 
   <script>
-    // 🔴 THAY ĐƯỜNG DẪN WEB APP CÓ CHỮ /exec Ở CUỐI VÀO ĐÂY 🔴
+    // 🔴 DÁN ĐÚNG LINK /EXEC CỦA GOOGLE APPS SCRIPT VÀO ĐÂY 🔴
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxZAAe_GNoUsKU8JR25JU8NvBqru14crCr7WVqqDq4SVLfSGyBCG57mMI47OGGtX4td/exec";
 
     window.addEventListener('DOMContentLoaded', async () => {
       const urlParams = new URLSearchParams(window.location.search);
-      const token = urlParams.get('token');
+      let token = urlParams.get('token');
+      
+      // Nếu link4m làm mất token trên URL, tự động lấy từ bộ nhớ tạm của máy
+      if (!token) {
+        token = localStorage.getItem("tiz_pending_token");
+      }
+
       const savedUid = localStorage.getItem("tiz_current_uid");
       const msgDiv = document.getElementById("msg");
 
       if (!token || !savedUid) {
         document.getElementById("keyBox").innerText = "LỖI PHIÊN!";
         msgDiv.style.color = "#f87171";
-        msgDiv.innerText = "Phiên làm việc không hợp lệ hoặc đã hết hạn! Vui lòng quay về trang chủ lấy lại link.";
+        msgDiv.innerText = "Phiên làm việc không hợp lệ! Vui lòng quay về trang chủ nhập lại UID và bấm Lấy Key.";
         return;
       }
 
@@ -63,6 +69,7 @@
           document.getElementById("subText").innerText = "🎉 Chúc mừng! Bạn đã lấy Key thành công:";
           document.getElementById("copyBtn").style.display = "block";
           localStorage.setItem("tiz_last_key", generatedKey);
+          localStorage.removeItem("tiz_pending_token"); // Xóa token cũ tránh dùng lại
           msgDiv.style.color = "#4ade80";
           msgDiv.innerText = "Key đã được tạo thành công!";
         } else {
