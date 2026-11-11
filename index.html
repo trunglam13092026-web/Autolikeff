@@ -504,4 +504,5 @@
             if (streakData.lastDate) {
               let lastD = new Date(streakData.lastDate);
               let todayD = new Date(todayStr);
- 
+              let diffDays = Math.ceil(Math.abs(todayD - lastD) / (1000 * 60 * 60 * 24));
+            
