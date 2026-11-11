@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BUFF LIKE FREE FIRE - TRANG CHỦ</title>
+  <title>BUFF LIKE FF - TRANG CHỦ</title>
   <!-- 🛡️ Thêm thư viện Cloudflare Turnstile -->
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   
@@ -45,77 +45,30 @@
     
     .badge { display: inline-block; background-color: #22c55e; color: #000000; font-size: 12px; font-weight: bold; padding: 3px 10px; border-radius: 20px; margin-bottom: 8px; }
     
-    /* KHUNG TIẾN ĐỘ CHUỖI BUFF */
-    .progress-box { 
-      background-color: #1f2937; 
-      border: 1px solid #eab308; 
-      border-radius: 10px; 
-      padding: 12px 10px; 
-      margin-bottom: 12px; 
-      text-align: center; 
-      box-shadow: 0 0 10px rgba(234, 179, 8, 0.15); 
-    }
-    .progress-title { font-size: 12px; color: #eab308; font-weight: bold; margin-bottom: 2px; text-transform: uppercase; }
-    .progress-info { font-size: 11px; color: #9ca3af; margin-bottom: 8px; }
-    
-    .progress-bar-container {
-      background-color: #111827;
-      border: 1px solid #374151;
-      border-radius: 6px;
-      padding: 8px;
-      margin-bottom: 8px;
-    }
-    .progress-text-top {
-      display: flex;
-      justify-content: space-between;
-      font-size: 11px;
-      color: #38bdf8;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-    .progress-track-bg {
-      width: 100%;
-      height: 10px;
-      background-color: #374151;
-      border-radius: 5px;
-      overflow: hidden;
-      position: relative;
-    }
-    .progress-track-fill {
-      height: 100%;
-      background: linear-gradient(to right, #22c55e, #38bdf8);
-      width: 0%;
-      border-radius: 5px;
-      transition: width 0.4s ease;
+    /* 🔥 HIỆU ỨNG NHẤP NHÁY / PHÓNG TO THU NHỎ CHO NÚT ĐUA TOP */
+    @keyframes pulseGlow {
+      0% { transform: scale(1); box-shadow: 0 0 10px rgba(245, 158, 11, 0.3); }
+      50% { transform: scale(1.03); box-shadow: 0 0 20px rgba(245, 158, 11, 0.8); }
+      100% { transform: scale(1); box-shadow: 0 0 10px rgba(245, 158, 11, 0.3); }
     }
 
-    .reward-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 4px;
-      margin-top: 8px;
-    }
-    .reward-item {
-      background-color: #111827;
-      border: 1px solid #374151;
-      border-radius: 6px;
-      padding: 5px 2px;
-      text-align: center;
-    }
-    .reward-day { font-size: 9px; color: #9ca3af; }
-    .reward-name { font-size: 10px; color: #eab308; font-weight: bold; margin: 2px 0; }
-    .reward-btn {
-      background-color: #eab308;
+    .btn-top-event {
+      display: block;
+      background: linear-gradient(to right, #f59e0b, #d97706);
       color: #000;
-      border: none;
-      width: 100%;
-      padding: 2px 0;
-      font-size: 9px;
       font-weight: bold;
-      border-radius: 3px;
-      cursor: pointer;
+      font-size: 13px;
+      padding: 10px;
+      border-radius: 8px;
+      text-decoration: none;
+      margin-bottom: 12px;
+      text-align: center;
+      animation: pulseGlow 1.5s infinite ease-in-out;
+      transition: 0.2s;
     }
-    .reward-btn:hover { background-color: #ca8a04; color: #fff; }
+    .btn-top-event:hover {
+      opacity: 0.9;
+    }
 
     .marquee-container {
       background-color: #1f2937;
@@ -191,43 +144,10 @@
   <div class="container">
     <span class="badge">❄️ GIÁNG SINH AN LÀNH ❄️</span>
 
-    <div class="progress-box">
-      <div class="progress-title">🛡️ TIẾN TRÌNH CHUỖI BUFF</div>
-      <div class="progress-info" id="streakText">Chuỗi hiện tại: 0 / 120 Ngày</div>
-
-      <div class="progress-bar-container">
-        <div class="progress-text-top">
-          <span id="progressPercentText">0.0%</span>
-          <span id="progressDetailText">(0/120 Ngày)</span>
-        </div>
-        <div class="progress-track-bg">
-          <div class="progress-track-fill" id="progressFill"></div>
-        </div>
-      </div>
-
-      <div class="reward-grid">
-        <div class="reward-item">
-          <div class="reward-day">14 Ngày</div>
-          <div class="reward-name">25 KC</div>
-          <button class="reward-btn" onclick="claimMilestone(14)">Rút</button>
-        </div>
-        <div class="reward-item">
-          <div class="reward-day">30 Ngày</div>
-          <div class="reward-name">50 KC</div>
-          <button class="reward-btn" onclick="claimMilestone(30)">Rút</button>
-        </div>
-        <div class="reward-item">
-          <div class="reward-day">60 Ngày</div>
-          <div class="reward-name">113 KC</div>
-          <button class="reward-btn" onclick="claimMilestone(60)">Rút</button>
-        </div>
-        <div class="reward-item">
-          <div class="reward-day">120 Ngày</div>
-          <div class="reward-name">Thẻ Tuần</div>
-          <button class="reward-btn" onclick="claimMilestone(120)">Nhận</button>
-        </div>
-      </div>
-    </div>
+    <!-- Nút tham gia đua top có hiệu ứng nhấp nháy thu hút -->
+    <a href="https://bufflikeff.github.io/bufflikeff-key/" target="_blank" class="btn-top-event">
+      🔥 NHẤP VÀO ĐÂY ĐỂ THAM GIA ĐUA TOP NHẬN THẺ THÁNG FF🔥
+    </a>
 
     <div class="marquee-container">
       <marquee scrollamount="5">🎄 Mẹo hãy load lại web để tránh bị lỗi khi lấy key ! 🎄</marquee>
@@ -235,7 +155,7 @@
 
     <div class="control-panel">
       <label for="uidInput">Nhập ID Game (UID) của bạn:</label>
-      <input type="text" id="uidInput" class="input-box" placeholder="Ví dụ: 2230853045" oninput="loadUserStreak()">
+      <input type="text" id="uidInput" class="input-box" placeholder="Ví dụ: 2230853045">
 
       <div class="btn-row">
         <button class="btn-action btn-key" onclick="goToGetKey()">🔑 Lấy Key</button>
@@ -245,7 +165,7 @@
       <label for="keyInput" style="margin-top: 6px;">Nhập Mã Key đã lấy:</label>
       <input type="text" id="keyInput" class="input-box" placeholder="Dán mã Key vào đây...">
 
-      <!-- 🛡️ KHUNG XÁC THỰC CLOUDFLARE TURNSTILE (CÓ ICON DỄ THẤY) -->
+      <!-- 🛡️ KHUNG XÁC THỰC CLOUDFLARE TURNSTILE -->
       <div style="margin: 10px 0; text-align: left;">
         <label style="color: #38bdf8; font-size: 11px; font-weight: bold; margin-bottom: 4px; display: block;">
           🛡️ XÁC THỰC BẢO MẬT (CHỐNG BOT):
@@ -303,10 +223,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       const savedUid = localStorage.getItem("tiz_current_uid");
       const savedKey = localStorage.getItem("tiz_last_key");
-      if (savedUid) {
-        document.getElementById("uidInput").value = savedUid;
-        loadUserStreak();
-      }
+      if (savedUid) document.getElementById("uidInput").value = savedUid;
       if (savedKey) document.getElementById("keyInput").value = savedKey;
     });
 
@@ -331,74 +248,6 @@
       if (prefix >= 1889 && prefix <= 1900) return true;
       if (blacklistUids.includes(uid)) return true;
       return false;
-    }
-
-    function loadUserStreak() {
-      const uid = document.getElementById("uidInput").value.trim();
-      if (!uid) {
-        updateProgressUI(0);
-        return;
-      }
-
-      localStorage.setItem("tiz_current_uid", uid);
-
-      let streakData = JSON.parse(localStorage.getItem("streak_" + uid)) || { count: 0, lastDate: "" };
-      let todayStr = new Date().toISOString().slice(0, 10);
-
-      if (streakData.lastDate) {
-        let lastD = new Date(streakData.lastDate);
-        let todayD = new Date(todayStr);
-        let diffTime = Math.abs(todayD - lastD);
-        let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-        if (diffDays > 1) {
-          streakData.count = 0;
-          streakData.lastDate = "";
-          localStorage.setItem("streak_" + uid, JSON.stringify(streakData));
-        }
-      }
-
-      updateProgressUI(streakData.count);
-    }
-
-    function updateProgressUI(daysCount) {
-      const maxDays = 120;
-      let percent = (daysCount / maxDays) * 100;
-      if (percent > 100) percent = 100;
-
-      document.getElementById("streakText").innerText = `Chuỗi hiện tại: ${daysCount} / ${maxDays} Ngày`;
-      document.getElementById("progressPercentText").innerText = percent.toFixed(1) + "%";
-      document.getElementById("progressDetailText").innerText = `(${daysCount}/${maxDays} Ngày)`;
-      document.getElementById("progressFill").style.width = percent + "%";
-    }
-
-    function claimMilestone(milestone) {
-      const uid = document.getElementById("uidInput").value.trim();
-      if (!uid) {
-        alert("Vui lòng nhập ID Game (UID) của bạn trước khi rút quà!");
-        return;
-      }
-
-      if (isUidBlocked(uid)) {
-        alert(bannedMessage);
-        return;
-      }
-
-      let streakData = JSON.parse(localStorage.getItem("streak_" + uid)) || { count: 0 };
-      
-      if (streakData.count < milestone) {
-        alert(`⚠️ Chuỗi buff hiện tại của bạn là ${streakData.count} ngày. Chưa đạt mốc ${milestone} ngày để rút phần thưởng này!`);
-        return;
-      }
-
-      const rewards = {
-        14: "25 Kim Cương",
-        30: "50 Kim Cương",
-        60: "113 Kim Cương",
-        120: "Thẻ Tuần"
-      };
-
-      alert(`🎉 Chúc mừng UID: ${uid} đã rút thành công phần thưởng mốc ${milestone} ngày: ${rewards[milestone]}!`);
     }
 
     function openGuide() { document.getElementById("videoModal").style.display = "flex"; }
@@ -450,7 +299,7 @@
       }
     }
 
-    // --- HÀM TIẾN HÀNH BUFF LIKE (ĐÃ TÍCH HỢP TURNSTILE TOKEN) ---
+    // --- HÀM TIẾN HÀNH BUFF LIKE ---
     async function submitBuff() {
       const uid = document.getElementById("uidInput").value.trim();
       const key = document.getElementById("keyInput").value.trim();
@@ -478,7 +327,6 @@
       try {
         let userIp = await getClientIp();
 
-        // Gửi request dạng POST kèm token bảo mật lên Apps Script
         const response = await fetch(SCRIPT_URL, {
           method: "POST",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -497,33 +345,12 @@
         msgDiv.innerText = data.message;
         
         if (data.status === "success") {
-          let todayStr = new Date().toISOString().slice(0, 10);
-          let streakData = JSON.parse(localStorage.getItem("streak_" + uid)) || { count: 0, lastDate: "" };
-
-          if (streakData.lastDate !== todayStr) {
-            if (streakData.lastDate) {
-              let lastD = new Date(streakData.lastDate);
-              let todayD = new Date(todayStr);
-              let diffDays = Math.ceil(Math.abs(todayD - lastD) / (1000 * 60 * 60 * 24));
-              
-              if (diffDays === 1) {
-                streakData.count += 1;
-              } else if (diffDays > 1) {
-                streakData.count = 1;
-              }
-            } else {
-              streakData.count = 1;
-            }
-            streakData.lastDate = todayStr;
-            localStorage.setItem("streak_" + uid, JSON.stringify(streakData));
-            loadUserStreak();
-          }
-
-          alert(data.message + " 🎉 Đã ghi nhận chuỗi buff liên tục hôm nay!");
+          localStorage.setItem("tiz_current_uid", uid);
+          localStorage.setItem("tiz_last_key", key);
         }
-      } catch (err) { 
-        msgDiv.style.color = "#f87171"; 
-        msgDiv.innerText = "Không thể kết nối đến Server!"; 
+      } catch (err) {
+        msgDiv.style.color = "#f87171";
+        msgDiv.innerText = "❌ Lỗi kết nối đến máy chủ!";
       }
     }
   </script>
