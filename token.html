@@ -8,19 +8,20 @@
         body { font-family: sans-serif; background: #0f172a; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
         .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 24px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .key-box { background: #0f172a; border: 1px dashed #f59e0b; color: #fbbf24; font-size: 20px; font-weight: bold; padding: 12px; border-radius: 8px; margin: 16px 0; word-break: break-all; }
-        .btn { background: #38bdf8; color: #0f172a; border: none; padding: 12px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; text-decoration: none; display: inline-block; box-sizing: border-box; }
-        .error { color: #f87171; font-weight: bold; }
+        .btn { background: #38bdf8; color: #0f172a; border: none; padding: 12px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; text-decoration: none; display: inline-block; box-sizing: border-box; margin-top: 10px; }
+        .btn:hover { background: #0ea5e9; }
+        .error { color: #f87171; font-weight: bold; line-height: 1.5; }
     </style>
 </head>
 <body>
 
 <div class="card">
     <h2>🔑 XÁC NHẬN LẤY KEY</h2>
-    <div id="status">Đang xác thực tiến trình vượt link...</div>
+    <div id="status">⏳ Đang xác thực tiến trình vượt link với hệ thống...</div>
 </div>
 
 <script>
-    // THAY LINK SCRIPT GOOGLE APPS SCRIPT CỦA ÔNG VÀO ĐÂY
+    // ⚠️ THAY LINK GOOGLE APPS SCRIPT CỦA ÔNG VÀO ĐÂY (CÓ CHỮ /exec Ở CUỐI)
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzBdiOzgz_-nJmHPSnsSrgkGUFRPCrMFqugOREU-cq7A-c4NP08w9ibDBcFx4ZrlA-vQg/exec";
 
     window.onload = function() {
@@ -32,29 +33,44 @@
 
         // BẮT BÀI NHẢY CÓC: Không có token trên URL là chặn luôn từ FE
         if (!token) {
-            statusDiv.innerHTML = `<p class="error">❌ Lỗi: Bạn chưa thực hiện vượt link từ Bước 1!</p>`;
+            statusDiv.innerHTML = `<p class="error">❌ Lỗi: Bạn chưa thực hiện vượt link từ trang chủ hoặc thiếu Token xác thực!</p>`;
             return;
         }
 
-        // Gọi về Google Apps Script để xác minh và lấy Key
+        // Gọi về Google Apps Script để xác minh token và lấy Key
         fetch(`${SCRIPT_URL}?action=generate_key&token=${encodeURIComponent(token)}&uid=${encodeURIComponent(uid)}`)
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
+                    const generatedKey = data.key;
+                    
+                    // Tự động lưu key vào localStorage để trang chủ tự điền giúp người dùng
+                    localStorage.setItem("tiz_last_key", generatedKey);
+
                     statusDiv.innerHTML = `
-                        <p style="color: #4ade80;">🎉 Chúc mừng! Bạn đã lấy Key thành công:</p>
-                        <div class="key-box">${data.key}</div>
-                        <a href="index.html" class="btn">📋 SAO CHÉP KEY & VỀ TRANG CHỦ</a>
-                        <p style="font-size: 12px; color: #94a3b8; margin-top: 12px;">Key đã được tạo thành công và Token đã hủy!</p>
+                        <p style="color: #4ade80; font-weight: bold;">🎉 Chúc mừng! Bạn đã lấy Key thành công:</p>
+                        <div class="key-box" id="keyText">${generatedKey}</div>
+                        <button class="btn" onclick="copyKey('${generatedKey}')">📋 SAO CHÉP KEY & VỀ TRANG CHỦ</button>
+                        <p style="font-size: 11px; color: #94a3b8; margin-top: 12px;">Token phiên đã được hủy thành công trên hệ thống!</p>
                     `;
                 } else {
                     statusDiv.innerHTML = `<p class="error">❌ ${data.message}</p>`;
                 }
             })
             .catch(err => {
-                statusDiv.innerHTML = `<p class="error">❌ Lỗi kết nối máy chủ! Vui lòng kiểm tra SCRIPT_URL.</p>`;
+                statusDiv.innerHTML = `<p class="error">❌ Lỗi kết nối máy chủ! Vui lòng kiểm tra lại SCRIPT_URL trong mã nguồn.</p>`;
             });
     };
+
+    function copyKey(key) {
+        navigator.clipboard.writeText(key).then(() => {
+            alert("Đã sao chép Key vào bộ nhớ tạm!");
+            window.location.href = "index.html";
+        }).catch(err => {
+            // Fallback nếu trình duyệt chặn clipboard API
+            window.location.href = "index.html";
+        });
+    }
 </script>
 
 </body>
