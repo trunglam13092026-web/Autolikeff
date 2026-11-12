@@ -25,15 +25,16 @@
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzBdiOzgz_-nJmHPSnsSrgkGUFRPCrMFqugOREU-cq7A-c4NP08w9ibDBcFx4ZrlA-vQg/exec";
 
     window.onload = function() {
+        // Lấy token và uid từ localStorage hoặc URL dự phòng nếu có
         const urlParams = new URLSearchParams(window.location.search);
-        const token = urlParams.get('token');
-        const uid = urlParams.get('uid') || '';
+        const token = urlParams.get('token') || localStorage.getItem("tiz_pending_token");
+        const uid = urlParams.get('uid') || localStorage.getItem("tiz_current_uid") || '';
 
         const statusDiv = document.getElementById('status');
 
-        // BẮT BÀI NHẢY CÓC: Không có token trên URL là chặn luôn từ FE
+        // BẮT BÀI NHẢY CÓC: Không có token trong máy lẫn URL là chặn luôn
         if (!token) {
-            statusDiv.innerHTML = `<p class="error">❌ Lỗi: Bạn chưa thực hiện vượt link từ trang chủ hoặc thiếu Token xác thực!</p>`;
+            statusDiv.innerHTML = `<p class="error">❌ Lỗi: Bạn chưa thực hiện vượt link từ trang chủ hoặc phiên làm việc đã hết hạn!</p>`;
             return;
         }
 
@@ -44,8 +45,9 @@
                 if (data.status === 'success') {
                     const generatedKey = data.key;
                     
-                    // Tự động lưu key vào localStorage để trang chủ tự điền giúp người dùng
+                    // Lưu key vào localStorage và xóa token tạm đi để chống dùng lại
                     localStorage.setItem("tiz_last_key", generatedKey);
+                    localStorage.removeItem("tiz_pending_token");
 
                     statusDiv.innerHTML = `
                         <p style="color: #4ade80; font-weight: bold;">🎉 Chúc mừng! Bạn đã lấy Key thành công:</p>
@@ -67,7 +69,6 @@
             alert("Đã sao chép Key vào bộ nhớ tạm!");
             window.location.href = "index.html";
         }).catch(err => {
-            // Fallback nếu trình duyệt chặn clipboard API
             window.location.href = "index.html";
         });
     }
